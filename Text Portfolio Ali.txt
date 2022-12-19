@@ -20,7 +20,7 @@ Companies <br> worked
 * SERVICES
 services__modal-service
 I develop the user interface.
-Web page development.
+Web page development, front and back-end.
 I create ux element interactions.
 I position your company brand.
 
