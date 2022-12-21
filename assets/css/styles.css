@@ -1,11 +1,10 @@
-/*==================== GOOGLE FONTS ====================*/
+/*Google fonts*/
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
 
-/*==================== VARIABLES CSS ====================*/
+/*Variables*/
 :root {
     --header-height: 3rem;
 
-    /*========== Colors ==========*/
     /* Change favorite color */
     --hue-color: 250; /*Purple 250 - Green 142 - Blue 230 - Pink 340*/
 
@@ -23,7 +22,7 @@
     --scroll-bar-color: hsl(var(--hue-color), 12%, 90%);
     --scroll-thumb-color: hsl(var(--hue-color), 12%, 80%);
 
-    /*========== Font and typography ==========*/
+    /*Fonts*/
     --body-font: 'Poppins', sans-serif;
 
     /* .5rem = 8px, 1rem = 16px, 1.5rem = 24px ... */
@@ -35,11 +34,10 @@
     --small-font-size: .813rem;
     --smaller-font-size: .75rem;
 
-    /*========== Font weight ==========*/
     --font-medium: 500;
     --font-semi-bold: 600;
 
-    /*========== Margenes Bottom ==========*/
+    /*Margins*/
     /* .25rem = 4px, .5rem = 8px, .75rem = 12px ... */
     --mb-0-25: .25rem;
     --mb-0-5: .5rem;
@@ -50,7 +48,7 @@
     --mb-2-5: 2.5rem;
     --mb-3: 3rem;
 
-    /*========== z index ==========*/
+    /*Index*/
     --z-tooltip: 10;
     --z-fixed: 100;
     --z-modal: 1000;
@@ -69,13 +67,13 @@
     }
 }
 
-/*========== Variables Dark theme ==========*/
+/*Darker themes*/
 
 
-/*========== Button Dark/Light ==========*/
+/*Buttons contrast*/
 
 
-/*==================== BASE ====================*/
+/*Base*/
 * {
   box-sizing: border-box;
   padding: 0;
@@ -112,7 +110,7 @@ img {
   height: auto;
 }
 
-/*==================== REUSABLE CSS CLASSES ====================*/
+/*CSS classes*/
 .section {
   padding: 2rem 0 4rem;
 }
@@ -133,7 +131,7 @@ img {
   text-align: center;
 }
 
-/*==================== LAYOUT ====================*/
+/*Layout*/
 .container {
   max-width: 768px;
   margin-left: var(--mb-1-5);
@@ -154,7 +152,14 @@ img {
   background-color: var(--body-color);
 }
 
-/*==================== NAV ====================*/
+/*Nav*/
+.nav{
+  max-width: 968px;
+  height: var(--header-height);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+} 
 
 
 /* show menu */
