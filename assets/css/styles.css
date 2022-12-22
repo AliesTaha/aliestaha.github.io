@@ -247,7 +247,44 @@ img {
 /* Change background header */
 
 
-/*==================== HOME ====================*/
+/*Home Page*/
+.home__container{
+  gap: 1rem;
+}
+
+.home__content{
+  grid-template-columns: 0.5fr 3fr;
+  padding-top: 3.5rem;
+  align-items: center;
+}
+
+.home__social{
+  display: grid;
+  grid-template-columns: max-content;
+  row-gap: 1rem;
+}
+
+.home__social-icon{
+  font-size: 1.25rem;
+  color: var(--first-color);
+}
+
+.home__social-icon:hover{
+  color: var(--first-color-alt);
+}
+
+.home__blob{
+  width: 200px;
+  fill: var(--first-color);
+}
+
+.home__blob-img{
+  width:300px;
+  height: 250px;
+}
+
+
+
 
 
 /*==================== BUTTONS ====================*/
