@@ -195,6 +195,29 @@ img {
   }
 }
 
+.nav__list{
+  grid-template-columns: repeat(3 , 1fr);
+  gap: 2rem;
+}
+
+.nav__link{
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: var(--small-font-size);
+  color: var(--title-color);
+  font-weight: var(--font-medium);
+}
+
+.nav__link:hover{
+  color:var(--first-color);
+}
+
+.nav__icon{
+  font-size: 1.2rem;
+}
+
+
 
 /* show menu */
 
