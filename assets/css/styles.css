@@ -233,9 +233,12 @@ img {
 .nav__close:hover{
   color: var(--first-color-alt);
 }
+ 
 
-
-/* show menu */
+/*Show the menu*/
+.show-menu{
+  bottom: 0;
+}
 
 
 /* Active link */

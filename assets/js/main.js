@@ -1,8 +1,15 @@
-/*==================== MENU SHOW Y HIDDEN ====================*/
+/*Showing Hidden Menu (Y)*/
+const navMenu=document.getElementById('nav-menu'),
+    navToggle=document.getElementById('nav-toggle'),
+    navClose=document.getElementById('nav-close');
 
-
-/*===== MENU SHOW =====*/
-/* Validate if constant exists */
+/*Show Menu, again :(*/
+if(navToggle){
+    navToggle.addEventListener('click', ()=>{
+        navMenu.classList.add('show-menu')
+    })
+    //now that I made show menu, I will introduce its style in css
+}
 
 
 /*===== MENU HIDDEN =====*/
