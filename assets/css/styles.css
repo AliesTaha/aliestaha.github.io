@@ -6,7 +6,7 @@
     --header-height: 3rem;
 
     /* Change favorite color */
-    --hue-color: 250; /*Purple 250 - Green 142 - Blue 230 - Pink 340*/
+    --hue-color: 230; /*Purple 250 - Green 142 - Blue 230 - Pink 340*/
 
     /* HSL color mode */
     --first-color: hsl(var(--hue-color), 69%, 61%);
@@ -304,12 +304,13 @@ img {
 
 .home__scroll{
   /*will work on this later*/
+  display: none;
 }
 
 .home__scroll-button{
   color: var(--first-color);
-  transition: 0.3s;
-}
+  transition: .3s;
+} 
 
 .home__scroll-button:hover{
   transform: translateY(0.25rem);
