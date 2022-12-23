@@ -80,22 +80,28 @@ body.dark-theme{
 }
 
 /*Buttons contrast*/
-.nave_btns{
+.nav_btns{
   display: flex;
   align-items: center;
 }
 
 .change-theme{
-  font-size:1.25rem;
+  font-style: var(--body-font);
   color: var(--title-color);
   margin-right: var(--mb-1);
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: var(--small-font-size);
+  font-weight: var(--font-medium);
 }
 
 .change-theme:hover{
   color: var(--first-color);
 
 }
+
 
 /*Base*/
 * {
@@ -341,7 +347,7 @@ img {
 } 
 
 .home_scroll-button:hover{
-  transform: translateY(0.25rem);
+  transform: translateY(1.2rem);
 }
 
 .home_scroll-mouse{
@@ -857,6 +863,7 @@ img {
   .projects_modal{
     padding: 0 .5rem;
   }
+
 }
 
 
@@ -869,23 +876,13 @@ img {
     grid-column: initial;
   }
 
-  .home_img{
-    order:1;
-    justify-self: center;
-  }
-
   .about_container,
   .skills_container,
   .contact_container,
   .footer_container{
-    grid-template-columns: repeat(2,1fr);
+    grid-template-columns: repeat(1,1fr);
   }
 
-  .qualification_sections{
-    display: grid;
-    grid-template-columns: .6fr;
-    justify-content:center;
-  }
 
   @media screen and (min-width:768px){
     .container{
@@ -982,9 +979,6 @@ img {
       justify-content: initial;
     }
 
-    .qualification_tabs{
-      justify-content: center;
-    }
 
     .qualification_button{
       margin:0 var(--mb-1);
@@ -1024,9 +1018,39 @@ img {
       column-gap: 2rem;
     }
 
+    .footer_socials{
+      justify-self: flex-end;
+    }
+
+    .footer_copy{
+      margin-top: 4.5fr;
+    } 
   }
-
-
 }
 
 /* For large devices */
+
+@media screen and (min-width:1024px) {
+  .header,
+  .main,
+  .footer_container{
+    padding: 0;
+  }
+
+  .home_blob{
+    width: 320px;
+  }
+
+  .home_social{
+    transform: translateX(-6rem);
+  }
+
+  .projects_container{
+    grid-template-columns: repeat(2,268px);
+  }
+
+  .contact_inputs{
+    grid-template-columns: repeat(2,1fr);
+  }
+  
+}
