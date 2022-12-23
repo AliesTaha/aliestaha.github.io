@@ -37,29 +37,29 @@
 
                         <!--3-->
                         <li class="nav_item">
-                            <a href="#qualifications" class="nav_link">
-                                <i class="uil uil-file-alt nav_icon"></i>Qualification
+                            <a href="#skills" class="nav_link">
+                                <i class="uil uil-file-alt nav_icon"></i>Skills
                             </a>
                         </li>
 
                         <!--4-->
                         <li class="nav_item">
-                            <a href="#projects" class="nav_link">
-                                <i class="uil uil-bag-alt nav_icon"></i>Projects
+                            <a href="#qualifications" class="nav_link">
+                                <i class="uil uil-bag-alt nav_icon"></i>Qualifications
                             </a>
                         </li>
 
                         <!--5-->
                         <li class="nav_item">
-                            <a href="#portfolio" class="nav_link">
-                                <i class="uil uil-scenery nav_icon"></i> Portfolio
+                            <a href="#projects" class="nav_link">
+                                <i class="uil uil-scenery nav_icon"></i> Projects
                             </a>
                         </li>
 
                          <!--6-->
                          <li class="nav_item">
                             <a href="#contact" class="nav_link">
-                                <i class="uil uil-envelope-check nav_icon">Contact Me </i>
+                                <i class="uil uil-envelope-check nav_icon" >Contact Me </i>
                             </a>
                         </li>
 
@@ -67,6 +67,9 @@
                 </div>
 
                 <div class="nav_btns">
+                    <!--Theme change button-->
+                    <i class="uil uil-wind-moon change-theme" id="theme-button"></i>
+
                     <div class="nav_toggle" id="nav-toggle">
                         <i class="uil uil-apps "></i>
                     </div>
@@ -126,7 +129,7 @@
                             <h3 class="home_subtitle">My name is Ali Taha, nice to meet you!</h3>
                             <p class="home_description">
                                 I'm a student at the University of Waterloo, majoring in Computer Engineering. I am profoundly interested in designing and coding websites, apps, games, and overall enjoy development of any sort!</p>
-                                <a href="#contact" class="button button--flex">
+                                <a href="mailto:ali.taha@uwaterloo.ca" class="button button--flex">
                                     Contact Me <i class="uil uil-envelope-check button_icon"></i>
                                 </a>
                         </div>
@@ -148,8 +151,6 @@
                 <span class="section_subtitle">Let me introduce myself</span>
 
                 <div class="about_container container grid">
-                    <img src="https://imgur.com/oUnF3fD.jpeg" alt="" class="about_img">
-
                     <div class="about_data">
                         <p class="about_description">I'm amazing because...</p>
                         <div class="about_info">
@@ -270,7 +271,7 @@
             </section>
 
             <!--My Qualifications-->
-            <section class="qualification section">
+            <section class="qualifications" id="qualifications">
                 <h2 class="section_title">Qualifications</h2>
                 <span class="section_subtitle">My journey</span>
                 <div class="qualification_container container">
@@ -487,6 +488,52 @@
                             <i class="uil uil-rocket projects_icon"></i>
 
                             <h3 class="projects_title">Project 3 <br>Description</h3>
+                        </div>
+
+                        <span class="button button--flex button--small button--link projects_button">
+                            More info
+                            <i class="uil uil-folder-open button_icon"></i>
+                        </span>
+
+                        <div class="projects_modal">
+                            <div class="projects_modal-content">
+                                <h4 class="projects_modal-title">Ui <br>Designer</h4>
+                                <i class="uil uil-times projects_modal-close"></i>
+
+                                <ul class="projects_modal-projects grid">
+                                    
+                                    <li class="projects_modal-project">
+                                        <i class="uil uil-file-check projects_modal-icon"></i>
+                                        <p>The project does a bunch</p>
+                                    </li>
+
+                                    <li class="projects_modal-project">
+                                        <i class="uil uil-file-check projects_modal-icon"></i>
+                                        <p>The project does a bunch</p>
+                                    </li>
+
+                                    <li class="projects_modal-project">
+                                        <i class="uil uil-file-check projects_modal-icon"></i>
+                                        <p>The project does a bunch</p>
+                                    </li>
+
+                                    <li class="projects_modal-project">
+                                        <i class="uil uil-file-check projects_modal-icon"></i>
+                                        <p>The project does a bunch</p>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!--Project4-->
+                    <div class="projects_content">
+                        <div>
+                            <i class="uil uil-rocket projects_icon"></i>
+
+                            <h3 class="projects_title">Project 4 <br>Description</h3>
                         </div>
 
                         <span class="button button--flex button--small button--link projects_button">
