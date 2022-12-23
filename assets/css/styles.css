@@ -554,6 +554,18 @@ img {
   transform: translate(6px, -7px);
 }
 
+.qualification [data-content]{
+  display: none;
+}
+
+.qualification_active[data-content]{
+  display: block;
+}
+
+.qualification_button.qualification_active{
+  color: var(--first-color);
+}
+
 /*==================== SERVICES ====================*/
 
 
