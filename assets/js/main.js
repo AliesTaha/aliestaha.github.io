@@ -35,7 +35,7 @@ function linkAction(){
 navLink.forEach(n=>n.addEventListener('click', linkAction))
 
 /*Skills*/
-const skillsContent=document.getElementsByClassName('skills_content')
+const skillsContent=document.getElementsByClassName('skills_content'),
     skillsHeader=document.querySelectorAll('.skills_header')
 
 function toggleSkills(){
@@ -76,8 +76,7 @@ tabs.forEach(tab=>{
     })
 })
 
-/*==================== SERVICES MODAL ====================*/
-
+/*==================== Projects MODAL ====================*/
 
 /*==================== PORTFOLIO SWIPER  ====================*/
 
