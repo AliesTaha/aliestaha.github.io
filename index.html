@@ -577,24 +577,60 @@
                 </div>
             </section>
 
-            <!--Portfolio and Side Projects-->
-            <section class="portfolio section" id="portfolio">
-                
-            </section>
-
-            <!--What I'm currently working on-->
-            <section class="project section">
-
-            </section>
-
-            <!--Testimonials? Not too sure if I'm including this-->
-            <section class="testimonial section">
-                
-            </section>
-
-            <!--==================== CONTACT ME ====================-->
+            <!--Contact Me : Please I want job-->
             <section class="contact section" id="contact">
+                <h2 class="section_title">Contact Me</h2>
+                <span class="section_subtitle">Let's get in touch</span>
 
+                <div class="contact_container container grid">
+                    <div>
+                        
+                        <!---->
+                        <div class="contact_information">
+                            <i class="uil uil-phone contact_icon"></i>
+                            <div>
+                                <h3 class="contact_title">Call Me</h3>
+                                <span class="contact_subtitle">6475445933</span>
+                            </div>
+                        </div>
+
+                        <!---->
+                        <div class="contact_information">
+                            <i class="uil uil-message contact_icon"></i>
+                            <div>
+                                <h3 class="contact_title">Email Me</h3>
+                                <span class="contact_subtitle">ali.taha@uwaterloo.ca</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <form action="send-email.php" class="contact_form grid" method="post">
+                      <div class="contact_inputs grid">
+                            
+                            <div class="contact_content">
+                                <label for="name" class="contact_label">Name</label>
+                                <input type="text" id="name" name="name" class="contact_input">
+                            </div>
+
+                            <div class="contact_content">
+                                <label for="email" class="contact_label">Email</label>
+                                <input type="email" id="email" name="email" class="contact_input">
+                            </div>
+                        </div>
+                        <!---->
+
+                        <div class="contact_content">
+                            <label for="message"  class="contact_label">Message</label>
+                            <textarea name="message" id="message" cols="0" rows="7" class="contact_input"></textarea> 
+                        </div>
+
+                        <div>
+                            <input type="submit" value="Submit">
+                          </a>
+                        </div>
+                   </form>
+                </div>
             </section>
         </main>
 
