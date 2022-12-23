@@ -75,6 +75,10 @@ body.dark-theme{
     --input-color: hsl(var(--hue-color), 29%, 16%);
     --body-color: hsl(var(--hue-color), 28%, 12%);
     --container-color: hsl(var(--hue-color), 29%, 16%);
+
+    --scroll-bar-color: hsl(var(--hue-color), 12%, 90%);
+    --scroll-thumb-color: hsl(var(--hue-color), 12%, 80%);
+
 }
 
 /*Buttons contrast*/
@@ -94,8 +98,6 @@ body.dark-theme{
   color: var(--first-color);
 
 }
-
-
 
 /*Base*/
 * {
@@ -536,8 +538,7 @@ img {
 /*Qualification*/
 .qualification_tabs{
   display: flex;
-  justify-content: space-evenly;
-  margin-bottom: var(--mb-2);
+  justify-content: left;
 }
 
 .qualification_button{
@@ -601,7 +602,7 @@ img {
   display: block;
 }
 
-.qualification_button.qualification_active{
+.qualification_button{
   color: var(--first-color);
 }
 
