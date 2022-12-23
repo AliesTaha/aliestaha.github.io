@@ -597,7 +597,7 @@ img {
 }
 
 .projects_content:hover{
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 25px 25px 25px 25px rgba(0, 0, 0, 0.15);
 }
 
 .projects_icon{
@@ -634,9 +634,57 @@ img {
   right:0;
   bottom:0;
   background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  z-index: var(--z-modal);
+  opacity: 0; 
+  visibility: hidden; 
+  transition: 0.3s;
 }
-/* Active Modal */
 
+.projects_modal-content{
+  position:relative;
+  background-color:var(--container-color);
+  padding:1.5rem; 
+  border-radius: .5rem;
+}
+
+.projects_modal-projects{
+  row-gap: 1rem;
+}
+
+.projects_modal-project{
+  display:flex;
+}
+
+.projects_modal-title{
+  font-size: var(--h3-font-size);
+  font-weight: var(--font-medium);
+  margin-bottom: var(--mb-1-5);
+}
+
+.projects_modal-close{
+  position:absolute;
+  top:1rem;
+  right:1rem;
+  font-size:1.5rem;
+  color: var(--first-color);
+  cursor: pointer;
+}
+
+.services_modal-icon{
+  color: var(--first-color);
+  margin-right: var(--mb-0-25);
+
+}
+
+/* Modal */
+.active-modal{
+  opacity:1;
+  visibility: visible;
+}
 
 /*==================== PORTFOLIO ====================*/
 
