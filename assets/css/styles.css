@@ -232,7 +232,7 @@ span.starss:nth-child(1){
 span.starss:nth-child(2){
   top:0;
   left: initial;
-  right: 200px;
+  right: 700px;
   animation-delay: 0.2s;
   animation-duration:  3s;
 }
@@ -269,6 +269,7 @@ span.starss:nth-child(7){
 
 span.starss:nth-child(8){
   top:0 px;
+  left: 1rem;
   animation-delay: 0.4s;
   animation-duration:  1.25s;
 }
