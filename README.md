@@ -78,9 +78,7 @@ Liking a post is simply done through pressing the like button, which increments 
 #### Contact Section
 <div align="center">
 <a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210186056-1a80f910-309b-41a3-b1ad-8f9eb436fcb6.png" width="500" height="100"> </a>
-  
-<div align="center">
-<a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210186082-ff040876-eb86-4bea-b592-c83d3ddda703.png" width="500" height="100"> </a>
+
 
 </div>
 Liking a post is simply done through pressing the like button, which increments the post's number of likes by 1. Clicking the button again removes the like from the post
