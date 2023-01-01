@@ -58,8 +58,8 @@ Liking a post is simply done through pressing the like button, which increments 
 
 #### Qualifications
 <div align="center">
-<a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210185599-629a642a-d2d4-4521-903a-6d0ae0b32434.png" width="500" height="230"> </a>
-<a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210185603-dc19261c-57d6-4240-a536-41e6b077fd28.png" width="500" height="230"></a>
+<a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210185846-5accf58d-0b08-4364-9d4d-7ec469e4e058.png" width="500" height="230"> </a>
+<a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210185852-5de32f2d-8d4b-450f-af87-db882f9f673f.png" width="500" height="230"></a>
 </div>
 Liking a post is simply done through pressing the like button, which increments the post's number of likes by 1. Clicking the button again removes the like from the post
 
