@@ -31,8 +31,8 @@ My personal <a href="https://alitaha.ca"> portfolio website </a>. It is compatib
 
 #### Light and Dark Theme
 <div align="center">
-<a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210185146-782cac57-cda1-4619-b6d6-e94dc96c49a5.png" width="600" height="430"> </a>
-<a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210185364-929b23a6-7489-4af0-a70d-bd091a2cbbcf.png" width="600" height="430"></a>
+<a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210185146-782cac57-cda1-4619-b6d6-e94dc96c49a5.png" width="400" height="230"> </a>
+<a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210185364-929b23a6-7489-4af0-a70d-bd091a2cbbcf.png" width="400" height="230"></a>
 </div>
 
 The feed is created by appending all the posts of the users who are followed in the database, then ordering the posts using the timestamps so that the most recent post in on top. 
