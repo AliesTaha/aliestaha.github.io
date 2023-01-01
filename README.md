@@ -11,11 +11,12 @@ My personal <a href="https://alitaha.ca"> portfolio website </a>. It is compatib
 * [Languages used](#languages)
 * [Supported functionality](#functionality)
   + [Light and Dark Theme](#light-and-dark-theme)
-  + [About me](#create-a-post)
+  + [About me](#about-me)
   + [Skills](#skills)
   + [Qualifications](#qualifications)
   + [My Projects](#my-projects)
-
+  + [Contact Section](#contact-section)
+  
 ## Languages
 [![Typing SVG](https://readme-typing-svg.demolab.com/?lines=Languages;)](https://git.io/typing-svg)
 <p align="center">
@@ -46,132 +47,41 @@ One can create a post that includes a text, an image, or both. The functionality
 <a href="#top" class="btn">Back to table of contents</a><hr>
 
 #### Skills
-<img src="https://media.giphy.com/media/wpVh4p82R9T7XxPsrd/giphy.gif" width="900" height="730">
-Liking a post is simply done through pressing the like button, which increments the post's number of likes by 1. Clicking the button again removes the like from the post
 <div align="center">
 <a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210185599-629a642a-d2d4-4521-903a-6d0ae0b32434.png" width="500" height="230"> </a>
 <a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210185603-dc19261c-57d6-4240-a536-41e6b077fd28.png" width="500" height="230"></a>
 </div>
+Liking a post is simply done through pressing the like button, which increments the post's number of likes by 1. Clicking the button again removes the like from the post
 
 <br>
 <a href="#top" class="btn">Back to table of contents</a><hr>
 
-#### Add Profile Status
-<img src="https://media.giphy.com/media/fq8JaLSUalKxwwKbAt/giphy.gif" width="900" height="730">
-At the click of a button, the user is able to access their status. They can change the fields, their information, and the respective picture, for background and profile. 
+#### Qualifications
+<div align="center">
+<a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210185599-629a642a-d2d4-4521-903a-6d0ae0b32434.png" width="500" height="230"> </a>
+<a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210185603-dc19261c-57d6-4240-a536-41e6b077fd28.png" width="500" height="230"></a>
+</div>
+Liking a post is simply done through pressing the like button, which increments the post's number of likes by 1. Clicking the button again removes the like from the post
+
 <br>
 <a href="#top" class="btn">Back to table of contents</a><hr>
 
-#### Change Profile/Background Picture]
-<img src="https://media.giphy.com/media/74f209Zeae9b08qCag/giphy.gif" width="900" height="730">
-This is performed in the same way as above
-<br>
-<a href="#top" class="btn">Back to table of contents</a><hr>
-<hr>
+#### My Projects
+<div align="center">
+<a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210185599-629a642a-d2d4-4521-903a-6d0ae0b32434.png" width="500" height="230"> </a>
+<a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210185603-dc19261c-57d6-4240-a536-41e6b077fd28.png" width="500" height="230"></a>
+</div>
+Liking a post is simply done through pressing the like button, which increments the post's number of likes by 1. Clicking the button again removes the like from the post
 
-## Backend
-<img src="https://user-images.githubusercontent.com/103478551/209657629-59e84dc9-49a7-4e32-95b9-e8a63a43c260.png">
-Useful functionalities implemented by connecting MongoDB to app, and Express server and Node.js used on the server side. Routing and the aggregation of timeline were also taken care of :sunglasses:	.
 <br>
 <a href="#top" class="btn">Back to table of contents</a><hr>
 
-## Installation
-- Download the files, then CD into the /client and run the following commands
-```
-cd client
-npm i redux red ux-thunk react-redux
-npm i axios
-yarn 
-yarn add react-roucter-dom
-yarn start
-)
-```
-- Simultaneously open a new terminal, CD into the /server and run the following 
-```
-npm init
-npm i express
-npm i mongoose
-npm i body-parser
-npm i nodemon
-yarn 
-yarn add react-roucter-dom
-npm start
-)
-```
-
-
-- The backend is connected to mongo db cloud
-- The server runs in port 8080
-- The client runs in port 3000
-- Make sure these are free before downloading the project
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `yarn start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `yarn test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `yarn build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
+#### Contact Section
+<div align="center">
+<a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210185599-629a642a-d2d4-4521-903a-6d0ae0b32434.png" width="500" height="230"> </a>
+<a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210185603-dc19261c-57d6-4240-a536-41e6b077fd28.png" width="500" height="230"></a>
+</div>
+Liking a post is simply done through pressing the like button, which increments the post's number of likes by 1. Clicking the button again removes the like from the post
 
 <br>
 <a href="#top" class="btn">Back to table of contents</a>
-<hr>
