@@ -11,10 +11,10 @@ My personal <a href="https://alitaha.ca"> portfolio website </a>. It is compatib
 * [Languages used](#languages)
 * [Supported functionality](#functionality)
   + [Light and Dark Theme](#light-and-dark-theme)
-  + [Create a Post](#create-a-post)
-  + [Like or Unlike a Post](#like-or-unlike-a-post)
-  + [Add Profile Status](#add-profile-status)
-  + [Change Profile or Background Picture](#change-profile-or-background-picture)
+  + [About me](#create-a-post)
+  + [Skills](#skills)
+  + [Qualifications](#qualifications)
+  + [My Projects](#my-projects)
 
 ## Languages
 [![Typing SVG](https://readme-typing-svg.demolab.com/?lines=Languages;)](https://git.io/typing-svg)
