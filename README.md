@@ -2,7 +2,7 @@
 
 <a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210185146-782cac57-cda1-4619-b6d6-e94dc96c49a5.png"> </a>
 
-My personal portfolio website. It is compatible with mobile devices, developed with Mobile First methodology, then desktop. This responsive personal portfolio website was made using HTML, CSS, and JavaScript. It contains a header, footer, and a section for homepage, about, skills, qualifications, my projects and contacts. 
+My personal <a href="https://alitaha.ca"> portfolio website </a>. It is compatible with mobile devices, developed with Mobile First methodology, then desktop. This responsive personal portfolio website was made using HTML, CSS, and JavaScript. It contains a header, footer, and a section for homepage, about, skills, qualifications, my projects and contacts. 
 
 <hr>
 
