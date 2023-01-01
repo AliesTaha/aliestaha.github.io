@@ -45,9 +45,14 @@ One can create a post that includes a text, an image, or both. The functionality
 <br>
 <a href="#top" class="btn">Back to table of contents</a><hr>
 
-#### Like or Unlike a Post
+#### Skills
 <img src="https://media.giphy.com/media/wpVh4p82R9T7XxPsrd/giphy.gif" width="900" height="730">
 Liking a post is simply done through pressing the like button, which increments the post's number of likes by 1. Clicking the button again removes the like from the post
+<div align="center">
+<a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210185599-629a642a-d2d4-4521-903a-6d0ae0b32434.png" width="500" height="230"> </a>
+<a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210185603-dc19261c-57d6-4240-a536-41e6b077fd28.png" width="500" height="230"></a>
+</div>
+
 <br>
 <a href="#top" class="btn">Back to table of contents</a><hr>
 
