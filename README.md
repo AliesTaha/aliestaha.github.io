@@ -10,16 +10,11 @@ My personal <a href="https://alitaha.ca"> portfolio website </a>. It is compatib
 
 * [Languages used](#languages)
 * [Supported functionality](#functionality)
-  + [Sign Up](#sign-up)
-  + [Log In or Out](#log-in-or-out)
-  + [Follow or Unfollow a User](#follow-or-unfollow-a-user)
-  + [Scroll Through Feed](#scroll-through-feed)
+  + [Light and Dark Theme](#light-and-dark-theme)
   + [Create a Post](#create-a-post)
   + [Like or Unlike a Post](#like-or-unlike-a-post)
   + [Add Profile Status](#add-profile-status)
   + [Change Profile or Background Picture](#change-profile-or-background-picture)
-* [Backend](#backend)
-* [Installation](#installation)
 
 ## Languages
 [![Typing SVG](https://readme-typing-svg.demolab.com/?lines=Languages;)](https://git.io/typing-svg)
@@ -34,28 +29,12 @@ My personal <a href="https://alitaha.ca"> portfolio website </a>. It is compatib
 
 ## Functionality
 
-#### Sign Up
-![image](https://user-images.githubusercontent.com/103478551/209669670-178f3942-f529-4717-9d38-fa2ade107b93.png)
-Signing up adds the new user to the database, and gives them the default profile and background image. It checks to see if passwords match, and checks if the user already exists in the database before doing so. 
-<br>
-<a href="#top" class="btn">Back to table of contents</a>
-<hr>
+#### Light and Dark Theme
+<div>
+<a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210185146-782cac57-cda1-4619-b6d6-e94dc96c49a5.png"> </a>
+<a href="https://alitaha.ca"> <img src="https://user-images.githubusercontent.com/103478551/210185364-929b23a6-7489-4af0-a70d-bd091a2cbbcf.png" width="900" height="730"></a>
+</div>
 
-#### Log In or Out
-<img src="https://media.giphy.com/media/LdoUkF2twXT4gkoihl/giphy.gif" width="900" height="730">
-Logging in simply checks if the user exists in the databse. If so, it checks if the passwords match. If so, then they can move on their own home page. 
-Logging out simply clears the memory of the browser such that the user has to log back in, either with the same credentials or a different one. 
-<br>
-<a href="#top" class="btn">Back to table of contents</a><hr>
-
-#### Follow or Unfollow a User
-Following a user and unfollowing them is similar to liking the post. Clicking the follow button allows the user to be added to the userBeingFollowed's array of followers, and adds the userBeingFollowed to the user's array of followings. Pressing the button again reverses this process. This is shown above. 
-![image](https://user-images.githubusercontent.com/103478551/209669125-72bd695a-6728-4076-acfb-eb4087ddff74.png)
-<br>
-<a href="#top" class="btn">Back to table of contents</a><hr>
-
-#### Scroll Through Feed
-<img src="https://media.giphy.com/media/ZFBd9pxKvjqMK1Aqgk/giphy.gif" width="900" height="730">
 The feed is created by appending all the posts of the users who are followed in the database, then ordering the posts using the timestamps so that the most recent post in on top. 
 <br>
 <a href="#top" class="btn">Back to table of contents</a><hr>
