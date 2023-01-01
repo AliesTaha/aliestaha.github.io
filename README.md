@@ -40,7 +40,7 @@ User has preference and can choose between the light or the dark theme. Dark the
 <a href="#top" class="btn">Back to table of contents</a><hr>
 
 #### About me
-<img src="https://user-images.githubusercontent.com/103478551/210185536-0b3d6141-81b5-4150-b92d-2a31664a9fb7.png">
+<a href="https://alitaha.ca"><img src="https://user-images.githubusercontent.com/103478551/210185536-0b3d6141-81b5-4150-b92d-2a31664a9fb7.png"></a>
 One can create a post that includes a text, an image, or both. The functionality is supported for any option, and each post has its own ID in the backend, and is timestamped so that they are shown in chronological order.
 
 <br>
