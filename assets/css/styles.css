@@ -78,6 +78,7 @@ body.dark-theme{
     --scroll-bar-color: hsl(var(--hue-color), 12%, 48%);
     --scroll-thumb-color: hsl(var(--hue-color), 12%, 36%);
 }
+
 span.stars{
   position: absolute;
   top: 50%;
@@ -233,21 +234,21 @@ span.starss:nth-child(2){
   top:0;
   left: initial;
   right: 700px;
-  animation-delay: 0.2s;
+  animation-delay: 0s;
   animation-duration:  3s;
 }
 
 span.starss:nth-child(3){
   top: 80px;
   right: initial;
-  animation-delay: 0.4s;
+  animation-delay: 0s;
   animation-duration:  2s;
 }
 
 span.starss:nth-child(4){
   top:0 px;
   left: initial;
-  animation-delay: 0.56s;
+  animation-delay: 0.s;
   animation-duration:  1.5s;
 }
 
@@ -255,7 +256,7 @@ span.starss:nth-child(5){
   top:0 px;
   left: 100px;
   right: 50px;
-  animation-delay: 0.45s;
+  animation-delay: 0.s;
   animation-duration:  2.5s;
 }
 
@@ -263,14 +264,14 @@ span.starss:nth-child(7){
   top:0 px;
   bottom: 200px;
   right: 90px;
-  animation-delay: 0.1s;
+  animation-delay: 0s;
   animation-duration:  3s;
 }
 
 span.starss:nth-child(8){
   top:0 px;
   left: 1rem;
-  animation-delay: 0.4s;
+  animation-delay: 0s;
   animation-duration:  1.25s;
 }
 
@@ -714,15 +715,40 @@ img {
 }
 
 .skills_css{
-  width: 80%;
+  width: 90%;
 }
 
 .skills_js{
-  width: 60%;
+  width: 82.5%;
 }
 
 .skills_react{
-  width: 85%;
+  width: 75%;
+}
+
+.skills_mongo{
+  width: 82.5%;
+
+}
+
+.skills_express{
+  width: 63%;
+
+}
+
+.skills_node{
+  width: 55%;
+
+}
+
+.skills_python{
+  width: 75%;
+
+}
+
+.skills_ruby{
+  width: 10%;
+
 }
 
 .skills_close .skills_list{
@@ -908,6 +934,31 @@ img {
   margin-right: var(--mb-0-25);
 
 }
+
+
+.typewriter h3 {
+  overflow: hidden; /* Ensures the content is not revealed until the animation */
+  border-right: .15em solid orange; /* The typwriter cursor */
+  white-space: nowrap; /* Keeps the content on a single line */
+  margin: 0 auto; /* Gives that scrolling effect as the typing happens */
+  letter-spacing: .15em; /* Adjust as needed */
+  animation: 
+    typing 3.5s steps(12, end),
+    blink-caret .9s step-end infinite;
+}
+
+/* The typing effect */
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+/* The typewriter cursor effect */
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: var(--first-color) }
+}
+
 
 /* Modal */
 .active-modal{
