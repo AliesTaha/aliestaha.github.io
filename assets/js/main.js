@@ -22,7 +22,7 @@ if(navClose){
 }
 
 
-/*==================== REMOVE MENU MOBILE ====================*/
+/*Remove Menu*/
 const navLink = document.querySelectorAll('.nav_link')
 
 function linkAction(){
@@ -76,7 +76,7 @@ tabs.forEach(tab=>{
     })
 })
 
-/*==================== Projects MODAL ====================*/
+/*Modal Projects*/
 const modalViews=document.querySelectorAll('.projects_modal'),
     modalBtns=document.querySelectorAll('.projects_button'),
     modalCloses= document.querySelectorAll('.projects_modal-close')
@@ -99,7 +99,7 @@ modalCloses.forEach((modalClose)=>{
     })
 })
 
-/*SCROLL SECTIONS ACTIVE LINK*/
+/*Active links*/
 const sections = document.querySelectorAll('section[id]')
 
 function scrollActive(){
@@ -119,7 +119,7 @@ function scrollActive(){
 }
 window.addEventListener('scroll', scrollActive)
 
-/* CHANGE BACKGROUND HEADER */ 
+/*Background header*/ 
 function scrollHeader(){
     const nav = document.getElementById('header')
     // When the scroll is greater than 200 viewport height, add the scroll-header class to the header tag
@@ -135,7 +135,7 @@ function scrollUp(){
 }
 window.addEventListener('scroll', scrollUp)
 
-/*DARK LIGHT THEME*/ 
+/*Dark and light them*/ 
 const themeButton = document.getElementById('theme-button')
 const darkTheme = 'dark-theme'
 const iconTheme = 'uil-sun'

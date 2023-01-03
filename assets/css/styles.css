@@ -838,7 +838,7 @@ img {
 
 /*Projects*/
 .projects_container{
-  gap:1.5rem;
+  grid-column-gap:7rem;
   grid-template-columns: repeat(2, 1fr);
 }
 
@@ -849,6 +849,7 @@ img {
   border-radius: 0.25rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   transition: .3s;
+  width: 135%;
 }
 
 .projects_content:hover{
