@@ -1294,7 +1294,7 @@ img {
   }
 
   .projects_container{
-    grid-template-columns: repeat(3,268px);
+    grid-template-columns: repeat(2,268px);
   }
 
   .contact_inputs{
