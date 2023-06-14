@@ -129,15 +129,20 @@ currencies.forEach(function(value, key, map){
 
 const apiKey = '9a7dea0e2aa946c48e769034c5321b30';
 const apiUrl = 'https://openexchangerates.org/api';
-
 const baseCurrency = 'USD';
 const targetCurrency = 'EUR';
-let currencyConv=' ';
+
+let currencyConv = null;
+let otherConv = null;
+
 fetch(`${apiUrl}/latest.json?app_id=${apiKey}&base=${baseCurrency}`)
   .then(response => response.json())
   .then(data => {
     currencyConv = data.rates[targetCurrency];
-    console.log(currencyConv);
+    otherConv = 1 / currencyConv;
+
+    const movementsUSD = movements.map(mov => mov * otherConv);
+    console.log(movementsUSD);
   })
   .catch(error => {
     console.log('Error:', error);
