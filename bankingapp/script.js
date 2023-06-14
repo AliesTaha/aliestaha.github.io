@@ -126,3 +126,38 @@ const currencies = new Map([
 currencies.forEach(function(value, key, map){
   console.log(`${key}: ${value}`);
 });
+
+const apiKey = '9a7dea0e2aa946c48e769034c5321b30';
+const apiUrl = 'https://openexchangerates.org/api';
+
+const baseCurrency = 'USD';
+const targetCurrency = 'EUR';
+let currencyConv=' ';
+fetch(`${apiUrl}/latest.json?app_id=${apiKey}&base=${baseCurrency}`)
+  .then(response => response.json())
+  .then(data => {
+    currencyConv = data.rates[targetCurrency];
+    console.log(currencyConv);
+  })
+  .catch(error => {
+    console.log('Error:', error);
+  });
+
+// const checkDogs = function(dogsJulia, dogsKate){
+//   const dogsJuliaCrrct= dogsJulia.slice();
+//   dogsJuliaCrrct.splice(0,1);
+//   dogsJuliaCrrct.splice(-2);
+//   const dogs= dogsJuliaCorrected.concat(dogsKate);
+//   console.log(dogs);
+
+
+//   dogs.forEach(function(dog, i){
+//     if (dog>=3){
+//       console.log(`Dog number ${i+1} is and adult and is ${dog} years old`);
+//     }else{
+//       console.log(`Dog number ${i+1} is not and adult and is ${dog} years old`);
+//     }
+//   })
+// }
+
+// checkDogs([3,5,2,12,17],[4,1,15,8,3]);
