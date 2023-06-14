@@ -141,28 +141,43 @@ fetch(`${apiUrl}/latest.json?app_id=${apiKey}&base=${baseCurrency}`)
     currencyConv = data.rates[targetCurrency];
     otherConv = 1 / currencyConv;
 
-    const movementsUSD = movements.map(mov => mov * otherConv);
-    console.log(movementsUSD);
+    //Continue after having fetched everything
+    //----------------------------------------
+    makingArrays();
+
+
+    //-----------------------------------------
   })
   .catch(error => {
     console.log('Error:', error);
   });
 
-// const checkDogs = function(dogsJulia, dogsKate){
-//   const dogsJuliaCrrct= dogsJulia.slice();
-//   dogsJuliaCrrct.splice(0,1);
-//   dogsJuliaCrrct.splice(-2);
-//   const dogs= dogsJuliaCorrected.concat(dogsKate);
-//   console.log(dogs);
+  function makingArrays(){
+    makeArraysNum();
+    const movementsDescription=makeArraysDesc();
+    function makeArraysNum(){
+    const movementsUSD= movements.map(mov=> {
+      return mov*otherConv;
+    })
+    //const movementsUSD = movements.map(mov => mov * otherConv);
+    const movementsUSD2=[];
+    for(const mov of movements){
+      movementsUSD2.push(mov*otherConv)
+    }
+    console.log(movementsUSD);
+    console.log(movementsUSD2);
+  }
+  function makeArraysDesc(){
+    const movementsDescription= movements.map((mov, i, arr)=>{
+      if (mov>0){
+        return `Movement ${i+1}: You deposited ${Math.abs(mov)}`
+      }
+      else{
+        return `Movement ${i+1}: You withdrew ${Math.abs(mov)}`
+      }
+    })
+    return movementsDescription;
+  }
 
-
-//   dogs.forEach(function(dog, i){
-//     if (dog>=3){
-//       console.log(`Dog number ${i+1} is and adult and is ${dog} years old`);
-//     }else{
-//       console.log(`Dog number ${i+1} is not and adult and is ${dog} years old`);
-//     }
-//   })
-// }
-
-// checkDogs([3,5,2,12,17],[4,1,15,8,3]);
+    //----------------------------------------
+  }
