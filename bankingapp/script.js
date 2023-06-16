@@ -146,7 +146,8 @@ fetch(`${apiUrl}/latest.json?app_id=${apiKey}&base=${baseCurrency}`)
     //Continue after having fetched everything
     //----------------------------------------
     makingArrays();
-
+    createUsernames(accounts);
+    console.log(accounts);
 
     //-----------------------------------------
   })
@@ -155,38 +156,49 @@ fetch(`${apiUrl}/latest.json?app_id=${apiKey}&base=${baseCurrency}`)
   });
 
   function makingArrays(){
-    makeArraysNum();
-    const movementsDescription=makeArraysDesc();
-    console.log(movementsDescription);
-    function makeArraysNum(){
-    const movementsUSD= movements.map(mov=> {
-      return mov*otherConv;
-    })
-    //const movementsUSD = movements.map(mov => mov * otherConv);
-    const movementsUSD2=[];
-    for(const mov of movements){
-      movementsUSD2.push(mov*otherConv)
+      makeArraysNum();
+      const movementsDescription=makeArraysDesc();
+      console.log(movementsDescription);
+      function makeArraysNum(){
+      const movementsUSD= movements.map(mov=> {
+        return mov*otherConv;
+      })
+      //const movementsUSD = movements.map(mov => mov * otherConv);
+      const movementsUSD2=[];
+      for(const mov of movements){
+        movementsUSD2.push(mov*otherConv)
+      }
+      console.log(movementsUSD);
+      console.log(movementsUSD2);
     }
-    console.log(movementsUSD);
-    console.log(movementsUSD2);
+    function makeArraysDesc(){
+
+      //.map(), .forEach(), .for
+      const movementDescriptions=movements.map((mov, i , arr)=>{
+        `Movement ${i+1}: You ${mov>0 ? 'deposited' : 'withdres'} ${Math.abs(mov)}`;
+      })
+
+      const movementsDescription= movements.map((mov, i, arr)=>{
+        if (mov>0){
+          return `Movement ${i+1}: You deposited ${Math.abs(mov)}`
+        }
+        else{
+          return `Movement ${i+1}: You withdrew ${Math.abs(mov)}`
+        }
+      })
+      return movementsDescription;
+    }
+
+      //----------------------------------------
   }
-  function makeArraysDesc(){
 
-    //.map(), .forEach(), .for
-    const movementDescriptions=movements.map((mov, i , arr)=>{
-      `Movement ${i+1}: You ${mov>0 ? 'deposited' : 'withdres'} ${Math.abs(mov)}`;
+  function createUsernames(accs){
+    accs.forEach(function(acc){
+        const usernameWords= acc.owner.toLowerCase().split(" ");
+        const usernameLetters= usernameWords.map((mov, i, arr)=>{
+          return mov[0]
+        });
+        const username=usernameLetters.join('');
+        acc.username=username;
     })
-
-    const movementsDescription= movements.map((mov, i, arr)=>{
-      if (mov>0){
-        return `Movement ${i+1}: You deposited ${Math.abs(mov)}`
-      }
-      else{
-        return `Movement ${i+1}: You withdrew ${Math.abs(mov)}`
-      }
-    })
-    return movementsDescription;
-  }
-
-    //----------------------------------------
   }
