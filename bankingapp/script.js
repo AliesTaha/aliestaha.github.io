@@ -147,8 +147,9 @@ fetch(`${apiUrl}/latest.json?app_id=${apiKey}&base=${baseCurrency}`)
     //----------------------------------------
     makingArrays();
     createUsernames(accounts);
-    console.log(accounts);
-
+    const withdrawals= filtering(movements);
+    const balance= accBalance(movements);
+    document.querySelector('.balance__value').textContent=`${balance} DOLLAR`;
     //-----------------------------------------
   })
   .catch(error => {
@@ -201,4 +202,18 @@ fetch(`${apiUrl}/latest.json?app_id=${apiKey}&base=${baseCurrency}`)
         const username=usernameLetters.join('');
         acc.username=username;
     })
+  }
+
+  function filtering(movements){
+    const withdrawals= movements.filter((mov, i, arr)=>{
+      return mov<0;
+    });
+    return withdrawals;
+  }
+
+  function accBalance(movements){
+    const balance= movements.reduce((acc, mov, i , arr)=>{
+      return acc+mov;
+    }, 0);
+    return balance;
   }
