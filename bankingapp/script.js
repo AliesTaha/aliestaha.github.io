@@ -149,7 +149,6 @@ fetch(`${apiUrl}/latest.json?app_id=${apiKey}&base=${baseCurrency}`)
     createUsernames(accounts);
     const withdrawals= filtering(movements);
     const balance= accBalance(movements);
-    document.querySelector('.balance__value').textContent=`${balance} DOLLAR`;
     //-----------------------------------------
   })
   .catch(error => {
@@ -215,5 +214,6 @@ fetch(`${apiUrl}/latest.json?app_id=${apiKey}&base=${baseCurrency}`)
     const balance= movements.reduce((acc, mov, i , arr)=>{
       return acc+mov;
     }, 0);
+    document.querySelector('.balance__value').textContent=`${balance} DOLLAR`;
     return balance;
   }
