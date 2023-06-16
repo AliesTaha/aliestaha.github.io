@@ -75,6 +75,7 @@ nav {
   color: inherit;
   cursor: pointer;
   transition: all 0.3s;
+  color: whitesmoke;
 }
 
 .login__btn:hover,
@@ -82,7 +83,8 @@ nav {
 .btn--sort:hover,
 .btn--sort:focus {
   outline: none;
-  color: #ac9f9f;
+  font-size: 3.2rem;
+  color: gold;
 }
 
 /* MAIN */
@@ -253,6 +255,10 @@ h2 {
   grid-row: 2;
 }
 /* End exceptions */
+
+input.form__input {
+  color:black;
+}
 
 .form__input {
   width: 100%;
