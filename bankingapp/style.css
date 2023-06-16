@@ -18,7 +18,7 @@ html {
 body {
   font-family: "Poppins", sans-serif;
   color: #444;
-  background-color: #f3f3f3;
+  background-color: #000000;
   height: 100vh;
   padding: 2rem;
 }
@@ -32,11 +32,13 @@ nav {
 
 .welcome {
   font-size: 1.9rem;
+  color: wheat;
   font-weight: 500;
 }
 
 .logo {
   height: 5.25rem;
+  color: wheat;
 }
 
 .login {
@@ -63,7 +65,7 @@ nav {
 }
 
 .login__input::placeholder {
-  color: #bbb;
+  color: grey;
 }
 
 .login__btn {
@@ -80,7 +82,7 @@ nav {
 .btn--sort:hover,
 .btn--sort:focus {
   outline: none;
-  color: #777;
+  color: #ac9f9f;
 }
 
 /* MAIN */
@@ -110,16 +112,18 @@ nav {
   font-size: 2.2rem;
   font-weight: 500;
   margin-bottom: -0.2rem;
+  color: wheat;
 }
 
 .balance__date {
   font-size: 1.4rem;
-  color: #888;
+  color: #bea7a7;
 }
 
 .balance__value {
   font-size: 4.5rem;
   font-weight: 400;
+  color: wheat;
 }
 
 /* MOVEMENTS */
@@ -151,7 +155,7 @@ nav {
   font-size: 1.1rem;
   text-transform: uppercase;
   font-weight: 500;
-  color: #666;
+  color: #b09f9f;
 }
 
 .movements__type--deposit {
@@ -180,6 +184,7 @@ nav {
   font-size: 1.2rem;
   font-weight: 500;
   text-transform: uppercase;
+  color: wheat;
   margin-right: 0.8rem;
 }
 
@@ -210,7 +215,7 @@ nav {
 .operation {
   border-radius: 1rem;
   padding: 3rem 4rem;
-  color: #333;
+  color: #857676;
 }
 
 .operation--transfer {
@@ -229,7 +234,7 @@ h2 {
   margin-bottom: 1.5rem;
   font-size: 1.7rem;
   font-weight: 600;
-  color: #333;
+  color: #a99a9a;
 }
 
 .form {
@@ -244,6 +249,7 @@ h2 {
   grid-template-columns: 2.5fr 1fr 2.5fr;
 }
 .form__label--loan {
+  color: wheat;
   grid-row: 2;
 }
 /* End exceptions */
@@ -251,11 +257,11 @@ h2 {
 .form__input {
   width: 100%;
   border: none;
-  background-color: rgba(255, 255, 255, 0.4);
+  background-color: rgba(99, 88, 88, 0.4);
   font-family: inherit;
   font-size: 1.5rem;
   text-align: center;
-  color: #333;
+  color: #918585;
   padding: 0.3rem 1rem;
   border-radius: 0.7rem;
   transition: all 0.3s;
@@ -263,12 +269,18 @@ h2 {
 
 .form__input:focus {
   outline: none;
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: rgba(158, 141, 141, 0.6);
 }
 
 .form__label {
   font-size: 1.3rem;
   text-align: center;
+  color: #000000;
+}
+
+h2{
+  color: #000000;
+
 }
 
 .form__btn {
@@ -290,8 +302,10 @@ h2 {
   margin-top: 1.9rem;
   text-align: right;
   font-size: 1.25rem;
+  color:wheat
 }
 
 .timer {
   font-weight: 600;
+  color:red
 }

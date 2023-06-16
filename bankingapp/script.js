@@ -123,6 +123,8 @@ const currencies = new Map([
   ['GBP', 'Pound sterling'],
 ]);
 
+//i mov in for(const [i,mov] of movements.entries())
+//mov i arr in forEach() in arrays
 currencies.forEach(function(value, key, map){
   console.log(`${key}: ${value}`);
 });
@@ -155,6 +157,7 @@ fetch(`${apiUrl}/latest.json?app_id=${apiKey}&base=${baseCurrency}`)
   function makingArrays(){
     makeArraysNum();
     const movementsDescription=makeArraysDesc();
+    console.log(movementsDescription);
     function makeArraysNum(){
     const movementsUSD= movements.map(mov=> {
       return mov*otherConv;
@@ -168,6 +171,12 @@ fetch(`${apiUrl}/latest.json?app_id=${apiKey}&base=${baseCurrency}`)
     console.log(movementsUSD2);
   }
   function makeArraysDesc(){
+
+    //.map(), .forEach(), .for
+    const movementDescriptions=movements.map((mov, i , arr)=>{
+      `Movement ${i+1}: You ${mov>0 ? 'deposited' : 'withdres'} ${Math.abs(mov)}`;
+    })
+
     const movementsDescription= movements.map((mov, i, arr)=>{
       if (mov>0){
         return `Movement ${i+1}: You deposited ${Math.abs(mov)}`
