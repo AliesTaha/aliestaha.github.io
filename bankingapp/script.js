@@ -68,7 +68,7 @@ const displayMovements = function (movements){
     const html=`
     <div class="movements__row">
     <div class="movements__type movements__type--${type}">${i+1} ${type}</div>
-    <div class="movements__value">${mov}</div>
+    <div class="movements__value">${mov}€</div>
     `;
 
     containerMovements.insertAdjacentHTML('afterbegin', html);
@@ -134,21 +134,24 @@ const apiUrl = 'https://openexchangerates.org/api';
 const baseCurrency = 'USD';
 const targetCurrency = 'EUR';
 
-let currencyConv = null;
-let otherConv = null;
+let USDto = null;
+let toUSD = null;
 
 fetch(`${apiUrl}/latest.json?app_id=${apiKey}&base=${baseCurrency}`)
   .then(response => response.json())
   .then(data => {
-    currencyConv = data.rates[targetCurrency];
-    otherConv = 1 / currencyConv;
+    USDto = data.rates[targetCurrency];
+    toUSD = 1 / USDto;
 
     //Continue after having fetched everything
     //----------------------------------------
     makingArrays();
     createUsernames(accounts);
     const withdrawals= filtering(movements);
-    const balance= accBalance(movements);
+    const balance= accBalance(account1.movements);
+    calcDisplaySummary(account1.movements);
+    const totalDepositUSD= movements.filter(mov=> mov>0).map(mov=>toUSD*mov).reduce((acc, mov)=> acc+mov, 0);
+    console.log(totalDepositUSD);
     //-----------------------------------------
   })
   .catch(error => {
@@ -161,12 +164,12 @@ fetch(`${apiUrl}/latest.json?app_id=${apiKey}&base=${baseCurrency}`)
       console.log(movementsDescription);
       function makeArraysNum(){
       const movementsUSD= movements.map(mov=> {
-        return mov*otherConv;
+        return mov*toUSD;
       })
-      //const movementsUSD = movements.map(mov => mov * otherConv);
+      //const movementsUSD = movements.map(mov => mov * toUSD);
       const movementsUSD2=[];
       for(const mov of movements){
-        movementsUSD2.push(mov*otherConv)
+        movementsUSD2.push(mov*toUSD)
       }
       console.log(movementsUSD);
       console.log(movementsUSD2);
@@ -214,6 +217,18 @@ fetch(`${apiUrl}/latest.json?app_id=${apiKey}&base=${baseCurrency}`)
     const balance= movements.reduce((acc, mov, i , arr)=>{
       return acc+mov;
     }, 0);
-    document.querySelector('.balance__value').textContent=`${balance} DOLLAR`;
+    document.querySelector('.balance__value').textContent=`${balance}€`;
     return balance;
+  }
+
+  function calcDisplaySummary(movements){
+    const incomes=movements.filter(mov=>mov>0).reduce((acc,mov,i,arr)=>acc+mov,0);
+    labelSumIn.textContent=`${incomes}€`;
+
+    const out= movements.filter(mov=>mov<0).reduce(function (acc,mov){return acc+mov}, 0);
+    labelSumOut.textContent=`${Math.abs(out)}€`;
+
+    const interest= movements.filter(mov=>mov>0).map(deposit=>deposit*1.2/100).reduce((acc, int, i, arr)=>acc+int,0);
+    console.log(interest);
+    labelSumInterest.textContent=`${interest}€`
   }
