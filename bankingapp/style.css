@@ -88,12 +88,17 @@ nav {
   color: whitesmoke;
 }
 
+.btn--sort{
+  color: wheat;
+  font-size: 2rem;
+  float: left;
+}
 .login__btn:hover,
 .login__btn:focus,
 .btn--sort:hover,
 .btn--sort:focus {
   outline: none;
-  font-size: 3.2rem;
+  font-size: 1.5rem;
   color: gold;
 }
 
