@@ -10,6 +10,7 @@ const nav = document.querySelector('.nav');
 const tabs = document.querySelectorAll('.operations__tab');
 const tabsContainer = document.querySelector('.operations__tab-container');
 const tabsContent = document.querySelectorAll('.operations__content');
+const lnkbtn=document.querySelector('.lnkbtn');
 
 ///////////////////////////////////////
 // Modal window
@@ -27,6 +28,9 @@ const closeModal = function () {
 
 btnsOpenModal.forEach(btn => btn.addEventListener('click', openModal));
 
+lnkbtn.addEventListener('click', function() {
+  window.open('https://alitaha.ca/bankingapp', '_blank');
+});
 btnCloseModal.addEventListener('click', closeModal);
 overlay.addEventListener('click', closeModal);
 
