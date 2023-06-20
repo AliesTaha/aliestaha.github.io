@@ -141,6 +141,34 @@
         </form>
       </div>
 
+            
+      <div id="currency-converter">
+        <h2>Currency Converter</h2>
+        <form>
+          <label for="from-currency">From:</label>
+          <select id="from-currency" name="from-currency">
+            <option value="USD">US Dollar (USD)</option>
+            <option value="EUR">Euro (EUR)</option>
+            <option value="GBP">British Pound (GBP)</option>
+            <!-- Add more currency options here -->
+          </select>
+          <br>
+          <label for="to-currency">To:</label>
+          <select id="to-currency" name="to-currency">
+            <option value="USD">US Dollar (USD)</option>
+            <option value="EUR">Euro (EUR)</option>
+            <option value="GBP">British Pound (GBP)</option>
+            <!-- Add more currency options here -->
+          </select>
+          <br>
+          <label for="amount">Amount:</label>
+          <input type="number" id="amount" name="amount" min="0" step="0.01">
+          <br>
+          <button type="submit">Convert</button>
+        </form>
+        <div id="result"></div>
+      </div>
+      
       <!-- LOGOUT TIMER -->
       <p class="logout-timer">
         You will be logged out in <span class="timer">05:00</span>
@@ -148,7 +176,7 @@
     </main>
 
     <!-- <footer>
-      &copy; by Jonas Schmedtmann. Don't claim as your own :)
+      Inspired by, Ali Taha
     </footer> -->
 
     <script src="script.js"></script>

@@ -6,21 +6,49 @@
 
 // Data
 const account1 = {
-  owner: 'Jonas Schmedtmann',
-  movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
+  owner: 'Jonas Shmedtmann',
+  movements: [200, 455.23, -306.5, 25000, -642.21, -133.9, 79.97, 1300],
   interestRate: 1.2, // %
   pin: 1111,
+  username: 'js',
+  movementsDates: [
+    '2019-11-18T21:31:17.178Z',
+    '2019-12-23T07:42:02.383Z',
+    '2020-01-28T09:15:04.904Z',
+    '2020-04-01T10:17:24.185Z',
+    '2020-05-08T14:11:59.604Z',
+    '2020-05-27T17:01:17.194Z',
+    '2020-07-11T23:36:17.929Z',
+    '2020-07-12T10:51:36.790Z',
+  ],
+  currency: 'EUR',
+  locale: 'pt-PT', // de-DE
 };
 
 const account2 = {
   owner: 'Jessica Davis',
+  username: 'jd',
   movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
   interestRate: 1.5,
   pin: 2222,
+
+  movementsDates: [
+    '2019-11-01T13:15:33.035Z',
+    '2019-11-30T09:48:16.867Z',
+    '2019-12-25T06:04:23.907Z',
+    '2020-01-25T14:18:46.235Z',
+    '2020-02-05T16:33:06.386Z',
+    '2020-04-10T14:43:26.374Z',
+    '2020-06-25T18:49:59.371Z',
+    '2020-07-26T12:01:20.894Z',
+  ],
+  currency: 'USD',
+  locale: 'en-US',
 };
 
 const account3 = {
   owner: 'Steven Thomas Williams',
+  username: 'stw',
   movements: [200, -200, 340, -300, -20, 50, 400, -460],
   interestRate: 0.7,
   pin: 3333,
@@ -28,6 +56,7 @@ const account3 = {
 
 const account4 = {
   owner: 'Sarah Smith',
+  username: 'ss',
   movements: [430, 1000, 700, 50, 90],
   interestRate: 1,
   pin: 4444,
@@ -68,8 +97,17 @@ const displayMovements = function (acc, sort=false){
 
   movs.forEach(function (mov, i){
     const type = (mov>0)? 'deposit' : 'withdrawal';
+    const date = new Date(acc.movementsDates[i]);
+
+    const now=new Date();
+    const day = `${date.getDate()}`.padStart(2,0);
+    const month= `${date.getMonth()+1}`.padStart(2,0);
+    const year = date.getFullYear();
+    const displayDate=`${day}/${month}/${year}`;
+
     const html=`
     <div class="movements__row">
+    <div class="movements__date">${displayDate}</div>
     <div class="movements__type movements__type--${type}">${i+1} ${type}</div>
     <div class="movements__value">${mov.toFixed(2)}€</div>
     `;
@@ -78,7 +116,7 @@ const displayMovements = function (acc, sort=false){
   });
 };
 
-displayMovements(account1.movements);
+displayMovements(account1);
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
@@ -132,34 +170,40 @@ currencies.forEach(function(value, key, map){
   console.log(`${key}: ${value}`);
 });
 
+
 const apiKey = '9a7dea0e2aa946c48e769034c5321b30';
 const apiUrl = 'https://openexchangerates.org/api';
-const baseCurrency = 'USD';
-const targetCurrency = 'EUR';
 
-let USDto = null;
-let toUSD = null;
+const converterForm = document.querySelector('#currency-converter form');
+const resultDiv = document.querySelector('#currency-converter #result');
 
-fetch(`${apiUrl}/latest.json?app_id=${apiKey}&base=${baseCurrency}`)
-  .then(response => response.json())
-  .then(data => {
-    USDto = data.rates[targetCurrency];
-    toUSD = 1 / USDto;
+converterForm.addEventListener('submit', event => {
+  event.preventDefault(); // Prevent form submission
 
-    //Continue after having fetched everything
+  const fromCurrency = converterForm.elements['from-currency'].value;
+  const toCurrency = converterForm.elements['to-currency'].value;
+  const amount = converterForm.elements['amount'].value;
+
+  fetch(`${apiUrl}/latest.json?app_id=${apiKey}&base=${fromCurrency}`)
+    .then(response => response.json())
+    .then(data => {
+      const rate = data.rates[toCurrency];
+      const result = amount * rate;
+      resultDiv.textContent = `${amount} ${fromCurrency} = ${result.toFixed(2)} ${toCurrency}`;
+
+      //Continue after having fetched everything
     //----------------------------------------
     makingArrays();
     createUsernames(accounts);
     const withdrawals= filtering(movements);
     const balance= accBalance(account1);
-    calcDisplaySummary(account1.movements);
-    const totalDepositUSD= movements.filter(mov=> mov>0).map(mov=>toUSD*mov).reduce((acc, mov)=> acc+mov, 0);
-    console.log(totalDepositUSD);
+    calcDisplaySummary(account1);
     //-----------------------------------------
-  })
-  .catch(error => {
-    console.log('Error:', error);
-  });
+    })
+    .catch(error => {
+      console.log('Error:', error);
+    });
+});
 
   function makingArrays(){
       makeArraysNum();
@@ -236,25 +280,54 @@ fetch(`${apiUrl}/latest.json?app_id=${apiKey}&base=${baseCurrency}`)
 
   function updateUI(currentAccount){
     //Display movements
-    displayMovements(currentAccount.movements);
+    displayMovements(currentAccount);
     //Display summary
     calcDisplaySummary(currentAccount);
     //Display balance
     accBalance(currentAccount);
   }
+
+  const startLogoutTimer=function(){
+    //Set time to 5 mins
+    let time = 180;
+    const tick =function(){
+      const min = String(Math.trunc(time/60)).padStart(2,0);
+      const sec = String(time%60).padStart(2,0);
+      labelTimer.textContent=`${min}:${sec}`;
+      //Decrease 1s
+
+      time--;
+
+      if (time===0){
+        clearInterval(timer);
+        labelWelcome.textContent='Login to get started';
+        containerApp.style.opacity=0;
+      }
+    }
+    //Call timer every 5 secs 
+    tick();
+    timer= setInterval(tick,1000)
+
+    return timer;
+    //0 seconds, stop timer and logout
+  }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Event Handlers
-let currentAccount;
+let currentAccount, timer;
   btnLogin.addEventListener('click', function(e){
     e.preventDefault();
     //This prevents form from submitting
+
+    if (timer) clearInterval (timer);
+    timer= startLogoutTimer();
+
     console.log('Login');
 
     currentAccount=accounts.find(
       acc=> acc.username===inputLoginUsername.value
       );
     console.log(currentAccount);
-
+    console.log(accounts);
     if(currentAccount?.pin===Number(inputLoginPin.value)){
       labelWelcome.textContent=`Welcome back, ${currentAccount.owner.split(' ')[0]}`;
       containerApp.style.opacity=100;
@@ -262,7 +335,6 @@ let currentAccount;
       //clear input fields
       inputLoginUsername.value= inputLoginPin.value='';
       inputLoginPin.blur();
-
       updateUI(currentAccount);
     }
   })
@@ -314,7 +386,7 @@ btnClose.addEventListener('click', (e)=>{
 let sorted= false;
 btnSort.addEventListener('click', (e)=>{
 e.preventDefault();
-displayMovements(currentAccount.movements, !sorted);
+displayMovements(currentAccount, !sorted);
 sorted=!sorted;
 });
 
@@ -322,6 +394,6 @@ const now=new Date();
 const day = `${now.getDate()}`.padStart(2,0);
 const month= `${now.getMonth()+1}`.padStart(2,0);
 const year = now.getFullYear();
-const hour= now.getHours()+1;
-const min = now.getMinutes();
+const hour= `${now.getHours()+1}`.padStart(2,0);
+const min = `${now.getMinutes()}`.padStart(2,0);
 labelDate.textContent=`${day}/${month}/${year}, ${hour}:${min}`;
