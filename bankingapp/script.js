@@ -148,7 +148,7 @@ fetch(`${apiUrl}/latest.json?app_id=${apiKey}&base=${baseCurrency}`)
     makingArrays();
     createUsernames(accounts);
     const withdrawals= filtering(movements);
-    const balance= accBalance(account1.movements);
+    const balance= accBalance(account1);
     calcDisplaySummary(account1.movements);
     const totalDepositUSD= movements.filter(mov=> mov>0).map(mov=>toUSD*mov).reduce((acc, mov)=> acc+mov, 0);
     console.log(totalDepositUSD);
@@ -213,22 +213,70 @@ fetch(`${apiUrl}/latest.json?app_id=${apiKey}&base=${baseCurrency}`)
     return withdrawals;
   }
 
-  function accBalance(movements){
-    const balance= movements.reduce((acc, mov, i , arr)=>{
-      return acc+mov;
-    }, 0);
-    document.querySelector('.balance__value').textContent=`${balance}€`;
-    return balance;
+  function accBalance(acc){
+     acc.balance= acc.movements.reduce((acc, mov, i , arr)=>
+      acc+mov, 0);
+    document.querySelector('.balance__value').textContent=`${acc.balance}€`;
   }
 
-  function calcDisplaySummary(movements){
-    const incomes=movements.filter(mov=>mov>0).reduce((acc,mov,i,arr)=>acc+mov,0);
+  function calcDisplaySummary(acc){
+    const incomes=acc.movements.filter(mov=>mov>0).reduce((acc,mov,i,arr)=>acc+mov,0);
     labelSumIn.textContent=`${incomes}€`;
 
-    const out= movements.filter(mov=>mov<0).reduce(function (acc,mov){return acc+mov}, 0);
+    const out= acc.movements.filter(mov=>mov<0).reduce(function (acc,mov){return acc+mov}, 0);
     labelSumOut.textContent=`${Math.abs(out)}€`;
 
-    const interest= movements.filter(mov=>mov>0).map(deposit=>deposit*1.2/100).reduce((acc, int, i, arr)=>acc+int,0);
+    const interest= acc.movements.filter(mov=>mov>0).map(deposit=>deposit*acc.interestRate/100).reduce((acc, int, i, arr)=>acc+int,0);
     console.log(interest);
-    labelSumInterest.textContent=`${interest}€`
+    labelSumInterest.textContent=`${Math.round(interest*10)/10}€`
   }
+
+  function updateUI(currentAccount){
+    //Display movements
+    displayMovements(currentAccount.movements);
+    //Display summary
+    calcDisplaySummary(currentAccount);
+    //Display balance
+    accBalance(currentAccount);
+  }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Event Handlers
+let currentAccount;
+  btnLogin.addEventListener('click', function(e){
+    e.preventDefault();
+    //This prevents form from submitting
+    console.log('Login');
+
+    currentAccount=accounts.find(
+      acc=> acc.username===inputLoginUsername.value
+      );
+    console.log(currentAccount);
+
+    if(currentAccount?.pin===Number(inputLoginPin.value)){
+      labelWelcome.textContent=`Welcome back, ${currentAccount.owner.split(' ')[0]}`;
+      containerApp.style.opacity=100;
+
+      //clear input fields
+      inputLoginUsername.value= inputLoginPin.value='';
+      inputLoginPin.blur();
+
+      updateUI(currentAccount);
+    }
+  })
+
+//  document.querySelector().addEventListener('',)
+//  .textContent()
+
+btnTransfer.addEventListener('click', (e)=>{
+  e.preventDefault();
+  const amount = Number(inputTransferAmount.value);
+  const recAcc= accounts.find(acc=> acc.username===inputTransferTo.value);
+  inputTransferAmount.value=inputTransferTo.value='';
+
+  if(amount>0 && currentAccount.balance>=amount && recAcc && recAcc?.username!==currentAccount.username){
+    currentAccount.movements.push(-amount);
+    recAcc.movements.push(amount);
+    updateUI(currentAccount);
+  }
+
+});
