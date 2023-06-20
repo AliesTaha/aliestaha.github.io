@@ -87,24 +87,69 @@ nav {
   transition: all 0.3s;
   color: whitesmoke;
 }
+#spacee {
+  bottom: 60rem;
+}
 
 #currency-converter {
   position: absolute;
-  bottom: 0;
+  bottom: -28rem;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #fff;
-  border: 2px solid #f5a623;
+  background-image: linear-gradient(to top left, #ac21c7, #42259a);
+  border: 4px solid #f5a623;
   padding: 20px;
   width: 400px;
   text-align: center;
   font-family: Arial, sans-serif;
 }
 
+.currform {
+  display: inline-block;
+  text-align: left;
+}
+
+.amnt{
+  display: block;
+  font-size: 18px;
+  font-weight: bold;
+  color:#000;
+  margin-bottom: 5px;
+}
+
+.currlabel {
+  display: block;
+  font-size: 18px;
+  font-weight: bold;
+  color:#000;
+  margin-bottom: 5px;
+}
+
+button[type="submit"] {
+  color: #b67409;
+  border: none;
+  cursor: pointer;
+  font-weight: normal; /* Set font weight to normal */
+  transition: font-weight 0.2s ease-in-out; /* Add transition effect */
+}
+ button[type="submit"]:hover {
+  font-weight: bold; /* Change font weight on hover */
+}
+
+#container {
+  padding-bottom: 100rem; /* Add desired padding value here */
+}
+
+#result {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
 .currTitle {
   font-size: 24px;
   font-weight: bold;
-  color: #f5a623;
+  color: #b67409;
   margin-top: 0;
   margin-bottom: 20px;
 }

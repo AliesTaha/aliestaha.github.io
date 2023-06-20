@@ -52,6 +52,18 @@ const account3 = {
   movements: [200, -200, 340, -300, -20, 50, 400, -460],
   interestRate: 0.7,
   pin: 3333,
+  movementsDates: [
+    '2019-11-01T13:15:33.035Z',
+    '2019-11-30T09:48:16.867Z',
+    '2019-12-25T06:04:23.907Z',
+    '2020-01-25T14:18:46.235Z',
+    '2020-02-05T16:33:06.386Z',
+    '2020-04-10T14:43:26.374Z',
+    '2020-06-25T18:49:59.371Z',
+    '2020-07-26T12:01:20.894Z',
+  ],
+  currency: 'USD',
+  locale: 'en-US',
 };
 
 const account4 = {
@@ -60,6 +72,18 @@ const account4 = {
   movements: [430, 1000, 700, 50, 90],
   interestRate: 1,
   pin: 4444,
+  movementsDates: [
+    '2019-11-01T13:15:33.035Z',
+    '2019-11-30T09:48:16.867Z',
+    '2019-12-25T06:04:23.907Z',
+    '2020-01-25T14:18:46.235Z',
+    '2020-02-05T16:33:06.386Z',
+    '2020-04-10T14:43:26.374Z',
+    '2020-06-25T18:49:59.371Z',
+    '2020-07-26T12:01:20.894Z',
+  ],
+  currency: 'USD',
+  locale: 'en-US',
 };
 
 const accounts = [account1, account2, account3, account4];
@@ -210,16 +234,6 @@ converterForm.addEventListener('submit', event => {
       const movementsDescription=makeArraysDesc();
       console.log(movementsDescription);
       function makeArraysNum(){
-      const movementsUSD= movements.map(mov=> {
-        return mov*toUSD;
-      })
-      //const movementsUSD = movements.map(mov => mov * toUSD);
-      const movementsUSD2=[];
-      for(const mov of movements){
-        movementsUSD2.push(mov*toUSD)
-      }
-      console.log(movementsUSD);
-      console.log(movementsUSD2);
     }
     function makeArraysDesc(){
 
