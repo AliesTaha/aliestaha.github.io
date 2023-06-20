@@ -280,3 +280,30 @@ btnTransfer.addEventListener('click', (e)=>{
   }
 
 });
+
+btnLoan.addEventListener('click',(e)=>{
+  e.preventDefault();
+  const amount= Number(inputLoanAmount.value);
+  if (amount>0 && currentAccount.movements.some(mov=> mov>= amount*0.1)){
+    // Add movement
+    currentAccount.movements.push(amount);
+
+    //Update UI 
+    updateUI(currentAccount);
+  }
+  inputLoanAmount.value='';
+})
+
+btnClose.addEventListener('click', (e)=>{
+  e.preventDefault();
+  if(Number(inputClosePin.value)===currentAccount.pin && inputCloseUsername.value===currentAccount.username){
+    const index= accounts.findIndex(
+      acc=>acc.username===currentAccount.username);
+    console.log(index);
+    accounts.splice(index, 1);
+    //Hide UI
+    containerApp.style.opacity=0;
+  }
+  inputCloseUsername.value=inputClosePin.value='';
+
+});
