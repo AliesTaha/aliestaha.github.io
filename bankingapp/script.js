@@ -61,17 +61,17 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-const displayMovements = function (movements, sort=false){
+const displayMovements = function (acc, sort=false){
   document.querySelector('.movements').innerHTML='';
 
-  const movs=sort ? movements.slice().sort((a,b)=> a-b) : movements;
+  const movs=sort ? acc.movements.slice().sort((a,b)=> a-b) : acc.movements;
 
   movs.forEach(function (mov, i){
     const type = (mov>0)? 'deposit' : 'withdrawal';
     const html=`
     <div class="movements__row">
     <div class="movements__type movements__type--${type}">${i+1} ${type}</div>
-    <div class="movements__value">${mov}€</div>
+    <div class="movements__value">${mov.toFixed(2)}€</div>
     `;
 
     containerMovements.insertAdjacentHTML('afterbegin', html);
@@ -88,10 +88,10 @@ const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 for (const [i, movement] of movements.entries()){
   if (movement>0){
-    console.log(`Movement ${i+1} You deposited ${movement}`);
+    console.log(`Movement ${i+1} You deposited ${movement.toFixed(2)}`);
   }
   else{
-    console.log(`Movement You withdrew ${movement}`);
+    console.log(`Movement You withdrew ${movement.toFixed(2)}`);
   }
 }
 
@@ -219,19 +219,19 @@ fetch(`${apiUrl}/latest.json?app_id=${apiKey}&base=${baseCurrency}`)
   function accBalance(acc){
      acc.balance= acc.movements.reduce((acc, mov, i , arr)=>
       acc+mov, 0);
-    document.querySelector('.balance__value').textContent=`${acc.balance}€`;
+    document.querySelector('.balance__value').textContent=`${acc.balance.toFixed(2)}€`;
   }
 
   function calcDisplaySummary(acc){
     const incomes=acc.movements.filter(mov=>mov>0).reduce((acc,mov,i,arr)=>acc+mov,0);
-    labelSumIn.textContent=`${incomes}€`;
+    labelSumIn.textContent=`${incomes.toFixed(2)}€`;
 
     const out= acc.movements.filter(mov=>mov<0).reduce(function (acc,mov){return acc+mov}, 0);
-    labelSumOut.textContent=`${Math.abs(out)}€`;
+    labelSumOut.textContent=`${Math.abs(out).toFixed(2)}€`;
 
     const interest= acc.movements.filter(mov=>mov>0).map(deposit=>deposit*acc.interestRate/100).reduce((acc, int, i, arr)=>acc+int,0);
     console.log(interest);
-    labelSumInterest.textContent=`${Math.round(interest*10)/10}€`
+    labelSumInterest.textContent=`${(Math.round(interest*10)/10).toFixed(2)}€`
   }
 
   function updateUI(currentAccount){
@@ -286,7 +286,7 @@ btnTransfer.addEventListener('click', (e)=>{
 
 btnLoan.addEventListener('click',(e)=>{
   e.preventDefault();
-  const amount= Number(inputLoanAmount.value);
+  const amount= Math.floor(inputLoanAmount.value);
   if (amount>0 && currentAccount.movements.some(mov=> mov>= amount*0.1)){
     // Add movement
     currentAccount.movements.push(amount);
@@ -317,3 +317,11 @@ e.preventDefault();
 displayMovements(currentAccount.movements, !sorted);
 sorted=!sorted;
 });
+
+const now=new Date();
+const day = `${now.getDate()}`.padStart(2,0);
+const month= `${now.getMonth()+1}`.padStart(2,0);
+const year = now.getFullYear();
+const hour= now.getHours()+1;
+const min = now.getMinutes();
+labelDate.textContent=`${day}/${month}/${year}, ${hour}:${min}`;
