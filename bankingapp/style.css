@@ -98,6 +98,7 @@ nav {
   transform: translateX(-50%);
   background-image: linear-gradient(to top left, #ac21c7, #42259a);
   border: 4px solid #f5a623;
+  border-radius: 10px; /* Add border radius */
   padding: 20px;
   width: 400px;
   text-align: center;
@@ -126,7 +127,7 @@ nav {
 }
 
 button[type="submit"] {
-  color: #b67409;
+  color: black;
   border: none;
   cursor: pointer;
   font-weight: normal; /* Set font weight to normal */
@@ -143,6 +144,7 @@ button[type="submit"] {
 #result {
   font-size: 20px;
   font-weight: bold;
+  color: black;
   margin-top: 20px;
 }
 
