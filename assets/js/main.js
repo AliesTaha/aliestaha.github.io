@@ -165,3 +165,88 @@ themeButton.addEventListener('click', () => {
     localStorage.setItem('selected-theme', getCurrentTheme())
     localStorage.setItem('selected-icon', getCurrentIcon())
 })
+
+
+var workExperiences = [
+    {
+      company: "Company A",
+      position: "Position A",
+      duration: "January 2018 - December 2019",
+      description: "Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position A..."
+    },
+    {
+      company: "Company B",
+      position: "Position B",
+      duration: "March 2020 - Present",
+      description: "Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B..."
+    },
+    {
+        company: "Company B",
+        position: "Position B",
+        duration: "March 2020 - Present",
+        description: "Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B..."
+      },
+      {
+        company: "Company B",
+        position: "Position B",
+        duration: "March 2020 - Present",
+        description: "Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B..."
+      },
+      {
+        company: "Company B",
+        position: "Position B",
+        duration: "March 2020 - Present",
+        description: "Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B..."
+      },
+    // Add more work experiences as needed
+  ];
+  
+  function populateWorkExperiences() {
+    var experienceList = document.getElementById("experience-list");
+  
+    workExperiences.forEach(function (experience, index) {
+      var li = document.createElement("li");
+      li.textContent = experience.company;
+  
+      li.addEventListener("mouseover", function() {
+        this.classList.add("highlight");
+      });
+  
+      li.addEventListener("mouseout", function() {
+        this.classList.remove("highlight");
+      });
+  
+      li.addEventListener("click", function() {
+        var selectedExperience = document.getElementsByClassName("selected");
+        if (selectedExperience.length > 0) {
+          selectedExperience[0].classList.remove("selected");
+        }
+        this.classList.add("selected");
+        updateExperienceDescription(experience);
+      });
+  
+      experienceList.appendChild(li);
+    });
+  
+    // Initially load the first work experience
+    if (workExperiences.length > 0) {
+      updateExperienceDescription(workExperiences[0]);
+    }
+  }
+  
+  function updateExperienceDescription(experience) {
+    document.getElementById('position').textContent = experience.position;
+    document.getElementById('company').textContent = experience.company;
+    document.getElementById('duration').textContent = experience.duration;
+    document.getElementById('description').textContent = experience.description;
+    
+    // Display all fields when a list item is clicked
+    document.getElementById('duration').style.display = 'block';
+    document.getElementById('description').style.display = 'block';
+    document.getElementById('position').style.display = 'block';
+  }
+  
+  window.onload = function () {
+    populateWorkExperiences();
+  };
+  

@@ -102,6 +102,116 @@ span.stars::before{
   height:1px;
   background: linear-gradient(90deg,rgb(31, 5, 96), transparent);
 }
+#work-experiences {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80%;
+  margin: auto;
+  padding: 20px;
+}
+
+#work-experiences h2 {
+  text-align: center;
+  width: 100%;
+}
+
+.experience-section {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.timeline {
+  width: 40%;
+  border-right: 1px solid #c0c0c0;
+  padding-right: 20px;
+  margin-right: 20px;
+}
+
+#experience-description {
+  width: 60%;
+}
+
+#experience-list {
+  list-style: none;
+  padding: 0;
+}
+
+#experience-list li {
+  padding: 10px 0;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#experience-list li h3,
+#experience-list li h4,
+#experience-list li p {
+    margin: 0;
+}
+
+#experience-list li h3 {
+    margin-bottom: 5px;
+}
+
+#progress-bar {
+  position: absolute;
+  width: 2px;  /* Make the bar 2px wide instead of 2px high */
+  background: goldenrod;
+  height: 100%;  /* This sets the height to be equal to a single list item */
+  transition: top 0.3s ease;
+}
+
+
+#experience-list li h4 {
+    font-weight: normal;
+    color: #666666;
+}
+
+#duration, #description {
+  display: none;
+}
+
+#experience-list li:hover,
+#experience-list li.highlight {
+}
+
+#experience-list li.selected,
+#experience-list li.selected:hover,
+#experience-list li.selected.highlight {
+}
+
+#duration {
+  display: none;
+}
+
+#experience-list li {
+  padding: 10px 0 10px 300px; /* Adjust the last value (50px) to suit your needs */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: goldenrod;
+  font-size: 1rem;
+}
+
+#experience-list li:hover,
+#experience-list li.highlight {
+  text-shadow: 0 0 10px goldenrod;
+}
+
+#experience-list li.selected,
+#experience-list li.selected:hover,
+#experience-list li.selected.highlight {
+  font-size: 1.2rem;
+  color: goldenrod;
+  text-shadow: 0 0 10px goldenrod;
+}
+
+#duration, #description, #position {
+  display: none;
+}
+
+
 
 @keyframes animate {
   0%{
