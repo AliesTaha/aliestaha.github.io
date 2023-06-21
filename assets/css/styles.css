@@ -105,14 +105,16 @@ span.stars::before{
 #work-experiences {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   width: 80%;
   margin: auto;
   padding: 20px;
+  margin-left: 80px;
 }
 
 #work-experiences h2 {
   text-align: center;
+  margin-left: -10px;
   width: 100%;
 }
 
@@ -140,7 +142,7 @@ span.stars::before{
 }
 
 #experience-list li {
-  padding: 10px 0;
+  padding: 10px 0 10px 15px;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -187,7 +189,7 @@ span.stars::before{
 }
 
 #experience-list li {
-  padding: 10px 0 10px 300px; /* Adjust the last value (50px) to suit your needs */
+  padding: 10px 0 10px 190px; /* Adjust the last value (50px) to suit your needs */
   cursor: pointer;
   transition: all 0.3s ease;
   color: goldenrod;
@@ -217,7 +219,7 @@ span.stars::before{
 
 #progress-bar {
   position: absolute;
-  left: 240px; 
+  left: 170px; 
   top: 0;
   width: 2px; /* Adjust the width of the progress bar */
   height: 20%;

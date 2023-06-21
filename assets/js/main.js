@@ -141,19 +141,26 @@ const themeButton = document.getElementById('theme-button')
 const darkTheme = 'dark-theme'
 const iconTheme = 'uil-sun'
 
-// Previously selected topic (if user selected)
-const selectedTheme = localStorage.getItem('selected-theme')
-const selectedIcon = localStorage.getItem('selected-icon')
+// Previously selected theme (if user selected)
+const selectedTheme = localStorage.getItem('selected-theme');
+const selectedIcon = localStorage.getItem('selected-icon');
 
-// We obtain the current theme that the interface has by validating the dark-theme class
-const getCurrentTheme = () => document.body.classList.contains(darkTheme) ? 'dark' : 'light'
-const getCurrentIcon = () => themeButton.classList.contains(iconTheme) ? 'uil-moon' : 'uil-sun'
+// Function to set the dark theme as default
+const setDarkTheme = () => {
+  document.body.classList.add(darkTheme);
+  themeButton.classList.add(iconTheme);
+  localStorage.setItem('selected-theme', 'dark');
+  localStorage.setItem('selected-icon', 'uil-moon');
+};
 
-// We validate if the user previously chose a topic
+// Check if the user previously selected a theme
 if (selectedTheme) {
-  // If the validation is fulfilled, we ask what the issue was to know if we activated or deactivated the dark
-  document.body.classList[selectedTheme === 'dark' ? 'add' : 'remove'](darkTheme)
-  themeButton.classList[selectedIcon === 'uil-moon' ? 'add' : 'remove'](iconTheme)
+  // Apply the user-selected theme and icon
+  document.body.classList.toggle(darkTheme, selectedTheme === 'dark');
+  themeButton.classList.toggle(iconTheme, selectedIcon === 'uil-moon');
+} else {
+  // Set the dark theme as default
+  setDarkTheme();
 }
 
 // Activate / deactivate the theme manually with the button
@@ -169,34 +176,34 @@ themeButton.addEventListener('click', () => {
 
 var workExperiences = [
     {
-      company: "Company A",
-      position: "Position A",
-      duration: "January 2018 - December 2019",
-      description: "Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position A..."
+      company: "Blackberry",
+      position: "Reporting Automation Developer",
+      duration: "May 2023 - Present",
+      description: "Developed and architected full-stack internal web tools used to automate change and process management workflows. Implemented best software practices when designing databases, APIs and web security."
     },
     {
-      company: "Company B",
-      position: "Position B",
-      duration: "March 2020 - Present",
-      description: "Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B..."
+      company: "Waterloo Orbital",
+      position: "Firmware Developer",
+      duration: "May 2023 - Present",
+      description: "Currently doing on-boarding..."
     },
     {
-        company: "Company B",
-        position: "Position B",
-        duration: "March 2020 - Present",
-        description: "Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B..."
+        company: "Waterloo Formula Electric",
+        position: "Firmware Developer",
+        duration: "October 2022 - December 2022",
+        description: "• Resolved over 3 linter tasks and tracked team progress using industry standard tools like Bitbucket and Jira• Implemented low-level hardware control using C, including adding 10 new events warnings for battery states"
       },
       {
-        company: "Company B",
-        position: "Position B",
-        duration: "March 2020 - Present",
-        description: "Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B..."
+        company: "Enginera",
+        position: "Front End Developer",
+        duration: "January 2021 - June 2022",
+        description: "• Increased the daily page visit count by 50 visits through the implementation of interactive forms, navigation and dropdown menus, built with HTML, CSS, and JavaScript • Implemented mobile-friendly responsive design for 3 screen sizes, resulting in a 15% mobile traffic increase • Communicated with University of Waterloo alumni to prepare panels, attended by over 230 members"
       },
       {
-        company: "Company B",
-        position: "Position B",
-        duration: "March 2020 - Present",
-        description: "Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B...Description of Position B..."
+        company: "FIRST Robotics",
+        position: "Programming Captain",
+        duration: "Spetember 2020 - April 2022",
+        description: "• Awarded as District Event Winner in Rapid React (2022), and received that Autonomous Award sponsored by Ford and District Event Finalist in Infinite Recharge (2020) • Managed a codebase and collaborated with over 12 developers using Git to assign tasks and track code changes • Coached over 40 team members in Java to seamlessly integrate the robot’s control systems into the overall design"
       },
     // Add more work experiences as needed
   ];
