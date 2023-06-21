@@ -211,6 +211,19 @@ span.stars::before{
   display: none;
 }
 
+.timeline {
+  position: relative;
+}
+
+#progress-bar {
+  position: absolute;
+  left: 240px; 
+  top: 0;
+  width: 2px; /* Adjust the width of the progress bar */
+  height: 20%;
+  background-color: goldenrod;
+  transition: top 0.3s ease;
+}
 
 
 @keyframes animate {
@@ -449,7 +462,8 @@ img {
 
 /*CSS classes*/
 .section {
-  padding: 2rem 0 4rem;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 .section_title {

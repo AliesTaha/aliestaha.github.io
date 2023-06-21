@@ -203,6 +203,7 @@ var workExperiences = [
   
   function populateWorkExperiences() {
     var experienceList = document.getElementById("experience-list");
+    var progressBar = document.getElementById("progress-bar");
   
     workExperiences.forEach(function (experience, index) {
       var li = document.createElement("li");
@@ -223,6 +224,10 @@ var workExperiences = [
         }
         this.classList.add("selected");
         updateExperienceDescription(experience);
+        var itemHeight = li.offsetHeight;
+      var position = Array.from(experienceList.children).indexOf(li);
+      var progressBarPosition = (position * itemHeight) + "px";
+      progressBar.style.top = progressBarPosition;
       });
   
       experienceList.appendChild(li);
