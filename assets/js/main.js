@@ -153,6 +153,8 @@ const setDarkTheme = () => {
   localStorage.setItem('selected-icon', 'uil-moon');
 };
 
+setDarkTheme();
+
 // Check if the user previously selected a theme
 if (selectedTheme) {
   // Apply the user-selected theme and icon
