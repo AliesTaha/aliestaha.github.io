@@ -1568,6 +1568,15 @@ img {
 }
 
 /* For large devices */
+@media screen and (min-width: 1024px) {
+  .projects_container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
 
 @media screen and (min-width:1024px) {
   .header,
@@ -1586,6 +1595,11 @@ img {
 
   .projects_container{
     grid-template-columns: repeat(3,250px);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
     margin-left: 290px; /* Adjust the margin value as needed */
   }
 
