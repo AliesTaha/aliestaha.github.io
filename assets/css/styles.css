@@ -1264,6 +1264,15 @@ img {
     align-items: center;
   }
   
+  .projects_container{
+    grid-template-columns: repeat(2,10px);
+    display: grid;
+    grid-template-columns: repeat(2, 9rem);
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .worksection{
     margin-right: 100000000px;
   }
@@ -1567,16 +1576,6 @@ img {
   }
 }
 
-/* For large devices */
-@media screen and (min-width: 1024px) {
-  .projects_container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    justify-content: center;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
 
 @media screen and (min-width:1024px) {
   .header,
@@ -1594,13 +1593,12 @@ img {
   }
 
   .projects_container{
-    grid-template-columns: repeat(3,250px);
+    grid-template-columns: repeat(3,350px);
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 18rem);
     justify-content: center;
     margin-left: auto;
     margin-right: auto;
-    margin-left: 290px; /* Adjust the margin value as needed */
   }
 
   .contact_inputs{
