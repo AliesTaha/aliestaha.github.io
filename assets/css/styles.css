@@ -103,13 +103,6 @@ span.stars::before{
   background: linear-gradient(90deg,rgb(31, 5, 96), transparent);
 }
 #work-experiences {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 80%;
-  margin: auto;
-  padding: 20px;
-  margin-left: 80px;
 }
 
 #work-experiences h2 {
@@ -1273,9 +1266,6 @@ img {
     margin-right: auto;
   }
 
-  .worksection{
-    margin-right: 100000000px;
-  }
   .timeline {
     width: 100%;
     align-items: left;
