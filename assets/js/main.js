@@ -181,7 +181,8 @@ var workExperiences = [
       company: "Blackberry",
       position: "Reporting Automation Developer",
       duration: "May 2023 - Present",
-      description: "Developed and architected full-stack internal web tools used to automate change and process management workflows. Implemented best software practices when designing databases, APIs and web security."
+      description: "• Developed and architected full-stack internal web tools used to automate change and process management workflows• Implemented best software practices when designing databases, APIs and web security."
+    
     },
     {
       company: "Waterloo Orbital",
@@ -190,7 +191,7 @@ var workExperiences = [
       description: "Currently doing on-boarding..."
     },
     {
-        company: "Waterloo Formula Electric",
+        company: "UW Formula Electric",
         position: "Firmware Developer",
         duration: "October 2022 - December 2022",
         description: "• Resolved over 3 linter tasks and tracked team progress using industry standard tools like Bitbucket and Jira• Implemented low-level hardware control using C, including adding 10 new events warnings for battery states"
@@ -247,6 +248,7 @@ var workExperiences = [
       updateExperienceDescription(workExperiences[0]);
     }
   }
+  
   
   function updateExperienceDescription(experience) {
     document.getElementById('position').textContent = experience.position;
