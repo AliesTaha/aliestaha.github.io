@@ -181,8 +181,7 @@ var workExperiences = [
       company: "Blackberry",
       position: "Reporting Automation Developer",
       duration: "May 2023 - Present",
-      description: "• Developed and architected full-stack internal web tools used to automate change and process management workflows• Implemented best software practices when designing databases, APIs and web security."
-    
+      description: "Developed and architected full-stack internal web tools used to automate change and process management workflows.    \n \n\nImplemented best software practices when designing databases, APIs and web security."
     },
     {
       company: "Waterloo Orbital",
@@ -251,16 +250,30 @@ var workExperiences = [
   
   
   function updateExperienceDescription(experience) {
-    document.getElementById('position').textContent = experience.position;
-    document.getElementById('company').textContent = experience.company;
-    document.getElementById('duration').textContent = experience.duration;
-    document.getElementById('description').textContent = experience.description;
-    
+    const positionElement = document.getElementById('position');
+    const companyElement = document.getElementById('company');
+    const durationElement = document.getElementById('duration');
+    const descriptionElement = document.getElementById('description');
+  
+    positionElement.textContent = experience.position;
+    companyElement.textContent = experience.company;
+    durationElement.textContent = experience.duration;
+  
+    const descriptionLines = experience.description.split('\n');
+    let descriptionHTML = '';
+    descriptionLines.forEach((line) => {
+      if (line.trim() !== '') {
+        descriptionHTML += `<li>${line}</li>`;
+      }
+    });
+    descriptionElement.innerHTML = `<ul>${descriptionHTML}</ul>`;
+  
     // Display all fields when a list item is clicked
-    document.getElementById('duration').style.display = 'block';
-    document.getElementById('description').style.display = 'block';
-    document.getElementById('position').style.display = 'block';
+    durationElement.style.display = 'block';
+    descriptionElement.style.display = 'block';
+    positionElement.style.display = 'block';
   }
+  
   
   window.onload = function () {
     populateWorkExperiences();

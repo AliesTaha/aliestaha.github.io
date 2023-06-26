@@ -109,7 +109,6 @@ span.stars::before{
   width: 80%;
   margin: auto;
   padding: 20px;
-  margin-left: 80px;
 }
 
 #work-experiences h2 {
@@ -1273,9 +1272,6 @@ img {
     margin-right: auto;
   }
 
-  .worksection{
-    margin-right: 100000000px;
-  }
   .timeline {
     width: 100%;
     align-items: left;
