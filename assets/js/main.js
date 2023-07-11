@@ -184,12 +184,6 @@ var workExperiences = [
       description: "Developed and architected full-stack internal web tools used to automate change and process management workflows.    \n \n\nImplemented best software practices when designing databases, APIs and web security."
     },
     {
-      company: "Waterloo Orbital",
-      position: "Firmware Developer",
-      duration: "May 2023 - Present",
-      description: "Currently doing on-boarding..."
-    },
-    {
         company: "UW Formula Electric",
         position: "Firmware Developer",
         duration: "October 2022 - December 2022",
@@ -206,6 +200,13 @@ var workExperiences = [
         position: "Programming Captain",
         duration: "Spetember 2020 - April 2022",
         description: "• Awarded as District Event Winner in Rapid React (2022), and received that Autonomous Award sponsored by Ford and District Event Finalist in Infinite Recharge (2020) • Managed a codebase and collaborated with over 12 developers using Git to assign tasks and track code changes • Coached over 40 team members in Java to seamlessly integrate the robot’s control systems into the overall design"
+      },
+
+      {
+        company: "UW Orbital",
+        position: "Firmware Developer",
+        duration: "May 2023 - Present",
+        description: "Currently doing on-boarding...Currently doing on-boarding...Currently doing on-boarding...Currently doing on-boarding..."
       },
     // Add more work experiences as needed
   ];

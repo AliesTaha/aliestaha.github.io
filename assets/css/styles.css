@@ -102,13 +102,12 @@ span.stars::before{
   height:1px;
   background: linear-gradient(90deg,rgb(31, 5, 96), transparent);
 }
+
 #work-experiences {
   display: flex;
-  flex-direction: column;
   align-items: flex-start;
   width: 80%;
   margin: auto;
-  padding: 20px;
 }
 
 #work-experiences h2 {
@@ -131,8 +130,12 @@ span.stars::before{
   margin-right: 20px;
 }
 
-#experience-description {
-  width: 60%;
+.timeline {
+  position: relative;
+}
+
+#position{
+  text-align: center;
 }
 
 #experience-list {
@@ -210,10 +213,6 @@ span.stars::before{
 
 #duration, #description, #position {
   display: none;
-}
-
-.timeline {
-  position: relative;
 }
 
 #progress-bar {
@@ -1198,14 +1197,18 @@ img {
   background-color: var(--text-color-light);
 }
 
+
 /*==================== MEDIA QUERIES ====================*/
 /*small device */
+
 @media screen and (max-width: 350px){
   .container{
     margin-left: var(--mb-1);
     margin-right: var(--mb-1);
   }
-
+  #position{
+    text-align: center;
+  }
   .timeline {
     width: 100%;
     margin-right: 0;
@@ -1215,6 +1218,8 @@ img {
   #experience-description {
     width: 100%;
     margin-left: 0;
+    text-align: center; /* Center the text horizontally */
+    margin: auto; /* Center the element within its container */
   }
 
   .nav_menu{
@@ -1256,7 +1261,11 @@ img {
 
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 900px) {
+
+  #work-experiences {
+    width: 80%;
+  }
   .experience-section {
     display: flex;
     flex-direction: column;
@@ -1288,130 +1297,6 @@ img {
 
 /* For medium devices */
 @media screen and (min-width: 568px){
-  #work-experiences {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: 80%;
-    margin: auto;
-    padding: 20px;
-    margin-left: 80px;
-  }
-  
-  #work-experiences h2 {
-    text-align: center;
-    margin-left: -10px;
-    width: 100%;
-  }
-  
-  .experience-section {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    width: 100%;
-  }
-
-  .timeline {
-    width: 40%;
-    border-right: 1px solid #c0c0c0;
-    padding-right: 20px;
-    margin-right: 20px;
-  }
-  
-  #experience-description {
-    width: 60%;
-  }
-  
-  #experience-list {
-    list-style: none;
-    padding: 0;
-  }
-  
-  #experience-list li {
-    padding: 10px 0 10px 15px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  #experience-list li h3,
-  #experience-list li h4,
-  #experience-list li p {
-      margin: 0;
-  }
-  
-  #experience-list li h3 {
-      margin-bottom: 5px;
-  }
-  
-  #progress-bar {
-    position: absolute;
-    width: 2px;  /* Make the bar 2px wide instead of 2px high */
-    background: goldenrod;
-    height: 100%;  /* This sets the height to be equal to a single list item */
-    transition: top 0.3s ease;
-  }
-  
-  
-  #experience-list li h4 {
-      font-weight: normal;
-      color: #666666;
-  }
-  
-  #duration, #description {
-    display: none;
-  }
-  
-  #experience-list li:hover,
-  #experience-list li.highlight {
-  }
-  
-  #experience-list li.selected,
-  #experience-list li.selected:hover,
-  #experience-list li.selected.highlight {
-  }
-  
-  #duration {
-    display: none;
-  }
-  
-  #experience-list li {
-    padding: 10px 0 10px 190px; /* Adjust the last value (50px) to suit your needs */
-    cursor: pointer;
-    transition: all 0.3s ease;
-    color: goldenrod;
-    font-size: 1rem;
-  }
-  
-  #experience-list li:hover,
-  #experience-list li.highlight {
-    text-shadow: 0 0 10px goldenrod;
-  }
-  
-  #experience-list li.selected,
-  #experience-list li.selected:hover,
-  #experience-list li.selected.highlight {
-    font-size: 1.2rem;
-    color: goldenrod;
-    text-shadow: 0 0 10px goldenrod;
-  }
-  
-  #duration, #description, #position {
-    display: none;
-  }
-  
-  .timeline {
-    position: relative;
-  }
-  
-  #progress-bar {
-    position: absolute;
-    left: 170px; 
-    top: 0;
-    width: 2px; /* Adjust the width of the progress bar */
-    height: 20%;
-    background-color: goldenrod;
-    transition: top 0.3s ease;
-  }
   
   .home_content{
     grid-template-columns: max-content 1fr 1fr;
@@ -1427,8 +1312,19 @@ img {
     grid-template-columns: repeat(1,1fr);
   }
 
+  #work-experiences {
+    width: 80%;
+  }
 
   @media screen and (min-width:768px){
+    #work-experiences {
+      width: 80%;
+    }
+
+    #company{
+      width:10%;
+    }
+
     .container{
       margin-left: auto;
       margin-right: auto;
@@ -1439,7 +1335,7 @@ img {
     }
 
     .section{
-      padding: 6rem 0 2rem;
+      padding:0 0 2rem 0;
     }
 
     .section_subtitle{
@@ -1573,7 +1469,131 @@ img {
 }
 
 
-@media screen and (min-width:1024px) {
+@media screen and (min-width:1524px) {
+  #work-experiences {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 80%;
+    margin: auto;
+    padding-left: 200px;
+    padding-right: 200px;
+  }
+  
+  #work-experiences h2 {
+    text-align: center;
+    width: 100%;
+  }
+  
+  .experience-section {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+  }
+  
+  .timeline {
+    width: 40%;
+    border-right: 1px solid #c0c0c0;
+    padding-right: 20px;
+    margin-right: 20px;
+  }
+  
+  #experience-description {
+    width: 60%;
+  }
+  
+  #experience-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  #experience-list li {
+    padding: 10px 0 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  #experience-list li h3,
+  #experience-list li h4,
+  #experience-list li p {
+      margin: 0;
+  }
+  
+  #experience-list li h3 {
+      margin-bottom: 5px;
+  }
+  
+  #progress-bar {
+    position: absolute;
+    width: 2px;  /* Make the bar 2px wide instead of 2px high */
+    background: goldenrod;
+    height: 100%;  /* This sets the height to be equal to a single list item */
+    transition: top 0.3s ease;
+  }
+  
+  
+  #experience-list li h4 {
+      font-weight: normal;
+      color: #666666;
+  }
+  
+  #duration, #description {
+    display: none;
+  }
+  
+  #experience-list li:hover,
+  #experience-list li.highlight {
+  }
+  
+  #experience-list li.selected,
+  #experience-list li.selected:hover,
+  #experience-list li.selected.highlight {
+  }
+  
+  #duration {
+    display: none;
+  }
+  
+  #experience-list li {
+    padding: 10px 0 10px 190px; /* Adjust the last value (50px) to suit your needs */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: goldenrod;
+    font-size: 1rem;
+  }
+  
+  #experience-list li:hover,
+  #experience-list li.highlight {
+    text-shadow: 0 0 10px goldenrod;
+  }
+  
+  #experience-list li.selected,
+  #experience-list li.selected:hover,
+  #experience-list li.selected.highlight {
+    font-size: 1.2rem;
+    color: goldenrod;
+    text-shadow: 0 0 10px goldenrod;
+  }
+  
+  #duration, #description, #position {
+    display: none;
+  }
+  
+  .timeline {
+    position: relative;
+  }
+  
+  #progress-bar {
+    position: absolute;
+    left: 170px; 
+    top: 0;
+    width: 2px; /* Adjust the width of the progress bar */
+    height: 20%;
+    background-color: goldenrod;
+    transition: top 0.3s ease;
+  }
+  
   .header,
   .main,
   .footer_container{
@@ -1602,5 +1622,4 @@ img {
   }
   
 }
-
 
