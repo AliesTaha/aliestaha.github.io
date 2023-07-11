@@ -249,6 +249,7 @@ var workExperiences = [
     }
   }
   
+  
   function updateExperienceDescription(experience) {
     const positionElement = document.getElementById('position');
     const companyElement = document.getElementById('company');
