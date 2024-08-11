@@ -127,8 +127,6 @@
         a:hover {
             text-decoration: underline;
         }
-
-        /* Light Mode */
         .light-mode {
             background-color: #f4f4f4;
             color: #333;
@@ -170,108 +168,12 @@
         .light-mode a {
             color: #333;
         }
-
-        /* Golden Hardware Theme */
-        .golden-hardware {
-            background-color: #1a1a1a;
-            color: #ffd700;
-        }
-        .golden-hardware header {
-            background-color: #333;
-            color: #ffd700;
-            border-bottom: 2px solid #ffd700;
-        }
-        .golden-hardware #theme-toggle {
-            background-color: #1a1a1a;
-            color: #ffd700;
-            border-color: #ffd700;
-        }
-        .golden-hardware .container {
-            background-color: #2a2a2a;
-            border-color: #ffd700;
-        }
-        .golden-hardware .section {
-            background-color: #3a3a3a;
-            border-color: #ffd700;
-        }
-        .golden-hardware .job-list li {
-            background-color: #444;
-            border-color: #ffd700;
-        }
-        .golden-hardware .job-list li:hover {
-            background-color: #555;
-        }
-        .golden-hardware .job-list li.active {
-            background-color: #666;
-            font-weight: bold;
-        }
-        .golden-hardware .job-details {
-            background-color: #2a2a2a;
-        }
-        .golden-hardware .portfolio-item {
-            background-color: #3a3a3a;
-            border-color: #ffd700;
-        }
-        .golden-hardware a {
-            color: #ffd700;
-        }
-        .golden-hardware a:hover {
-            color: #ffa500;
-        }
-
-        /* Circuit Board Theme */
-        .circuit-board {
-            background-color: #001f3f;
-            color: #39ff14;
-        }
-        .circuit-board header {
-            background-color: #004080;
-            color: #39ff14;
-            border-bottom: 2px solid #39ff14;
-        }
-        .circuit-board #theme-toggle {
-            background-color: #001f3f;
-            color: #39ff14;
-            border-color: #39ff14;
-        }
-        .circuit-board .container {
-            background-color: #003366;
-            border-color: #39ff14;
-        }
-        .circuit-board .section {
-            background-color: #004080;
-            border-color: #39ff14;
-        }
-        .circuit-board .job-list li {
-            background-color: #002244;
-            border-color: #39ff14;
-        }
-        .circuit-board .job-list li:hover {
-            background-color: #003366;
-        }
-        .circuit-board .job-list li.active {
-            background-color: #004080;
-            font-weight: bold;
-        }
-        .circuit-board .job-details {
-            background-color: #003366;
-        }
-        .circuit-board .portfolio-item {
-            background-color: #004080;
-            border-color: #39ff14;
-        }
-        .circuit-board a {
-            color: #39ff14;
-        }
-        .circuit-board a:hover {
-            color: #33cc00;
-        }
     </style>
 </head>
 <body class="dark-mode">
     <header>
         <h1>Ali Taha</h1>
-        <button id="theme-toggle" title="Switch Theme"></button>
+        <button id="theme-toggle" title="Switch to Light Mode"></button>
     </header>
 
     <div class="container">
@@ -368,8 +270,6 @@
         const jobs = document.querySelectorAll('.job-list li');
         const jobDetails = document.querySelectorAll('.job-details > div');
         const toggleButton = document.getElementById('theme-toggle');
-        const themes = ['dark-mode', 'light-mode', 'golden-hardware', 'circuit-board'];
-        let currentTheme = 0;
 
         jobs.forEach(job => {
             job.addEventListener('click', () => {
@@ -382,9 +282,12 @@
         });
 
         toggleButton.addEventListener('click', () => {
-            document.body.classList.remove(themes[currentTheme]);
-            currentTheme = (currentTheme + 1) % themes.length;
-            document.body.classList.add(themes[currentTheme]);
+            document.body.classList.toggle('light-mode');
+            if (document.body.classList.contains('light-mode')) {
+                toggleButton.title = 'Switch to Dark Mode';
+            } else {
+                toggleButton.title = 'Switch to Light Mode';
+            }
         });
     </script>
 </body>
