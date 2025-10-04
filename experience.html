@@ -25,13 +25,10 @@
             </div>
             <p class="meta">may – august 2025 • los altos, ca</p>
             <ul>
-                <li>brought up state-of-the-art matrix multiplication kernels on <strong>blackwell</strong> gpu, <strong>beating nvidia</strong>'s cublas at 103% sota perf, without writing a single line of cuda (<a href="https://www.modular.com/blog/matrix-multiplication-on-nvidias-blackwell-part-1-introduction" target="_blank">blog</a>, <a href="https://github.com/modular/modular/tree/main/max/kernels/test/gpu/linalg/matmul_blackwell_iterative" target="_blank">code</a>)</li>
-                <li>achieved 2 petaflops for matmuls on large matrices (8192×8192), using tma multicasting with 2-sm umma execution, producer-consumer specialization over multi-stage pipelining, and a pipelined clc scheduler</li>
-                <li>wrote a high-performance 1d convolution kernel that beat <strong>sota cudnn</strong> by 7x, speeding up the inference time of <strong>inworld ai</strong>'s text-to-speech model by 12%</li>
-                <li>implemented hilbert curve scheduling for <strong>h100</strong> matmul kernel in mojo, boosting l2 hit rate and improving performance from <strong>91%</strong> to <strong>92.8%</strong> (367.96 → 375.83 tflops) on h100, using space-filling curves</li>
-                <li>implemented specialized gpu kernels (3d convolution, bicubic resize) to accelerate <strong>midjourney</strong> model inference</li>
-                <li>refactored matmul dispatcher logic using pre-cached tables, removing code bloat (-1000 lines) and redundant branching logic</li>
-                <li>(some of) my code has been <a href="https://github.com/modular/modular/commits?author=AliesTaha&before=386dba7051e1455b145ff2d33bcadfeb971ac7ed+35" target="_blank">open-sourced</a></li>
+                <li>built matmul kernels on blackwell that beat nvidia's cublas at 103% sota (<a href="https://www.modular.com/blog/matrix-multiplication-on-nvidias-blackwell-part-1-introduction" target="_blank">blog</a>, <a href="https://github.com/modular/modular/tree/main/max/kernels/test/gpu/linalg/matmul_blackwell_iterative" target="_blank">code</a>)</li>
+                <li>wrote 1d conv kernel that beat cudnn by 7x, speeding up inworld ai's tts model by 12%</li>
+                <li>implemented hilbert curve scheduling for h100, improving performance from 91% to 92.8%</li>
+                <li>built specialized kernels (3d conv, bicubic resize) for midjourney inference</li>
             </ul>
         </div>
 
@@ -42,11 +39,8 @@
             </div>
             <p class="meta">sep – dec 2024 • fremont, ca</p>
             <ul>
-                <li>developed a <strong>computer vision</strong> prototype to improve the safety of 2-post lifts in tesla service centers</li>
-                <li>automated image capture by deploying the model on raspberry pi 5 and google coral test platforms</li>
-                <li>built an automatic number plate recognition (anpr) system using opencv for preprocessing and data augmentation</li>
-                <li>applied computer vision methods including hsv filtering and contour detection for object localization</li>
-                <li>trained a <strong>segmentation model</strong> to detect lift arms and car boundaries, computing safe angle thresholds for operation</li>
+                <li>built computer vision prototype for 2-post lift safety in service centers</li>
+                <li>trained segmentation model to detect lift arms and compute safe angle thresholds</li>
             </ul>
         </div>
 
@@ -57,7 +51,7 @@
             </div>
             <p class="meta">jan – april 2024 • dearborn, mi</p>
             <ul>
-                <li>worked on automated regression test suite using playwright and typescript</li>
+                <li>built automated test suite using playwright and typescript</li>
             </ul>
         </div>
 
@@ -68,7 +62,7 @@
             </div>
             <p class="meta">may – aug 2023 • waterloo, on</p>
             <ul>
-                <li>developed and deployed a full-stack solution that visualizes analytic records and service data</li>
+                <li>built full-stack analytics dashboard for service data</li>
             </ul>
         </div>
     </div>
