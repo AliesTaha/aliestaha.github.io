@@ -22,10 +22,9 @@
             <h3><a href="https://github.com/AliesTaha" target="_blank">matmul rewritten: cuda kernel study</a></h3>
             <p class="tech">cuda</p>
             <ul>
-                <li>developed a cuda (sgemm) kernel for a100, starting from a naive implementation and progressively optimizing performance</li>
-                <li>improved memory access patterns by implementing global memory coalescing, increasing memory bandwidth from 15gb/s to 110gb/s, leading to a 6.5× performance improvement (300 gflops → 2000 gflops)</li>
-                <li>utilized smem caching to store frequently used data on-chip, reducing redundant global memory loads</li>
-                <li>implemented 1d block tiling, allowing each thread to compute multiple results, improving register reuse and reducing shared memory stalls, achieving 8.5 tflops (~2.2× speedup over smem caching kernel)</li>
+                <li>built cuda matmul kernel for a100 from scratch, progressively optimizing performance</li>
+                <li>implemented memory coalescing, increasing bandwidth from 15gb/s to 110gb/s (6.5× speedup)</li>
+                <li>added 1d block tiling to improve register reuse, achieving 8.5 tflops</li>
             </ul>
         </div>
 
@@ -33,12 +32,9 @@
             <h3><a href="https://github.com/AliesTaha/BareNeuralNetwork" target="_blank">bare metal neural network</a></h3>
             <p class="tech">python, numpy</p>
             <ul>
-                <li>implemented dense layers with forward and backward propagation using numpy for matrix operations</li>
-                <li>developed activation functions (relu, softmax) and loss functions (categorical cross-entropy) from scratch</li>
-                <li>built custom optimizers like sgd and adam for efficient weight updates during training</li>
-                <li>enabled batch processing for input data using matrix dot products to support mini-batch gradient descent</li>
-                <li>visualized training progress and loss trends with matplotlib for debugging and analysis</li>
-                <li>implemented data normalization techniques for consistent input scaling and improved convergence</li>
+                <li>built neural network from scratch using only numpy</li>
+                <li>implemented dense layers, activation, and loss functions</li>
+                <li>built custom optimizers (sgd, adam) and mini-batch gradient descent</li>
             </ul>
         </div>
     </div>
