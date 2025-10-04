@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>projects - ali taha</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+    <nav class="nav">
+        <a href="index.html" class="nav-link">home</a>
+        <a href="experience.html" class="nav-link">experience</a>
+        <a href="projects.html" class="nav-link active">projects</a>
+        <a href="writing.html" class="nav-link">writing</a>
+        <a href="contact.html" class="nav-link">contact</a>
+    </nav>
+
+    <div class="container">
+        <h1>projects</h1>
+
+        <div class="project-item">
+            <h3><a href="https://github.com/AliesTaha" target="_blank">matmul rewritten: cuda kernel study</a></h3>
+            <p class="tech">cuda</p>
+            <ul>
+                <li>developed a cuda (sgemm) kernel for a100, starting from a naive implementation and progressively optimizing performance</li>
+                <li>improved memory access patterns by implementing global memory coalescing, increasing memory bandwidth from 15gb/s to 110gb/s, leading to a 6.5× performance improvement (300 gflops → 2000 gflops)</li>
+                <li>utilized smem caching to store frequently used data on-chip, reducing redundant global memory loads</li>
+                <li>implemented 1d block tiling, allowing each thread to compute multiple results, improving register reuse and reducing shared memory stalls, achieving 8.5 tflops (~2.2× speedup over smem caching kernel)</li>
+            </ul>
+        </div>
+
+        <div class="project-item">
+            <h3><a href="https://github.com/AliesTaha/BareNeuralNetwork" target="_blank">bare metal neural network</a></h3>
+            <p class="tech">python, numpy</p>
+            <ul>
+                <li>implemented dense layers with forward and backward propagation using numpy for matrix operations</li>
+                <li>developed activation functions (relu, softmax) and loss functions (categorical cross-entropy) from scratch</li>
+                <li>built custom optimizers like sgd and adam for efficient weight updates during training</li>
+                <li>enabled batch processing for input data using matrix dot products to support mini-batch gradient descent</li>
+                <li>visualized training progress and loss trends with matplotlib for debugging and analysis</li>
+                <li>implemented data normalization techniques for consistent input scaling and improved convergence</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
+

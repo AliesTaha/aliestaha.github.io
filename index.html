@@ -3,298 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ali Taha</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica', Arial, sans-serif;
-            background-color: #f5f1e8;
-            color: #2c2c2c;
-            line-height: 1.7;
-            font-size: 17px;
-        }
-
-        .container {
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 60px 20px;
-        }
-
-        header {
-            margin-bottom: 60px;
-        }
-
-        h1 {
-            font-size: 2.5em;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: #1a1a1a;
-        }
-
-        nav {
-            margin-top: 30px;
-        }
-
-        nav a {
-            color: #2c2c2c;
-            text-decoration: none;
-            margin-right: 25px;
-            font-size: 1.05em;
-            transition: opacity 0.2s;
-        }
-
-        nav a:hover {
-            opacity: 0.6;
-        }
-
-        section {
-            margin-bottom: 80px;
-        }
-
-        h2 {
-            font-size: 1.8em;
-            font-weight: 600;
-            margin-bottom: 30px;
-            color: #1a1a1a;
-        }
-
-        .about p {
-            margin-bottom: 15px;
-            color: #444;
-        }
-
-        .contact-links {
-            margin-top: 20px;
-        }
-
-        .contact-links a {
-            color: #2c2c2c;
-            text-decoration: none;
-            margin-right: 20px;
-            border-bottom: 1px solid #2c2c2c;
-            transition: opacity 0.2s;
-        }
-
-        .contact-links a:hover {
-            opacity: 0.6;
-        }
-
-        .writings-list, .bookshelf-list {
-            list-style: none;
-        }
-
-        .writings-list li {
-            margin-bottom: 25px;
-            padding-bottom: 25px;
-            border-bottom: 1px solid #d4cbb8;
-        }
-
-        .writings-list li:last-child {
-            border-bottom: none;
-        }
-
-        .date {
-            color: #888;
-            font-size: 0.95em;
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        .writings-list a, .bookshelf-list a {
-            color: #1a1a1a;
-            text-decoration: none;
-            font-weight: 500;
-            transition: opacity 0.2s;
-        }
-
-        .writings-list a:hover, .bookshelf-list a:hover {
-            opacity: 0.6;
-        }
-
-        .book-item {
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #d4cbb8;
-        }
-
-        .book-item:last-child {
-            border-bottom: none;
-        }
-
-        .book-title {
-            font-weight: 500;
-            color: #1a1a1a;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .book-author {
-            color: #666;
-            font-size: 0.95em;
-        }
-
-        .experience-item {
-            margin-bottom: 35px;
-        }
-
-        .experience-item h3 {
-            font-size: 1.2em;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 5px;
-        }
-
-        .experience-meta {
-            color: #888;
-            font-size: 0.95em;
-            margin-bottom: 15px;
-        }
-
-        .experience-item ul {
-            margin-left: 20px;
-            color: #444;
-        }
-
-        .experience-item ul li {
-            margin-bottom: 8px;
-        }
-
-        footer {
-            margin-top: 100px;
-            padding-top: 30px;
-            border-top: 1px solid #d4cbb8;
-            color: #888;
-            font-size: 0.9em;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 40px 20px;
-            }
-            
-            h1 {
-                font-size: 2em;
-            }
-            
-            nav a {
-                display: block;
-                margin-bottom: 10px;
-            }
-        }
-    </style>
+    <title>ali taha</title>
+    <link rel="stylesheet" href="assets/css/main.css">
 </head>
 <body>
+    <nav class="nav">
+        <a href="index.html" class="nav-link active">home</a>
+        <a href="experience.html" class="nav-link">experience</a>
+        <a href="projects.html" class="nav-link">projects</a>
+        <a href="writing.html" class="nav-link">writing</a>
+        <a href="contact.html" class="nav-link">contact</a>
+    </nav>
+
     <div class="container">
-        <header>
-            <h1>Ali Taha</h1>
-            <nav>
-                <a href="#about">About</a>
-                <a href="#experience">Experience</a>
-                <a href="#writings">Writings</a>
-                <a href="#bookshelf">Bookshelf</a>
-            </nav>
+        <header class="hero">
+            <h1>ali taha</h1>
+            <p class="subtitle">building fast things on gpus</p>
         </header>
 
-        <section id="about" class="about">
+        <section class="intro">
             <p>
-                I'm a 3rd-year Computer Engineering student at the University of Waterloo. 
-                I work on GPU kernels and performance optimization. Most recently, I was at 
-                <a href="https://www.modular.com" target="_blank" style="color: inherit; border-bottom: 1px solid #2c2c2c; text-decoration: none;">Modular</a> 
-                building state-of-the-art matrix multiplication kernels for Blackwell GPUs.
+                i'm a 3rd-year computer engineering student at waterloo. 
+                i work on gpu kernels and performance optimization.
             </p>
             <p>
-                When I'm not coding, you can find me in the gym, out on a hike, or jumping out of planes when the weather's just right.
+                most recently, i was at <a href="https://www.modular.com" target="_blank">modular</a> 
+                building state-of-the-art matrix multiplication kernels for blackwell gpus, 
+                beating nvidia's cublas at 103% sota performance.
             </p>
-            <div class="contact-links">
-                <a href="mailto:ali.taha@uwaterloo.ca">Email</a>
-                <a href="https://github.com/aliestaha" target="_blank">GitHub</a>
-                <a href="https://www.linkedin.com/in/aliestaha/" target="_blank">LinkedIn</a>
-            </div>
+            <p>
+                when i'm not coding, you can find me in the gym, out on a hike, 
+                or jumping out of planes when the weather's just right.
+            </p>
         </section>
 
-        <section id="experience">
-            <h2>Experience</h2>
-            
-            <div class="experience-item">
-                <h3>GPU Kernel Intern - Modular</h3>
-                <div class="experience-meta">May – August 2025 | Los Altos, California</div>
-                <ul>
-                    <li>Brought up state-of-the-art matrix multiplication kernels on Blackwell GPU, beating NVIDIA's cuBLAS at 103% SOTA performance</li>
-                    <li>Achieved 2 PetaFLOPs for matmuls on 8192×8192 matrices using TMA multicasting and pipelined scheduling</li>
-                    <li>Wrote high-performance 1D convolution kernel that beat SOTA cuDNN by 7x</li>
-                    <li>Implemented Hilbert curve scheduling for H100, improving performance from 91% to 92.8% (367.96 → 375.83 TFLOPS)</li>
-                </ul>
-            </div>
-
-            <div class="experience-item">
-                <h3>Software Engineering Intern - Tesla</h3>
-                <div class="experience-meta">Sep – Dec 2024 | Fremont, California</div>
-                <ul>
-                    <li>Developed computer vision prototype to improve safety of 2-Post Lifts in Tesla service centers</li>
-                    <li>Built ANPR system using OpenCV and trained segmentation model for lift arm detection</li>
-                </ul>
-            </div>
-
-            <div class="experience-item">
-                <h3>Software Engineering Intern - Ford</h3>
-                <div class="experience-meta">Jan – April 2024 | Dearborn, Michigan</div>
-                <ul>
-                    <li>Worked on automated regression test suite using Playwright and TypeScript</li>
-                </ul>
-            </div>
+        <section class="links">
+            <a href="https://github.com/aliestaha" target="_blank">github</a>
+            <a href="https://www.linkedin.com/in/aliestaha/" target="_blank">linkedin</a>
+            <a href="mailto:ali.taha@uwaterloo.ca">email</a>
         </section>
-
-        <section id="writings">
-            <h2>Writings</h2>
-            <ul class="writings-list">
-                <li>
-                    <span class="date">Coming soon</span>
-                    <a href="#">Optimizing Matrix Multiplication on Blackwell</a>
-                </li>
-                <li>
-                    <span class="date">Coming soon</span>
-                    <a href="#">Understanding GPU Memory Hierarchies</a>
-                </li>
-                <li>
-                    <span class="date">Coming soon</span>
-                    <a href="#">From CUDA to Mojo: A Performance Journey</a>
-                </li>
-            </ul>
-        </section>
-
-        <section id="bookshelf">
-            <h2>Bookshelf</h2>
-            <p style="margin-bottom: 30px; color: #666;">Books I've read and recommend:</p>
-            
-            <div class="book-item">
-                <span class="book-title">Programming Massively Parallel Processors</span>
-                <span class="book-author">David Kirk & Wen-mei Hwu</span>
-            </div>
-            
-            <div class="book-item">
-                <span class="book-title">Computer Architecture: A Quantitative Approach</span>
-                <span class="book-author">John Hennessy & David Patterson</span>
-            </div>
-            
-            <div class="book-item">
-                <span class="book-title">The Pragmatic Programmer</span>
-                <span class="book-author">David Thomas & Andrew Hunt</span>
-            </div>
-            
-            <div class="book-item">
-                <span class="book-title">Deep Learning</span>
-                <span class="book-author">Ian Goodfellow, Yoshua Bengio & Aaron Courville</span>
-            </div>
-        </section>
-
-        <footer>
-            <p>© 2025 Ali Taha</p>
-        </footer>
     </div>
 </body>
 </html>
