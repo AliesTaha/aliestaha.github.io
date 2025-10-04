@@ -1,448 +1,300 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Ali Taha - Interactive Resume</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ali Taha</title>
     <style>
-        body {
-            font-family: 'Courier New', Courier, monospace;
+        * {
             margin: 0;
-            padding: 20px;
-            background-color: #333;
-            color: #f4f4f4;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        header {
-            text-align: center;
-            padding: 20px;
-            background-color: #f4f4f4;
-            color: #333;
-            box-shadow: 5px 5px 0 #666;
-            position: relative;
-        }
-        header h1 {
-            font-size: 3em;
-            margin: 0;
-            font-weight: bold;
-        }
-        #theme-toggle {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            background-color: #f4f4f4;
-            color: #333;
-            border: 2px solid #333;
-            border-radius: 50%;
-            cursor: pointer;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1.5em;
-            box-shadow: 2px 2px 0 #666;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
-        }
-        #theme-toggle::before {
-            content: '☀️';
-        }
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #444;
-            border: 2px solid #333;
-            box-shadow: 5px 5px 0 #333;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .section {
-            margin-bottom: 40px;
-            padding: 20px;
-            background-color: #555;
-            border: 2px solid #333;
-            box-shadow: 5px 5px 0 #333;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .section h2 {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-        .section p, .section ul {
-            line-height: 1.6;
-            font-size: 1.2em;
-        }
-        .main {
-            display: flex;
-            gap: 20px;
-        }
-        .job-list {
-            width: 30%;
-        }
-        .job-list ul {
-            list-style-type: none;
             padding: 0;
+            box-sizing: border-box;
         }
-        .job-list li {
-            margin: 10px 0;
-            padding: 10px;
-            background-color: #555;
-            border: 2px solid #333;
-            box-shadow: 3px 3px 0 #333;
-            cursor: pointer;
-            transition: background-color 0.3s, color 0.3s;
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica', Arial, sans-serif;
+            background-color: #f5f1e8;
+            color: #2c2c2c;
+            line-height: 1.7;
+            font-size: 17px;
         }
-        .job-list li:hover {
-            background-color: #666;
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 60px 20px;
         }
-        .job-list li.active {
-            background-color: #777;
-            font-weight: bold;
+
+        header {
+            margin-bottom: 60px;
         }
-        .job-details {
-            width: 70%;
-            background-color: #444;
-            border: 2px solid #333;
-            box-shadow: 5px 5px 0 #333;
-            padding: 20px;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .job-details h2 {
-            margin-top: 0;
-        }
-        .projects-container {
-            display: flex;
-            gap: 20px;
-            justify-content: space-between;
-        }
-        .project-card {
-            flex: 1;
-            padding: 20px;
-            background-color: #555;
-            border: 2px solid #333;
-            box-shadow: 5px 5px 0 #333;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-        .project-card:hover {
-            background-color: #666;
-        }
-        .project-card h3 {
-            margin-top: 0;
-            font-size: 1.5em;
-            text-align: center;
-        }
-        .project-details-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            transition: opacity 0.3s ease;
-        }
-        .project-details-box {
-            background-color: #555;
-            padding: 30px;
-            border: 2px solid #333;
-            box-shadow: 5px 5px 0 #333;
-            max-width: 600px;
-            text-align: center;
-            position: relative;
-        }
-        .project-details-box h3 {
-            margin-top: 0;
-            font-size: 2em;
-        }
-        .project-details-box p {
-            font-size: 1.2em;
+
+        h1 {
+            font-size: 2.5em;
+            font-weight: 600;
             margin-bottom: 20px;
+            color: #1a1a1a;
         }
-        .retro-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #333;
-            color: #fff;
+
+        nav {
+            margin-top: 30px;
+        }
+
+        nav a {
+            color: #2c2c2c;
             text-decoration: none;
-            border: 2px solid #fff;
-            box-shadow: 2px 2px 0 #fff;
-            transition: background-color 0.3s, box-shadow 0.3s;
+            margin-right: 25px;
+            font-size: 1.05em;
+            transition: opacity 0.2s;
         }
-        .retro-button:hover {
-            background-color: #fff;
-            color: #333;
-            box-shadow: 2px 2px 0 #333;
+
+        nav a:hover {
+            opacity: 0.6;
         }
-        .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: transparent;
-            border: none;
-            color: #fff; /* Default color for dark mode */
-            font-size: 1.5em;
-            cursor: pointer;
-            transition: color 0.3s;
+
+        section {
+            margin-bottom: 80px;
         }
-        
-        .light-mode .close-button {
-            color: #333; /* Dark color for visibility in light mode */
+
+        h2 {
+            font-size: 1.8em;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #1a1a1a;
         }
-        .light-mode header {
-            background-color: #333;
-            color: #f4f4f4;
+
+        .about p {
+            margin-bottom: 15px;
+            color: #444;
         }
-        .light-mode #theme-toggle {
-            background-color: #333;
-            color: #f4f4f4;
-            border-color: #f4f4f4;
+
+        .contact-links {
+            margin-top: 20px;
         }
-        .light-mode .container {
-            background-color: rgba(255, 255, 255, 0.9);
-            color: #333;
+
+        .contact-links a {
+            color: #2c2c2c;
+            text-decoration: none;
+            margin-right: 20px;
+            border-bottom: 1px solid #2c2c2c;
+            transition: opacity 0.2s;
         }
-        .light-mode .section {
-            background-color: #fff;
-            color: #333;
+
+        .contact-links a:hover {
+            opacity: 0.6;
         }
-        .light-mode .job-list li {
-            background-color: #ddd;
-            border-color: #ccc;
+
+        .writings-list, .bookshelf-list {
+            list-style: none;
         }
-        .light-mode .job-list li:hover {
-            background-color: #ccc;
+
+        .writings-list li {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #d4cbb8;
         }
-        .light-mode .job-list li.active {
-            background-color: #bbb;
+
+        .writings-list li:last-child {
+            border-bottom: none;
         }
-        .light-mode .job-details {
-            background-color: #fff;
+
+        .date {
+            color: #888;
+            font-size: 0.95em;
+            margin-bottom: 5px;
+            display: block;
         }
-        .light-mode .project-card {
-            background-color: #ddd;
-            color: #333;
+
+        .writings-list a, .bookshelf-list a {
+            color: #1a1a1a;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.2s;
         }
-        .light-mode .project-details-box {
-            background-color: #fff;
-            color: #333;
+
+        .writings-list a:hover, .bookshelf-list a:hover {
+            opacity: 0.6;
         }
-        .light-mode .retro-button {
-            background-color: #f4f4f4;
-            color: #333;
-            box-shadow: 2px 2px 0 #333;
+
+        .book-item {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #d4cbb8;
         }
-        .light-mode .retro-button:hover {
-            background-color: #333;
-            color: #f4f4f4;
-            box-shadow: 2px 2px 0 #f4f4f4;
+
+        .book-item:last-child {
+            border-bottom: none;
         }
-        .light-mode a {
-            color: #333;
+
+        .book-title {
+            font-weight: 500;
+            color: #1a1a1a;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .book-author {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .experience-item {
+            margin-bottom: 35px;
+        }
+
+        .experience-item h3 {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 5px;
+        }
+
+        .experience-meta {
+            color: #888;
+            font-size: 0.95em;
+            margin-bottom: 15px;
+        }
+
+        .experience-item ul {
+            margin-left: 20px;
+            color: #444;
+        }
+
+        .experience-item ul li {
+            margin-bottom: 8px;
+        }
+
+        footer {
+            margin-top: 100px;
+            padding-top: 30px;
+            border-top: 1px solid #d4cbb8;
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            nav a {
+                display: block;
+                margin-bottom: 10px;
+            }
         }
     </style>
 </head>
-<body class="dark-mode">
-    <header>
-        <h1>Ali Taha</h1>
-        <button id="theme-toggle" title="Switch to Light Mode"></button>
-    </header>
-
+<body>
     <div class="container">
-        <!-- About Me -->
-        <div class="section">
-            <h2>Who am I?</h2>
-            <p>
-                I'm Ali. I'm a 3rd-year Computer Engineering student at the University of Waterloo, 
-                focusing on Software Engineering and Machine Learning research. When I'm not coding, 
-                you can find me in the gym, out on a hike, or, if the weather's justtt right, I'll jump out of planes.
-            </p>
-        </div>
+        <header>
+            <h1>Ali Taha</h1>
+            <nav>
+                <a href="#about">About</a>
+                <a href="#experience">Experience</a>
+                <a href="#writings">Writings</a>
+                <a href="#bookshelf">Bookshelf</a>
+            </nav>
+        </header>
 
-        <!-- Experience -->
-        <div class="section main">
-            <div class="job-list">
-                <h2>Experience</h2>
+        <section id="about" class="about">
+            <p>
+                I'm a 3rd-year Computer Engineering student at the University of Waterloo. 
+                I work on GPU kernels and performance optimization. Most recently, I was at 
+                <a href="https://www.modular.com" target="_blank" style="color: inherit; border-bottom: 1px solid #2c2c2c; text-decoration: none;">Modular</a> 
+                building state-of-the-art matrix multiplication kernels for Blackwell GPUs.
+            </p>
+            <p>
+                When I'm not coding, you can find me in the gym, out on a hike, or jumping out of planes when the weather's just right.
+            </p>
+            <div class="contact-links">
+                <a href="mailto:ali.taha@uwaterloo.ca">Email</a>
+                <a href="https://github.com/aliestaha" target="_blank">GitHub</a>
+                <a href="https://www.linkedin.com/in/aliestaha/" target="_blank">LinkedIn</a>
+            </div>
+        </section>
+
+        <section id="experience">
+            <h2>Experience</h2>
+            
+            <div class="experience-item">
+                <h3>GPU Kernel Intern - Modular</h3>
+                <div class="experience-meta">May – August 2025 | Los Altos, California</div>
                 <ul>
-                    <li data-job="ml-research" class="active">ML Research Assistant</li>
-                    <li data-job="tesla">Tesla</li>
-                    <li data-job="watonomous">Watonomous</li>
-                    <li data-job="ford">Ford</li>
-                    <li data-job="blackberry">BlackBerry</li>
+                    <li>Brought up state-of-the-art matrix multiplication kernels on Blackwell GPU, beating NVIDIA's cuBLAS at 103% SOTA performance</li>
+                    <li>Achieved 2 PetaFLOPs for matmuls on 8192×8192 matrices using TMA multicasting and pipelined scheduling</li>
+                    <li>Wrote high-performance 1D convolution kernel that beat SOTA cuDNN by 7x</li>
+                    <li>Implemented Hilbert curve scheduling for H100, improving performance from 91% to 92.8% (367.96 → 375.83 TFLOPS)</li>
                 </ul>
             </div>
-            <div class="job-details">
-                <!-- ML Research Assistant -->
-                <div id="ml-research">
-                    <h2>Machine Learning Research Assistant - University of Waterloo</h2>
-                    <p><em>Jan 2025 – Present | Waterloo, Ontario</em></p>
-                    <ul>
-                        <li>Refined transformer architectures by distinguishing contextual meanings in text-based corpora.</li>
-                        <li>Improved semantic understanding in Large-Language Models by classifying conditional probability distributions.</li>
-                        <li>Collaborated with a research team to enhance multi-head attention mechanisms.</li>
-                    </ul>
-                </div>
 
-                <!-- Tesla -->
-                <div id="tesla" style="display:none;">
-                    <h2>Software Engineering Intern - Tesla</h2>
-                    <p><em>Sep 2024 – Jan 2025 | Fremont, California</em></p>
-                    <ul>
-                        <li>Developed a vision prototype, securing \$500,000 in funding to enhance safety at Tesla service centers.</li>
-                        <li>Leveraged AP4 cameras for automated image capture, implementing an ANPR system for license plate detection.</li>
-                        <li>Implemented parallel multi-processing in Python to reduce system run-time from 15s to 7s.</li>
-                        <li>Applied computer vision (OpenCV) techniques, including HSV filtering and contour detection, improving detection accuracy by 20%.</li>
-                        <li>Used Transformers to recognize DOT patterns, achieving 95% accuracy on 800+ factory wheels.</li>
-                    </ul>
-                </div>
-
-                <!-- Watonomous -->
-                <div id="watonomous" style="display:none;">
-                    <h2>Software Developer - Watonomous</h2>
-                    <p><em>Feb – May 2024 | Waterloo, Ontario</em></p>
-                    <ul>
-                        <li>Developed a navigation system for a virtual robot using a proportional controller to reduce over-steering.</li>
-                        <li>Created ROS2 timer, subscriber, and publisher nodes in Python to handle string and odometry messages.</li>
-                        <li>Utilized coordinate transforms to convert global coordinates into robot-relative frames, streamlining path planning.</li>
-                    </ul>
-                </div>
-
-                <!-- Ford -->
-                <div id="ford" style="display:none;">
-                    <h2>Software Engineering Intern - Ford</h2>
-                    <p><em>Jan – Apr 2024 | Dearborn, Michigan</em></p>
-                    <ul>
-                        <li>Developed a Python-based automated email system using SMTP, reducing manual reporting time to 1 minute.</li>
-                        <li>Expanded automated regression test suite by 20% using Playwright and TypeScript, uncovering 85+ defects.</li>
-                        <li>Integrated CI/CD pipelines to cut script run-times from 30 to 2 minutes.</li>
-                    </ul>
-                </div>
-
-                <!-- BlackBerry -->
-                <div id="blackberry" style="display:none;">
-                    <h2>Software Engineering Intern - BlackBerry</h2>
-                    <p><em>May – Aug 2023 | Waterloo, Ontario</em></p>
-                    <ul>
-                        <li>Designed and deployed a full-stack solution for 4000+ personnel, visualizing analytics and service data.</li>
-                        <li>Utilized PostgreSQL for dynamic data management and implemented a scalable back-end API.</li>
-                        <li>Reduced processing time by 75% by migrating from flat files to a JIRA-powered DB, leveraging Python scripts.</li>
-                    </ul>
-                </div>
+            <div class="experience-item">
+                <h3>Software Engineering Intern - Tesla</h3>
+                <div class="experience-meta">Sep – Dec 2024 | Fremont, California</div>
+                <ul>
+                    <li>Developed computer vision prototype to improve safety of 2-Post Lifts in Tesla service centers</li>
+                    <li>Built ANPR system using OpenCV and trained segmentation model for lift arm detection</li>
+                </ul>
             </div>
-        </div>
 
-        <!-- Projects -->
-        <div class="section">
-            <h2>Projects</h2>
-            <div class="projects-container">
-                <div class="project-card" data-project="project-lunar">
-                    <h3>LunarLander - Reinforcement Learning</h3>
-                </div>
-                <div class="project-card" data-project="project-baremetal">
-                    <h3>Bare Metal Neural Network</h3>
-                </div>
+            <div class="experience-item">
+                <h3>Software Engineering Intern - Ford</h3>
+                <div class="experience-meta">Jan – April 2024 | Dearborn, Michigan</div>
+                <ul>
+                    <li>Worked on automated regression test suite using Playwright and TypeScript</li>
+                </ul>
             </div>
-        </div>
+        </section>
 
-        <!-- Project Overlays -->
-        <div id="project-lunar" class="project-details-overlay">
-            <div class="project-details-box">
-                <button class="close-button" onclick="closeProjectDetails()">✖</button>
-                <h3>LunarLander - Reinforcement Learning</h3>
-                <p>
-                    Engineered a Deep Q-Network (DQN) to autonomously land a rocket in a simulated lunar environment. 
-                    Used TensorFlow and Keras to implement a dual-network architecture with experience replay and 
-                    soft updates, reducing training time by 50%.
-                </p>
-                <a href="https://github.com/AliesTaha/Deep-Q-Network-Moon-Lander" class="retro-button" target="_blank" rel="noopener noreferrer">Learn More</a>
-            </div>
-        </div>
-
-        <div id="project-baremetal" class="project-details-overlay">
-            <div class="project-details-box">
-                <button class="close-button" onclick="closeProjectDetails()">✖</button>
-                <h3>Bare Metal Neural Network</h3>
-                <p>
-                    Implemented dense layers, forward/backward propagation, and custom optimizers (SGD, Adam) using 
-                    only Python and NumPy. Developed and tested activation functions (ReLU, Softmax) and loss functions 
-                    (categorical cross-entropy) from scratch. 
-                </p>
-                <a href="https://github.com/AliesTaha/BareNeuralNetwork" class="retro-button" target="_blank" rel="noopener noreferrer">Learn More</a>
-            </div>
-        </div>
-
-        <!-- Education -->
-        <div class="section">
-            <h2>Education</h2>
-            <p><strong>University of Waterloo</strong></p>
-            <p>Bachelor of Computer Engineering (Honours)</p>
-            <p><em>Sep 2022 – May 2027 | Waterloo, ON</em></p>
-        </div>
-
-        <!-- Skills -->
-        <div class="section">
-            <h2>Technical Skills</h2>
-            <ul>
-                <li><strong>Languages:</strong>Python, C, C++</li>
-                <li><strong>ML/AI Tools:</strong> TensorFlow, Keras, PyTorch, NumPy, OpenCV</li>
-                <li><strong>Concepts:</strong> Reinforcement Learning, CNNs, Transformers, Parallel Processing</li>
+        <section id="writings">
+            <h2>Writings</h2>
+            <ul class="writings-list">
+                <li>
+                    <span class="date">Coming soon</span>
+                    <a href="#">Optimizing Matrix Multiplication on Blackwell</a>
+                </li>
+                <li>
+                    <span class="date">Coming soon</span>
+                    <a href="#">Understanding GPU Memory Hierarchies</a>
+                </li>
+                <li>
+                    <span class="date">Coming soon</span>
+                    <a href="#">From CUDA to Mojo: A Performance Journey</a>
+                </li>
             </ul>
-        </div>
+        </section>
+
+        <section id="bookshelf">
+            <h2>Bookshelf</h2>
+            <p style="margin-bottom: 30px; color: #666;">Books I've read and recommend:</p>
+            
+            <div class="book-item">
+                <span class="book-title">Programming Massively Parallel Processors</span>
+                <span class="book-author">David Kirk & Wen-mei Hwu</span>
+            </div>
+            
+            <div class="book-item">
+                <span class="book-title">Computer Architecture: A Quantitative Approach</span>
+                <span class="book-author">John Hennessy & David Patterson</span>
+            </div>
+            
+            <div class="book-item">
+                <span class="book-title">The Pragmatic Programmer</span>
+                <span class="book-author">David Thomas & Andrew Hunt</span>
+            </div>
+            
+            <div class="book-item">
+                <span class="book-title">Deep Learning</span>
+                <span class="book-author">Ian Goodfellow, Yoshua Bengio & Aaron Courville</span>
+            </div>
+        </section>
+
+        <footer>
+            <p>© 2025 Ali Taha</p>
+        </footer>
     </div>
-
-    <script>
-        const jobs = document.querySelectorAll('.job-list li');
-        const jobDetails = document.querySelectorAll('.job-details > div');
-        const toggleButton = document.getElementById('theme-toggle');
-        const projectCards = document.querySelectorAll('.project-card');
-        const projectDetailsOverlays = document.querySelectorAll('.project-details-overlay');
-
-        // Experience tab switching
-        jobs.forEach(job => {
-            job.addEventListener('click', () => {
-                jobs.forEach(j => j.classList.remove('active'));
-                job.classList.add('active');
-                
-                jobDetails.forEach(detail => detail.style.display = 'none');
-                document.getElementById(job.getAttribute('data-job')).style.display = 'block';
-            });
-        });
-
-        // Project card pop-up
-        projectCards.forEach(card => {
-            card.addEventListener('click', () => {
-                const projectId = card.getAttribute('data-project');
-                document.getElementById(projectId).style.display = 'flex';
-                document.getElementById(projectId).style.opacity = '1';
-            });
-        });
-
-        // Close project pop-up
-        function closeProjectDetails() {
-            projectDetailsOverlays.forEach(overlay => {
-                overlay.style.opacity = '0';
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                }, 300);
-            });
-        }
-
-        // Theme toggle
-        toggleButton.addEventListener('click', () => {
-            document.body.classList.toggle('light-mode');
-            if (document.body.classList.contains('light-mode')) {
-                toggleButton.title = 'Switch to Dark Mode';
-            } else {
-                toggleButton.title = 'Switch to Light Mode';
-            }
-        });
-    </script>
 </body>
 </html>
