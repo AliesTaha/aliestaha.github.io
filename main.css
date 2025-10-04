@@ -342,6 +342,7 @@ h1 {
 
 .about-content {
     flex: 1;
+    max-width: 600px;
 }
 
 .intro-text {
@@ -377,11 +378,13 @@ h1 {
 
 .about-image {
     position: relative;
+    flex-shrink: 0;
 }
 
 .about-image img {
     width: 220px;
-    height: auto;
+    max-width: 220px;
+    max-height: 300px;
     border-radius: 8px;
     display: block;
     object-fit: cover;
