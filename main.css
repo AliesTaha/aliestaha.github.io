@@ -380,10 +380,11 @@ h1 {
 }
 
 .about-image img {
-    width: 280px;
+    width: 220px;
     height: auto;
     border-radius: 8px;
     display: block;
+    object-fit: cover;
 }
 
 .footnote {
