@@ -7,7 +7,7 @@
 body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-color: #f5f1e8;
-    color: #2b2b2b;
+    color: #232323;
     line-height: 1.65;
     font-size: 18px;
     -webkit-font-smoothing: antialiased;
@@ -28,7 +28,7 @@ body {
 }
 
 .nav-link {
-    color: #666;
+    color: #2a2a2a;
     text-decoration: none;
     font-size: 16px;
     transition: color 0.3s ease;
@@ -36,11 +36,11 @@ body {
 }
 
 .nav-link:hover {
-    color: #2b2b2b;
+    color: #1a1a1a;
 }
 
 .nav-link.active {
-    color: #2b2b2b;
+    color: #1a1a1a;
 }
 
 .container {
@@ -50,12 +50,12 @@ body {
 }
 
 .hero {
-    margin-bottom: 80px;
+    margin-bottom: 50px;
 }
 
 h1 {
     font-size: 42px;
-    font-weight: 400;
+    font-weight: 450;
     margin-bottom: 15px;
     letter-spacing: -0.01em;
     color: #1a1a1a;
@@ -63,7 +63,7 @@ h1 {
 
 .subtitle {
     font-size: 20px;
-    color: #666;
+    color: #232323;
     font-weight: 300;
 }
 
@@ -73,20 +73,20 @@ h1 {
 
 .intro p {
     margin-bottom: 22px;
-    color: #3a3a3a;
+    color: #232323;
     font-size: 18px;
     font-weight: 300;
 }
 
 .intro a {
-    color: #2b2b2b;
+    color: #1a1a1a;
     text-decoration: none;
-    border-bottom: 1.5px solid rgba(0, 0, 0, 0.2);
+    border-bottom: 1.5px solid rgba(0, 0, 0, 0.25);
     transition: border-color 0.3s ease;
 }
 
 .intro a:hover {
-    border-bottom: 1.5px solid rgba(0, 0, 0, 0.5);
+    border-bottom: 1.5px solid rgba(0, 0, 0, 0.6);
 }
 
 .links {
@@ -96,7 +96,7 @@ h1 {
 }
 
 .links a {
-    color: #666;
+    color: #2a2a2a;
     text-decoration: none;
     font-size: 16px;
     transition: color 0.3s ease;
@@ -104,7 +104,7 @@ h1 {
 }
 
 .links a:hover {
-    color: #2b2b2b;
+    color: #232323;
 }
 
 /* experience page */
@@ -124,19 +124,19 @@ h1 {
 
 .experience-item h3 {
     font-size: 22px;
-    font-weight: 400;
+    font-weight: 450;
     color: #1a1a1a;
     margin-bottom: 2px;
 }
 
 .company {
     font-size: 18px;
-    color: #888;
+    color: #1a1a1a;
     font-weight: 300;
 }
 
 .meta {
-    color: #999;
+    color: #1a1a1a;
     font-size: 15px;
     margin-bottom: 20px;
     font-weight: 300;
@@ -151,7 +151,7 @@ h1 {
     margin-bottom: 14px;
     padding-left: 0;
     position: relative;
-    color: #3a3a3a;
+    color: #232323;
     font-size: 17px;
     line-height: 1.7;
     font-weight: 300;
@@ -161,18 +161,18 @@ h1 {
     content: '•';
     position: absolute;
     left: -18px;
-    color: #bbb;
+    color: #aaa;
 }
 
 .experience-item ul li a {
-    color: #2b2b2b;
+    color: #1a1a1a;
     text-decoration: none;
-    border-bottom: 1.5px solid rgba(0, 0, 0, 0.2);
+    border-bottom: 1.5px solid rgba(0, 0, 0, 0.25);
     transition: border-color 0.3s ease;
 }
 
 .experience-item ul li a:hover {
-    border-bottom: 1.5px solid rgba(0, 0, 0, 0.5);
+    border-bottom: 1.5px solid rgba(0, 0, 0, 0.6);
 }
 
 /* projects page */
@@ -188,7 +188,7 @@ h1 {
 
 .project-item h3 {
     font-size: 22px;
-    font-weight: 400;
+    font-weight: 450;
     margin-bottom: 8px;
 }
 
@@ -203,7 +203,7 @@ h1 {
 }
 
 .tech {
-    color: #999;
+    color: #1a1a1a;
     font-size: 15px;
     margin-bottom: 18px;
     font-weight: 300;
@@ -218,7 +218,7 @@ h1 {
     margin-bottom: 14px;
     padding-left: 0;
     position: relative;
-    color: #3a3a3a;
+    color: #232323;
     font-size: 17px;
     line-height: 1.7;
     font-weight: 300;
@@ -228,7 +228,7 @@ h1 {
     content: '•';
     position: absolute;
     left: -18px;
-    color: #bbb;
+    color: #aaa;
 }
 
 /* writing page */
@@ -237,7 +237,7 @@ h1 {
 }
 
 .writing-item .date {
-    color: #999;
+    color: #1a1a1a;
     font-size: 15px;
     margin-bottom: 8px;
     display: block;
@@ -246,7 +246,7 @@ h1 {
 
 .writing-item h3 {
     font-size: 22px;
-    font-weight: 400;
+    font-weight: 450;
     margin: 0;
 }
 
@@ -261,7 +261,7 @@ h1 {
 }
 
 .writing-item .description {
-    color: #666;
+    color: #2a2a2a;
     font-size: 17px;
     line-height: 1.7;
     margin-top: 8px;
@@ -275,7 +275,7 @@ h1 {
 
 .contact-section > p {
     margin-bottom: 50px;
-    color: #3a3a3a;
+    color: #232323;
     font-size: 18px;
     font-weight: 300;
 }
@@ -291,14 +291,14 @@ h1 {
 }
 
 .label {
-    color: #999;
+    color: #1a1a1a;
     font-size: 16px;
     min-width: 110px;
     font-weight: 300;
 }
 
 .contact-item a {
-    color: #2b2b2b;
+    color: #1a1a1a;
     text-decoration: none;
     transition: opacity 0.3s ease;
     font-weight: 300;
@@ -318,7 +318,7 @@ h1 {
 .education-section h3,
 .skills-section h3 {
     font-size: 22px;
-    font-weight: 400;
+    font-weight: 450;
     margin-bottom: 20px;
     color: #1a1a1a;
 }
@@ -326,7 +326,7 @@ h1 {
 .education-section p,
 .skills-section p {
     margin-bottom: 10px;
-    color: #3a3a3a;
+    color: #232323;
     font-size: 17px;
     font-weight: 300;
 }
