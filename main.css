@@ -1,0 +1,370 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300..500&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background-color: #f5f1e8;
+    color: #1a1a1a;
+    line-height: 1.65;
+    font-size: 18px;
+    -webkit-font-smoothing: antialiased;
+}
+
+.nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 30px 50px;
+    background-color: rgba(245, 241, 232, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    z-index: 1000;
+    display: flex;
+    gap: 35px;
+}
+
+.nav-link {
+    color: #202020;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s ease;
+    font-weight: 400;
+}
+
+.nav-link:hover {
+    color: #1a1a1a;
+}
+
+.nav-link.active {
+    color: #1a1a1a;
+}
+
+.container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 140px 30px 100px;
+}
+
+.hero {
+    margin-bottom: 50px;
+}
+
+h1 {
+    font-size: 42px;
+    font-weight: 450;
+    margin-bottom: 15px;
+    letter-spacing: -0.01em;
+    color: #1a1a1a;
+}
+
+.subtitle {
+    font-size: 20px;
+    color: #1a1a1a;
+    font-weight: 300;
+}
+
+.intro {
+    margin-bottom: 60px;
+}
+
+.intro p {
+    margin-bottom: 22px;
+    color: #1a1a1a;
+    font-size: 18px;
+    font-weight: 300;
+}
+
+.intro a {
+    color: #1a1a1a;
+    text-decoration: none;
+    border-bottom: 1.5px solid rgba(0, 0, 0, 0.25);
+    transition: border-color 0.3s ease;
+}
+
+.intro a:hover {
+    border-bottom: 1.5px solid rgba(0, 0, 0, 0.6);
+}
+
+.links {
+    display: flex;
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.links a {
+    color: #202020;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s ease;
+    font-weight: 300;
+}
+
+.links a:hover {
+    color: #1a1a1a;
+}
+
+/* experience page */
+.experience-item {
+    margin-bottom: 55px;
+    padding-bottom: 55px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.experience-item:last-child {
+    border-bottom: none;
+}
+
+.exp-header {
+    margin-bottom: 8px;
+}
+
+.experience-item h3 {
+    font-size: 22px;
+    font-weight: 450;
+    color: #1a1a1a;
+    margin-bottom: 2px;
+}
+
+.company {
+    font-size: 18px;
+    color: #1a1a1a;
+    font-weight: 300;
+}
+
+.meta {
+    color: #1a1a1a;
+    font-size: 15px;
+    margin-bottom: 20px;
+    font-weight: 300;
+}
+
+.experience-item ul {
+    list-style: none;
+    margin-top: 18px;
+}
+
+.experience-item ul li {
+    margin-bottom: 14px;
+    padding-left: 0;
+    position: relative;
+    color: #1a1a1a;
+    font-size: 17px;
+    line-height: 1.7;
+    font-weight: 300;
+}
+
+.experience-item ul li:before {
+    content: '•';
+    position: absolute;
+    left: -18px;
+    color: #aaa;
+}
+
+.experience-item ul li a {
+    color: #1a1a1a;
+    text-decoration: none;
+    border-bottom: 1.5px solid rgba(0, 0, 0, 0.25);
+    transition: border-color 0.3s ease;
+}
+
+.experience-item ul li a:hover {
+    border-bottom: 1.5px solid rgba(0, 0, 0, 0.6);
+}
+
+/* projects page */
+.project-item {
+    margin-bottom: 55px;
+    padding-bottom: 55px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.project-item:last-child {
+    border-bottom: none;
+}
+
+.project-item h3 {
+    font-size: 22px;
+    font-weight: 450;
+    margin-bottom: 8px;
+}
+
+.project-item h3 a {
+    color: #1a1a1a;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+.project-item h3 a:hover {
+    opacity: 0.6;
+}
+
+.tech {
+    color: #1a1a1a;
+    font-size: 15px;
+    margin-bottom: 18px;
+    font-weight: 300;
+}
+
+.project-item ul {
+    list-style: none;
+    margin-top: 18px;
+}
+
+.project-item ul li {
+    margin-bottom: 14px;
+    padding-left: 0;
+    position: relative;
+    color: #1a1a1a;
+    font-size: 17px;
+    line-height: 1.7;
+    font-weight: 300;
+}
+
+.project-item ul li:before {
+    content: '•';
+    position: absolute;
+    left: -18px;
+    color: #aaa;
+}
+
+/* writing page */
+.writing-item {
+    margin-bottom: 50px;
+}
+
+.writing-item .date {
+    color: #1a1a1a;
+    font-size: 15px;
+    margin-bottom: 8px;
+    display: block;
+    font-weight: 300;
+}
+
+.writing-item h3 {
+    font-size: 22px;
+    font-weight: 450;
+    margin: 0;
+}
+
+.writing-item h3 a {
+    color: #1a1a1a;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+.writing-item h3 a:hover {
+    opacity: 0.6;
+}
+
+.writing-item .description {
+    color: #202020;
+    font-size: 17px;
+    line-height: 1.7;
+    margin-top: 8px;
+    font-weight: 300;
+}
+
+/* contact page */
+.contact-section {
+    margin-top: 50px;
+}
+
+.contact-section > p {
+    margin-bottom: 50px;
+    color: #1a1a1a;
+    font-size: 18px;
+    font-weight: 300;
+}
+
+.contact-links {
+    margin-bottom: 70px;
+}
+
+.contact-item {
+    margin-bottom: 25px;
+    display: flex;
+    gap: 25px;
+}
+
+.label {
+    color: #1a1a1a;
+    font-size: 16px;
+    min-width: 110px;
+    font-weight: 300;
+}
+
+.contact-item a {
+    color: #1a1a1a;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+    font-weight: 300;
+}
+
+.contact-item a:hover {
+    opacity: 0.6;
+}
+
+.education-section,
+.skills-section {
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.education-section h3,
+.skills-section h3 {
+    font-size: 22px;
+    font-weight: 450;
+    margin-bottom: 20px;
+    color: #1a1a1a;
+}
+
+.education-section p,
+.skills-section p {
+    margin-bottom: 10px;
+    color: #1a1a1a;
+    font-size: 17px;
+    font-weight: 300;
+}
+
+/* mobile responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 120px 25px 80px;
+    }
+
+    .nav {
+        padding: 20px 25px;
+        gap: 25px;
+        flex-wrap: wrap;
+    }
+
+    h1 {
+        font-size: 36px;
+    }
+
+    .subtitle {
+        font-size: 18px;
+    }
+
+    .exp-header {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .contact-item {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .label {
+        min-width: auto;
+    }
+}
+
