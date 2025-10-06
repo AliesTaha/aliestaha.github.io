@@ -235,13 +235,15 @@ h1 {
 
 /* writing page */
 .writing-item {
-    margin-bottom: 50px;
+    margin-bottom: 30px;
 }
 
 .writing-item .date {
-    color: #1a1a1a;
+    color: #888;
     font-size: 15px;
     margin-bottom: 8px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
     display: block;
     font-weight: 300;
 }
@@ -266,7 +268,7 @@ h1 {
     color: #202020;
     font-size: 17px;
     line-height: 1.7;
-    margin-top: 8px;
+    margin-top: 6px;
     font-weight: 300;
 }
 
@@ -401,7 +403,7 @@ h1 {
 
 /* blog content */
 .blog-content {
-    margin-top: 40px;
+    margin-top: 0;
 }
 
 .blog-content p {
@@ -433,10 +435,12 @@ h1 {
 }
 
 .date {
-    color: #1a1a1a;
+    color: #888;
     font-size: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 0;
+    padding-top: 15px;
     font-weight: 300;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 /* mobile responsive */
