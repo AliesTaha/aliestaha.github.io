@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="../AT.png">
     <link rel="stylesheet" href="../main.css">
 </head>
-<body>
+<body data-blog-id="elements-a-reflection">
     <nav class="nav">
         <a href="../index.html" class="nav-link">home</a>
         <a href="../technical.html" class="nav-link">technical</a>
@@ -18,12 +18,17 @@
 
     <div class="container">
         <h1>elements- a reflection</h1>
-        <p class="date">hopefully soon</p>
+        <p class="date" id="blog-date"></p>
         
         <div class="blog-content">
             <p>i'm still thinking about this one</p>
         </div>
     </div>
+
+    <script src="../blog-data.js"></script>
+    <script>
+        injectBlogDate();
+    </script>
 </body>
 </html>
 
