@@ -617,14 +617,15 @@ body {
     backdrop-filter: blur(20px);
     border-radius: 16px;
     border: 1px solid rgba(0, 0, 0, 0.06);
-    padding: 24px 28px;
+    padding: 5px 6px;
     box-shadow: 
         0 8px 24px rgba(0, 0, 0, 0.08),
         0 0 1px rgba(0, 0, 0, 0.05);
     text-align: center;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 2px;
+    transform: scale(1.1);
 }
 
 .profile-image {
