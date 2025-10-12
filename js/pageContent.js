@@ -138,6 +138,38 @@ const pageContent = {
                 <a href="https://www.linkedin.com/in/aliestaha/" target="_blank">linkedin.com/in/aliestaha</a>
             </div>
         </div>
+    `,
+    timer: `
+        <h1>Study Timer</h1>
+        <div class="timer-container">
+            <div class="session-input-container">
+                <input type="text" id="session-name" class="session-input" placeholder="Session name" />
+            </div>
+            <div class="timer-progress-container">
+                <div class="timer-progress-bar" id="timer-progress"></div>
+            </div>
+            <div class="timer-display" id="timer-display">03:00:00</div>
+            <div class="timer-controls">
+                <button class="timer-btn" id="start-btn">Start</button>
+                <button class="timer-btn" id="pause-btn" disabled>Pause</button>
+                <button class="timer-btn" id="reset-btn">Reset</button>
+            </div>
+            <div class="timer-presets">
+                <h3>Presets</h3>
+                <button class="preset-btn active" data-minutes="180">3 Hours</button>
+                <button class="preset-btn" data-minutes="120">2 Hours</button>
+                <button class="preset-btn" data-minutes="60">1 Hour</button>
+                <button class="preset-btn" data-minutes="45">45 Min</button>
+                <button class="preset-btn" data-minutes="25">25 Min</button>
+            </div>
+            <div class="timer-status" id="timer-status">Ready to focus</div>
+            <div class="timer-log-actions">
+                <button class="timer-btn secondary" id="download-log-btn">Download Log</button>
+                <button class="timer-btn secondary" id="view-log-btn">View History</button>
+            </div>
+        </div>
     `
 };
+
+
 
