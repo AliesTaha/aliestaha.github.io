@@ -114,8 +114,28 @@
         class WindowManager {
             constructor() {
                 this.windows = new Map();
+                this.windowStates = new Map(); // Store window states (position, size, etc)
                 this.zIndexCounter = 1000;
                 this.container = document.getElementById('windows-container');
+                this.dragState = {
+                    isDragging: false,
+                    currentWindow: null,
+                    startX: 0,
+                    startY: 0,
+                    windowX: 0,
+                    windowY: 0
+                };
+                this.resizeState = {
+                    isResizing: false,
+                    currentWindow: null,
+                    direction: null,
+                    startX: 0,
+                    startY: 0,
+                    startWidth: 0,
+                    startHeight: 0,
+                    startLeft: 0,
+                    startTop: 0
+                };
             }
 
             createWindow(id, title, content, url = null) {
@@ -143,9 +163,9 @@
                 windowEl.innerHTML = `
                     <div class="window-title-bar">
                         <div class="window-controls">
-                            <button class="window-button close"></button>
-                            <button class="window-button minimize"></button>
-                            <button class="window-button maximize"></button>
+                            <button class="window-button close" title="Close"></button>
+                            <button class="window-button minimize" title="Minimize"></button>
+                            <button class="window-button maximize" title="Maximize"></button>
                         </div>
                         <div class="window-title">${title}</div>
                         <div style="width: 68px;"></div>
@@ -153,11 +173,25 @@
                     <div class="window-content">
                         <div class="window-loading">Loading...</div>
                     </div>
+                    <div class="resize-handle resize-n"></div>
+                    <div class="resize-handle resize-e"></div>
+                    <div class="resize-handle resize-s"></div>
+                    <div class="resize-handle resize-w"></div>
+                    <div class="resize-handle resize-ne"></div>
+                    <div class="resize-handle resize-se"></div>
+                    <div class="resize-handle resize-sw"></div>
+                    <div class="resize-handle resize-nw"></div>
                 `;
 
                 // Add to container
                 this.container.appendChild(windowEl);
                 this.windows.set(id, windowEl);
+                
+                // Store initial state
+                this.windowStates.set(id, {
+                    state: 'normal', // normal, minimized, maximized
+                    normalPosition: { left: offsetX, top: offsetY, width: 600, height: 500 }
+                });
 
                 // Setup event listeners
                 this.setupWindowEvents(windowEl, id);
@@ -172,21 +206,274 @@
 
             setupWindowEvents(windowEl, id) {
                 // Close button
-                windowEl.querySelector('.window-button.close').addEventListener('click', () => {
+                windowEl.querySelector('.window-button.close').addEventListener('click', (e) => {
+                    e.stopPropagation();
                     this.closeWindow(id);
                 });
 
+                // Minimize button
+                windowEl.querySelector('.window-button.minimize').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.minimizeWindow(id);
+                });
+
+                // Maximize button
+                windowEl.querySelector('.window-button.maximize').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.toggleMaximize(id);
+                });
+
                 // Focus on click
-                windowEl.addEventListener('mousedown', () => {
+                windowEl.addEventListener('mousedown', (e) => {
                     this.focusWindow(id);
                 });
 
-                // Make window title bar draggable (simple version for Stage 2)
+                // Make window title bar draggable
                 const titleBar = windowEl.querySelector('.window-title-bar');
                 titleBar.addEventListener('mousedown', (e) => {
+                    // Don't drag if clicking buttons
                     if (e.target.classList.contains('window-button')) return;
-                    // Dragging will be added in Stage 3
+                    
+                    const state = this.windowStates.get(id);
+                    if (state && state.state !== 'maximized') {
+                        this.startDragging(windowEl, e);
+                    }
                 });
+
+                // Double-click title bar to maximize
+                titleBar.addEventListener('dblclick', (e) => {
+                    if (!e.target.classList.contains('window-button')) {
+                        this.toggleMaximize(id);
+                    }
+                });
+
+                // Setup resize handles
+                const resizeHandles = windowEl.querySelectorAll('.resize-handle');
+                resizeHandles.forEach(handle => {
+                    handle.addEventListener('mousedown', (e) => {
+                        e.stopPropagation();
+                        const direction = handle.className.split(' ')[1].replace('resize-', '');
+                        this.startResizing(windowEl, e, direction, id);
+                    });
+                });
+            }
+
+            startDragging(windowEl, e) {
+                this.dragState.isDragging = true;
+                this.dragState.currentWindow = windowEl;
+                this.dragState.startX = e.clientX;
+                this.dragState.startY = e.clientY;
+                
+                // Get current window position
+                const rect = windowEl.getBoundingClientRect();
+                this.dragState.windowX = rect.left;
+                this.dragState.windowY = rect.top - 28; // Subtract menu bar height
+                
+                // Change cursor
+                document.body.style.cursor = 'grabbing';
+                windowEl.style.cursor = 'grabbing';
+                
+                // Prevent text selection while dragging
+                e.preventDefault();
+            }
+
+            handleDragging(e) {
+                if (!this.dragState.isDragging) return;
+                
+                const deltaX = e.clientX - this.dragState.startX;
+                const deltaY = e.clientY - this.dragState.startY;
+                
+                const newX = this.dragState.windowX + deltaX;
+                const newY = this.dragState.windowY + deltaY;
+                
+                // Update window position
+                this.dragState.currentWindow.style.left = `${newX}px`;
+                this.dragState.currentWindow.style.top = `${newY}px`;
+            }
+
+            stopDragging() {
+                if (!this.dragState.isDragging) return;
+                
+                this.dragState.isDragging = false;
+                this.dragState.currentWindow = null;
+                
+                // Reset cursor
+                document.body.style.cursor = '';
+                
+                const windows = document.querySelectorAll('.window');
+                windows.forEach(win => win.style.cursor = '');
+            }
+
+            minimizeWindow(id) {
+                const windowEl = this.windows.get(id);
+                const state = this.windowStates.get(id);
+                
+                if (!windowEl || !state) return;
+                
+                // Save current state
+                state.state = 'minimized';
+                
+                // Animate out
+                windowEl.style.transition = 'all 0.3s ease';
+                windowEl.style.transform = 'scale(0.3)';
+                windowEl.style.opacity = '0';
+                
+                setTimeout(() => {
+                    windowEl.style.display = 'none';
+                    windowEl.style.transition = '';
+                    windowEl.style.transform = '';
+                    windowEl.style.opacity = '';
+                }, 300);
+                
+                // Add to dock (visual indicator)
+                this.addMinimizedIndicator(id);
+            }
+
+            restoreWindow(id) {
+                const windowEl = this.windows.get(id);
+                const state = this.windowStates.get(id);
+                
+                if (!windowEl || !state) return;
+                
+                state.state = 'normal';
+                windowEl.style.display = 'flex';
+                
+                // Animate in
+                windowEl.style.transition = 'all 0.3s ease';
+                windowEl.style.transform = 'scale(0.9)';
+                windowEl.style.opacity = '0';
+                
+                setTimeout(() => {
+                    windowEl.style.transform = 'scale(1)';
+                    windowEl.style.opacity = '1';
+                }, 10);
+                
+                setTimeout(() => {
+                    windowEl.style.transition = '';
+                    windowEl.style.transform = '';
+                }, 300);
+                
+                this.focusWindow(id);
+                this.removeMinimizedIndicator(id);
+            }
+
+            toggleMaximize(id) {
+                const windowEl = this.windows.get(id);
+                const state = this.windowStates.get(id);
+                
+                if (!windowEl || !state) return;
+                
+                if (state.state === 'maximized') {
+                    // Restore to normal
+                    state.state = 'normal';
+                    const normal = state.normalPosition;
+                    windowEl.style.left = `calc(50% - 300px + ${normal.left}px)`;
+                    windowEl.style.top = `calc(50% - 200px + ${normal.top}px)`;
+                    windowEl.style.width = `${normal.width}px`;
+                    windowEl.style.height = `${normal.height}px`;
+                    windowEl.classList.remove('maximized');
+                } else {
+                    // Save current position/size
+                    const rect = windowEl.getBoundingClientRect();
+                    state.normalPosition = {
+                        left: rect.left,
+                        top: rect.top - 28,
+                        width: rect.width,
+                        height: rect.height
+                    };
+                    
+                    // Maximize
+                    state.state = 'maximized';
+                    windowEl.style.left = '0';
+                    windowEl.style.top = '0';
+                    windowEl.style.width = '100%';
+                    windowEl.style.height = 'calc(100vh - 98px)'; // Full height minus menu and dock
+                    windowEl.classList.add('maximized');
+                }
+            }
+
+            startResizing(windowEl, e, direction, id) {
+                const state = this.windowStates.get(id);
+                if (state && state.state === 'maximized') return; // Can't resize maximized windows
+                
+                this.resizeState.isResizing = true;
+                this.resizeState.currentWindow = windowEl;
+                this.resizeState.direction = direction;
+                this.resizeState.startX = e.clientX;
+                this.resizeState.startY = e.clientY;
+                
+                const rect = windowEl.getBoundingClientRect();
+                this.resizeState.startWidth = rect.width;
+                this.resizeState.startHeight = rect.height;
+                this.resizeState.startLeft = rect.left;
+                this.resizeState.startTop = rect.top - 28;
+                
+                e.preventDefault();
+            }
+
+            handleResizing(e) {
+                if (!this.resizeState.isResizing) return;
+                
+                const deltaX = e.clientX - this.resizeState.startX;
+                const deltaY = e.clientY - this.resizeState.startY;
+                const dir = this.resizeState.direction;
+                const win = this.resizeState.currentWindow;
+                
+                let newWidth = this.resizeState.startWidth;
+                let newHeight = this.resizeState.startHeight;
+                let newLeft = this.resizeState.startLeft;
+                let newTop = this.resizeState.startTop;
+                
+                // Handle horizontal resizing
+                if (dir.includes('e')) {
+                    newWidth = Math.max(400, this.resizeState.startWidth + deltaX);
+                }
+                if (dir.includes('w')) {
+                    newWidth = Math.max(400, this.resizeState.startWidth - deltaX);
+                    newLeft = this.resizeState.startLeft + deltaX;
+                }
+                
+                // Handle vertical resizing
+                if (dir.includes('s')) {
+                    newHeight = Math.max(300, this.resizeState.startHeight + deltaY);
+                }
+                if (dir.includes('n')) {
+                    newHeight = Math.max(300, this.resizeState.startHeight - deltaY);
+                    newTop = this.resizeState.startTop + deltaY;
+                }
+                
+                win.style.width = `${newWidth}px`;
+                win.style.height = `${newHeight}px`;
+                win.style.left = `${newLeft}px`;
+                win.style.top = `${newTop}px`;
+            }
+
+            stopResizing() {
+                if (!this.resizeState.isResizing) return;
+                
+                this.resizeState.isResizing = false;
+                this.resizeState.currentWindow = null;
+                this.resizeState.direction = null;
+            }
+
+            addMinimizedIndicator(id) {
+                // Add visual indicator to dock (simple dot for now)
+                const windowEl = this.windows.get(id);
+                const title = windowEl.querySelector('.window-title').textContent;
+                
+                const indicator = document.createElement('div');
+                indicator.className = 'minimized-indicator';
+                indicator.dataset.windowId = id;
+                indicator.textContent = '●';
+                indicator.title = `Restore ${title}`;
+                indicator.addEventListener('click', () => this.restoreWindow(id));
+                
+                document.querySelector('.dock').appendChild(indicator);
+            }
+
+            removeMinimizedIndicator(id) {
+                const indicator = document.querySelector(`.minimized-indicator[data-window-id="${id}"]`);
+                if (indicator) indicator.remove();
             }
 
             async loadContent(windowEl, url) {
@@ -243,12 +530,25 @@
                 if (windowEl) {
                     windowEl.remove();
                     this.windows.delete(id);
+                    this.windowStates.delete(id);
+                    this.removeMinimizedIndicator(id);
                 }
             }
         }
 
         // Initialize window manager
         const windowManager = new WindowManager();
+
+        // Global mouse event listeners for dragging and resizing
+        document.addEventListener('mousemove', (e) => {
+            windowManager.handleDragging(e);
+            windowManager.handleResizing(e);
+        });
+
+        document.addEventListener('mouseup', () => {
+            windowManager.stopDragging();
+            windowManager.stopResizing();
+        });
 
         // Page content data (since fetch doesn't work with file:// protocol)
         const pageContent = {
