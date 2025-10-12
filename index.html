@@ -28,6 +28,9 @@
 
     <!-- Windows Container -->
     <div id="windows-container"></div>
+    
+    <!-- Snap Preview Overlay -->
+    <div id="snap-preview" class="snap-preview"></div>
 
     <!-- Desktop Area -->
     <div class="desktop">
@@ -120,11 +123,14 @@
                 this.dragState = {
                     isDragging: false,
                     currentWindow: null,
+                    currentWindowId: null,
                     startX: 0,
                     startY: 0,
                     windowX: 0,
                     windowY: 0
                 };
+                this.snapPreview = document.getElementById('snap-preview');
+                this.snapZone = null; // 'left', 'right', 'top', or null
                 this.resizeState = {
                     isResizing: false,
                     currentWindow: null,
@@ -235,8 +241,11 @@
                     if (e.target.classList.contains('window-button')) return;
                     
                     const state = this.windowStates.get(id);
-                    if (state && state.state !== 'maximized') {
-                        this.startDragging(windowEl, e);
+                    if (state && state.state === 'normal') {
+                        this.startDragging(windowEl, e, id);
+                    } else if (state && (state.state === 'maximized' || state.state.startsWith('snapped'))) {
+                        // Unsnap/unmaximize on drag
+                        this.restoreFromSnap(id, e);
                     }
                 });
 
@@ -258,9 +267,10 @@
                 });
             }
 
-            startDragging(windowEl, e) {
+            startDragging(windowEl, e, windowId) {
                 this.dragState.isDragging = true;
                 this.dragState.currentWindow = windowEl;
+                this.dragState.currentWindowId = windowId;
                 this.dragState.startX = e.clientX;
                 this.dragState.startY = e.clientY;
                 
@@ -289,19 +299,140 @@
                 // Update window position
                 this.dragState.currentWindow.style.left = `${newX}px`;
                 this.dragState.currentWindow.style.top = `${newY}px`;
+                
+                // Check for snap zones
+                this.checkSnapZones(e.clientX, e.clientY);
+            }
+
+            checkSnapZones(mouseX, mouseY) {
+                const snapThreshold = 20; // pixels from edge
+                const windowWidth = window.innerWidth;
+                const menuBarHeight = 28;
+                
+                let newSnapZone = null;
+                
+                // Left edge
+                if (mouseX <= snapThreshold) {
+                    newSnapZone = 'left';
+                }
+                // Right edge
+                else if (mouseX >= windowWidth - snapThreshold) {
+                    newSnapZone = 'right';
+                }
+                // Top edge (fullscreen)
+                else if (mouseY <= menuBarHeight + snapThreshold) {
+                    newSnapZone = 'top';
+                }
+                
+                // Update snap preview if zone changed
+                if (newSnapZone !== this.snapZone) {
+                    this.snapZone = newSnapZone;
+                    this.updateSnapPreview(newSnapZone);
+                }
+            }
+
+            updateSnapPreview(zone) {
+                if (!zone) {
+                    this.snapPreview.classList.remove('show');
+                    return;
+                }
+                
+                const menuBarHeight = 28;
+                const dockHeight = 70;
+                const availableHeight = window.innerHeight - menuBarHeight - dockHeight;
+                
+                this.snapPreview.classList.add('show');
+                
+                if (zone === 'left') {
+                    this.snapPreview.style.left = '0';
+                    this.snapPreview.style.top = `${menuBarHeight}px`;
+                    this.snapPreview.style.width = '50%';
+                    this.snapPreview.style.height = `${availableHeight}px`;
+                } else if (zone === 'right') {
+                    this.snapPreview.style.left = '50%';
+                    this.snapPreview.style.top = `${menuBarHeight}px`;
+                    this.snapPreview.style.width = '50%';
+                    this.snapPreview.style.height = `${availableHeight}px`;
+                } else if (zone === 'top') {
+                    this.snapPreview.style.left = '0';
+                    this.snapPreview.style.top = `${menuBarHeight}px`;
+                    this.snapPreview.style.width = '100%';
+                    this.snapPreview.style.height = `${availableHeight}px`;
+                }
             }
 
             stopDragging() {
                 if (!this.dragState.isDragging) return;
                 
+                // Apply snap if in snap zone
+                if (this.snapZone && this.dragState.currentWindowId) {
+                    this.snapWindow(this.dragState.currentWindowId, this.snapZone);
+                }
+                
                 this.dragState.isDragging = false;
                 this.dragState.currentWindow = null;
+                this.dragState.currentWindowId = null;
+                
+                // Hide snap preview
+                this.snapZone = null;
+                this.updateSnapPreview(null);
                 
                 // Reset cursor
                 document.body.style.cursor = '';
                 
                 const windows = document.querySelectorAll('.window');
                 windows.forEach(win => win.style.cursor = '');
+            }
+
+            snapWindow(id, position) {
+                const windowEl = this.windows.get(id);
+                const state = this.windowStates.get(id);
+                
+                if (!windowEl || !state) return;
+                
+                const menuBarHeight = 28;
+                const dockHeight = 70;
+                const availableHeight = window.innerHeight - menuBarHeight - dockHeight;
+                
+                // Save current position before snapping
+                if (state.state === 'normal') {
+                    const rect = windowEl.getBoundingClientRect();
+                    state.normalPosition = {
+                        left: rect.left,
+                        top: rect.top - menuBarHeight,
+                        width: rect.width,
+                        height: rect.height
+                    };
+                }
+                
+                // Apply snap position with animation
+                windowEl.style.transition = 'all 0.3s ease';
+                
+                if (position === 'left') {
+                    windowEl.style.left = '0';
+                    windowEl.style.top = '0';
+                    windowEl.style.width = '50%';
+                    windowEl.style.height = `${availableHeight}px`;
+                    state.state = 'snapped-left';
+                } else if (position === 'right') {
+                    windowEl.style.left = '50%';
+                    windowEl.style.top = '0';
+                    windowEl.style.width = '50%';
+                    windowEl.style.height = `${availableHeight}px`;
+                    state.state = 'snapped-right';
+                } else if (position === 'top') {
+                    windowEl.style.left = '0';
+                    windowEl.style.top = '0';
+                    windowEl.style.width = '100%';
+                    windowEl.style.height = `${availableHeight}px`;
+                    state.state = 'maximized';
+                    windowEl.classList.add('maximized');
+                }
+                
+                // Remove transition after animation
+                setTimeout(() => {
+                    windowEl.style.transition = '';
+                }, 300);
             }
 
             minimizeWindow(id) {
@@ -457,14 +588,24 @@
             }
 
             addMinimizedIndicator(id) {
-                // Add visual indicator to dock (simple dot for now)
+                // Add visual indicator to dock with icon
                 const windowEl = this.windows.get(id);
                 const title = windowEl.querySelector('.window-title').textContent;
+                
+                // Get icon from desktop icon if available
+                let icon = '📄'; // default
+                const desktopIcon = document.querySelector(`[data-window="${id}"]`);
+                if (desktopIcon) {
+                    const iconEl = desktopIcon.querySelector('.icon-image');
+                    if (iconEl) {
+                        icon = iconEl.textContent;
+                    }
+                }
                 
                 const indicator = document.createElement('div');
                 indicator.className = 'minimized-indicator';
                 indicator.dataset.windowId = id;
-                indicator.textContent = '●';
+                indicator.innerHTML = `<div class="minimized-icon">${icon}</div>`;
                 indicator.title = `Restore ${title}`;
                 indicator.addEventListener('click', () => this.restoreWindow(id));
                 
@@ -474,6 +615,31 @@
             removeMinimizedIndicator(id) {
                 const indicator = document.querySelector(`.minimized-indicator[data-window-id="${id}"]`);
                 if (indicator) indicator.remove();
+            }
+
+            restoreFromSnap(id, e) {
+                const windowEl = this.windows.get(id);
+                const state = this.windowStates.get(id);
+                
+                if (!windowEl || !state) return;
+                
+                // Restore to normal size
+                const normal = state.normalPosition;
+                
+                // Position under cursor (centered on title bar)
+                const offsetX = e.clientX - normal.width / 2;
+                const offsetY = e.clientY - 28;
+                
+                windowEl.style.left = `${offsetX}px`;
+                windowEl.style.top = `${offsetY}px`;
+                windowEl.style.width = `${normal.width}px`;
+                windowEl.style.height = `${normal.height}px`;
+                windowEl.classList.remove('maximized');
+                
+                state.state = 'normal';
+                
+                // Start dragging from here
+                this.startDragging(windowEl, e, id);
             }
 
             async loadContent(windowEl, url) {

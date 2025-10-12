@@ -134,6 +134,22 @@ body {
     display: none;
 }
 
+/* Snap Preview Overlay */
+.snap-preview {
+    position: fixed;
+    background: rgba(100, 100, 100, 0.3);
+    border: 2px solid rgba(100, 100, 100, 0.5);
+    border-radius: 8px;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0;
+    transition: all 0.2s ease;
+}
+
+.snap-preview.show {
+    opacity: 1;
+}
+
 .window-title-bar {
     background: rgba(245, 241, 232, 0.95);
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
@@ -671,22 +687,54 @@ body {
 
 /* Minimized Window Indicators in Dock */
 .minimized-indicator {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.4);
+    width: 50px;
+    height: 50px;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba(0, 0, 0, 0.6);
+    position: relative;
 }
 
 .minimized-indicator:hover {
-    background: rgba(0, 0, 0, 0.6);
-    transform: scale(1.2);
+    transform: translateY(-8px) scale(1.1);
+}
+
+.minimized-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.1),
+        0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+}
+
+.minimized-indicator:hover .minimized-icon {
+    box-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.15),
+        0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Dot indicator under minimized icon */
+.minimized-indicator::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 50%;
 }
 
 /* Notification (for Stage 1 feedback) */
