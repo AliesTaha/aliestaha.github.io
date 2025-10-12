@@ -633,9 +633,9 @@ body {
 }
 
 .greeting {
-    font-size: 22px;
+    font-size: 16px;
     color: #1a1a1a;
-    font-weight: 400;
+    font-weight: 500;
     margin: 0;
 }
 
@@ -818,7 +818,7 @@ body {
     }
 
     .greeting {
-        font-size: 16px;
+        font-size: 12px;
     }
 
     .central-feature {
