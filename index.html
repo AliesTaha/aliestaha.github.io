@@ -3,36 +3,498 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ali taha</title>
+    <title>ali taha - Desktop OS</title>
     <link rel="icon" type="image/png" href="AT.png">
-    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="desktop-os.css">
 </head>
 <body>
-    <nav class="nav">
-        <a href="index.html" class="nav-link active">home</a>
-        <a href="technical.html" class="nav-link">technical</a>
-        <a href="philosophy.html" class="nav-link">philosophy</a>
-        <a href="experience.html" class="nav-link">experience</a>
-        <a href="contact.html" class="nav-link">contact</a>
-    </nav>
+    <!-- Menu Bar (macOS-style) -->
+    <div class="menu-bar">
+        <div class="menu-left">
+            <div class="menu-item logo">🍎 ali taha</div>
+            <div class="menu-item">File</div>
+            <div class="menu-item">Edit</div>
+            <div class="menu-item">View</div>
+            <div class="menu-item">Go</div>
+            <div class="menu-item">Window</div>
+            <div class="menu-item">Help</div>
+        </div>
+        <div class="menu-right">
+            <div class="menu-icon">🔍</div>
+            <div class="menu-icon">⚙️</div>
+            <div class="menu-time" id="clock">12:00 PM</div>
+        </div>
+    </div>
 
-    <div class="container">
-        <div class="about-layout">
-            <div class="about-content">
-                <p class="intro-text">
-                    i'm ali taha.<sup>1</sup><br>
-                    i study computer engineering @ uwaterloo.<br>
-                    i work on performance engineering.<br>
-                </p>
-                <p class="contact-text">
-                    you can reach me at <a href="mailto:ali.taha@uwaterloo.ca">ali.taha@uwaterloo.ca</a>
-                </p>
+    <!-- Windows Container -->
+    <div id="windows-container"></div>
+
+    <!-- Desktop Area -->
+    <div class="desktop">
+        <!-- Desktop Icons -->
+        <div class="desktop-icons">
+            <!-- Row 1 -->
+            <div class="desktop-icon" data-window="home" data-url="index.html">
+                <div class="icon-image">📄</div>
+                <div class="icon-label">home.mdx</div>
             </div>
-            <div class="about-image">
-                <img src="me_sf.png" alt="ali taha">
-                <p class="footnote">1.</p>
+
+            <div class="desktop-icon" data-window="technical" data-url="technical.html">
+                <div class="icon-image">💻</div>
+                <div class="icon-label">technical.mdx</div>
+            </div>
+
+            <div class="desktop-icon" data-window="philosophy" data-url="philosophy.html">
+                <div class="icon-image">🧠</div>
+                <div class="icon-label">philosophy.mdx</div>
+            </div>
+
+            <!-- Row 2 -->
+            <div class="desktop-icon" data-window="experience" data-url="experience.html">
+                <div class="icon-image">💼</div>
+                <div class="icon-label">experience.mdx</div>
+            </div>
+
+            <div class="desktop-icon" data-window="contact" data-url="contact.html">
+                <div class="icon-image">✉️</div>
+                <div class="icon-label">contact.mdx</div>
+            </div>
+
+            <!-- Row 3 -->
+            <div class="desktop-icon" data-window="readme" data-special="readme">
+                <div class="icon-image">📋</div>
+                <div class="icon-label">README.md</div>
+            </div>
+        </div>
+
+        <!-- Central Feature Area -->
+        <div class="central-feature">
+            <div class="feature-card">
+                <img src="me_sf.png" alt="ali taha" class="profile-image">
+                <p class="greeting">hey, i'm ali</p>
+            </div>
+        </div>
+
+        <!-- Special Desktop Elements -->
+        <div class="desktop-shortcuts">
+            <a href="#roadmap" class="desktop-icon special-icon">
+                <div class="icon-image">🗺️</div>
+                <div class="icon-label">Roadmap</div>
+            </a>
+
+            <div class="desktop-icon special-icon trash-icon">
+                <div class="icon-image">🗑️</div>
+                <div class="icon-label">Trash</div>
             </div>
         </div>
     </div>
+
+    <!-- Dock (bottom) - Optional but adds to OS feel -->
+    <div class="dock">
+        <div class="dock-item" title="Home" data-page="index.html">
+            <div class="dock-icon">🏠</div>
+        </div>
+        <div class="dock-item" title="Technical" data-page="technical.html">
+            <div class="dock-icon">⚡</div>
+        </div>
+        <div class="dock-item" title="Philosophy" data-page="philosophy.html">
+            <div class="dock-icon">💭</div>
+        </div>
+        <div class="dock-separator"></div>
+        <div class="dock-item" title="GitHub">
+            <div class="dock-icon">📦</div>
+        </div>
+        <div class="dock-item" title="LinkedIn">
+            <div class="dock-icon">💼</div>
+        </div>
+    </div>
+
+    <script>
+        // Window Management System
+        class WindowManager {
+            constructor() {
+                this.windows = new Map();
+                this.zIndexCounter = 1000;
+                this.container = document.getElementById('windows-container');
+            }
+
+            createWindow(id, title, content, url = null) {
+                // Check if window already exists
+                if (this.windows.has(id)) {
+                    this.focusWindow(id);
+                    return;
+                }
+
+                // Create window element
+                const windowEl = document.createElement('div');
+                windowEl.className = 'window active';
+                windowEl.dataset.windowId = id;
+                windowEl.style.zIndex = ++this.zIndexCounter;
+                
+                // Random position (slightly offset from center)
+                const offsetX = Math.random() * 100 - 50;
+                const offsetY = Math.random() * 60 - 30;
+                windowEl.style.left = `calc(50% - 300px + ${offsetX}px)`;
+                windowEl.style.top = `calc(50% - 200px + ${offsetY}px)`;
+                windowEl.style.width = '600px';
+                windowEl.style.height = '500px';
+
+                // Create window structure
+                windowEl.innerHTML = `
+                    <div class="window-title-bar">
+                        <div class="window-controls">
+                            <button class="window-button close"></button>
+                            <button class="window-button minimize"></button>
+                            <button class="window-button maximize"></button>
+                        </div>
+                        <div class="window-title">${title}</div>
+                        <div style="width: 68px;"></div>
+                    </div>
+                    <div class="window-content">
+                        <div class="window-loading">Loading...</div>
+                    </div>
+                `;
+
+                // Add to container
+                this.container.appendChild(windowEl);
+                this.windows.set(id, windowEl);
+
+                // Setup event listeners
+                this.setupWindowEvents(windowEl, id);
+
+                // Load content
+                if (url) {
+                    this.loadContent(windowEl, url);
+                } else if (content) {
+                    windowEl.querySelector('.window-content').innerHTML = content;
+                }
+            }
+
+            setupWindowEvents(windowEl, id) {
+                // Close button
+                windowEl.querySelector('.window-button.close').addEventListener('click', () => {
+                    this.closeWindow(id);
+                });
+
+                // Focus on click
+                windowEl.addEventListener('mousedown', () => {
+                    this.focusWindow(id);
+                });
+
+                // Make window title bar draggable (simple version for Stage 2)
+                const titleBar = windowEl.querySelector('.window-title-bar');
+                titleBar.addEventListener('mousedown', (e) => {
+                    if (e.target.classList.contains('window-button')) return;
+                    // Dragging will be added in Stage 3
+                });
+            }
+
+            async loadContent(windowEl, url) {
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch');
+                    }
+                    const html = await response.text();
+                    
+                    // Parse HTML and extract content
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    
+                    // Get the main container content and remove nav
+                    const container = doc.querySelector('.container');
+                    if (container) {
+                        // Clone to avoid modifying original
+                        const content = container.cloneNode(true);
+                        // Remove any nav elements that might be inside
+                        const navs = content.querySelectorAll('nav, .nav');
+                        navs.forEach(nav => nav.remove());
+                        windowEl.querySelector('.window-content').innerHTML = content.innerHTML;
+                    } else {
+                        // Fallback: get body but remove nav and scripts
+                        const bodyClone = doc.body.cloneNode(true);
+                        const navs = bodyClone.querySelectorAll('nav, .nav');
+                        navs.forEach(nav => nav.remove());
+                        const scripts = bodyClone.querySelectorAll('script');
+                        scripts.forEach(script => script.remove());
+                        windowEl.querySelector('.window-content').innerHTML = bodyClone.innerHTML;
+                    }
+                } catch (error) {
+                    console.error('Error loading content:', error);
+                    windowEl.querySelector('.window-content').innerHTML = 
+                        '<p style="color: #888; text-align: center; margin-top: 40px;">Error loading content. Please try again.</p>';
+                }
+            }
+
+            focusWindow(id) {
+                // Remove active class from all windows
+                this.windows.forEach(win => win.classList.remove('active'));
+                
+                // Add active class and bring to front
+                const windowEl = this.windows.get(id);
+                if (windowEl) {
+                    windowEl.classList.add('active');
+                    windowEl.style.zIndex = ++this.zIndexCounter;
+                }
+            }
+
+            closeWindow(id) {
+                const windowEl = this.windows.get(id);
+                if (windowEl) {
+                    windowEl.remove();
+                    this.windows.delete(id);
+                }
+            }
+        }
+
+        // Initialize window manager
+        const windowManager = new WindowManager();
+
+        // Page content data (since fetch doesn't work with file:// protocol)
+        const pageContent = {
+            home: `
+                <div class="about-layout">
+                    <div class="about-content">
+                        <p class="intro-text">
+                            i'm ali taha.<br>
+                            i study computer engineering @ uwaterloo.<br>
+                            i work on performance engineering.<br>
+                        </p>
+                        <p class="contact-text">
+                            you can reach me at <a href="mailto:ali.taha@uwaterloo.ca">ali.taha@uwaterloo.ca</a>
+                        </p>
+                    </div>
+                </div>
+            `,
+            technical: `
+                <h1>technical</h1>
+                <h2>articles</h2>
+                <div class="writing-item">
+                    <p class="date">september 19, 2025</p>
+                    <h3><a href="https://www.modular.com/blog/matrix-multiplication-on-blackwell-part-4---breaking-sota" target="_blank">part 4: breaking sota: achieving 103% of peak performance on blackwell</a></h3>
+                    <p class="description">the final optimization techniques that push our matmul kernel past nvidia's cublas, reaching 103% of theoretical peak performance on blackwell gpus.</p>
+                </div>
+                <div class="writing-item">
+                    <p class="date">september 12, 2025</p>
+                    <h3><a href="https://www.modular.com/blog/matrix-multiplication-on-nvidias-blackwell-part-3-the-optimizations-behind-85-of-sota-performance" target="_blank">part 3: the optimizations behind 85% of sota performance</a></h3>
+                    <p class="description">diving into advanced optimization techniques including register allocation, memory coalescing, and pipelining strategies to reach 85% of peak performance.</p>
+                </div>
+                <div class="writing-item">
+                    <p class="date">september 5, 2025</p>
+                    <h3><a href="https://www.modular.com/blog/matrix-multiplication-on-nvidias-blackwell-part-2-using-hardware-features-to-optimize-matmul" target="_blank">part 2: using blackwell hardware features to optimize matmul</a></h3>
+                    <p class="description">exploring blackwell-specific features like tcgen05 instructions and tensor memory to build faster matrix multiplication kernels.</p>
+                </div>
+                <div class="writing-item">
+                    <p class="date">august 28, 2025</p>
+                    <h3><a href="https://www.modular.com/blog/matrix-multiplication-on-nvidias-blackwell-part-1-introduction" target="_blank">part 1: matrix multiplication on blackwell: introduction</a></h3>
+                    <p class="description">introducing the fundamentals of gpu programming and building a simple matmul kernel in mojo. the starting point of our journey to beat cublas.</p>
+                </div>
+            `,
+            philosophy: `
+                <h1>philosophy</h1>
+                <div class="writing-item">
+                    <p class="date">10th October</p>
+                    <h3><a href="blogs/elements-a-reflection.html">elements- a reflection</a></h3>
+                    <p class="description">finding God</p>
+                </div>
+                <div class="writing-item">
+                    <p class="date">incomplete</p>
+                    <h3><a href="blogs/how-to-find-your-purpose.html">how to find your purpose</a></h3>
+                    <p class="description">i did not find mine yet. i'll update this when i do</p>
+                </div>
+            `,
+            experience: `
+                <h1>experience</h1>
+                <div class="experience-item">
+                    <div class="exp-header">
+                        <h3>performance engineering intern</h3>
+                        <span class="company">modular</span>
+                    </div>
+                    <p class="meta">may – august 2025 • los altos, ca</p>
+                    <ul>
+                        <li>built matmul kernels on blackwell that beat nvidia's cublas at 103% sota (<a href="https://www.modular.com/blog/matrix-multiplication-on-nvidias-blackwell-part-1-introduction" target="_blank">blog</a>, <a href="https://github.com/modular/modular/tree/main/max/kernels/test/gpu/linalg/matmul_blackwell_iterative" target="_blank">code</a>)</li>
+                        <li>wrote 1d conv kernel that beat cudnn by 7x, speeding up inworld ai's tts model by 12%</li>
+                        <li>implemented hilbert curve scheduling for h100</li>
+                        <li>built specialized kernels (3d conv, bicubic resize) for midjourney inference</li>
+                    </ul>
+                </div>
+                <div class="experience-item">
+                    <div class="exp-header">
+                        <h3>software engineering intern</h3>
+                        <span class="company">tesla</span>
+                    </div>
+                    <p class="meta">sep – dec 2024 • fremont, ca</p>
+                    <ul>
+                        <li>built computer vision prototype for 2-post lift safety in service centers</li>
+                        <li>trained segmentation model to detect lift arms and compute safe angle thresholds</li>
+                    </ul>
+                </div>
+                <div class="experience-item">
+                    <div class="exp-header">
+                        <h3>software engineering intern</h3>
+                        <span class="company">ford</span>
+                    </div>
+                    <p class="meta">jan – april 2024 • dearborn, mi</p>
+                    <ul>
+                        <li>built automated test suite using playwright and typescript</li>
+                    </ul>
+                </div>
+                <div class="experience-item">
+                    <div class="exp-header">
+                        <h3>software engineering intern</h3>
+                        <span class="company">blackberry</span>
+                    </div>
+                    <p class="meta">may – aug 2023 • waterloo, on</p>
+                    <ul>
+                        <li>built full-stack analytics dashboard for service data</li>
+                    </ul>
+                </div>
+                <h2 style="margin-top: 50px;">projects</h2>
+                <div class="experience-item">
+                    <div class="exp-header">
+                        <h3>matmul rewritten: cuda kernel study</h3>
+                    </div>
+                    <p class="meta">cuda • <a href="https://github.com/AliesTaha" target="_blank">github</a></p>
+                    <ul>
+                        <li>built cuda matmul kernel for a100 from scratch, progressively optimizing performance</li>
+                        <li>implemented memory coalescing, increasing bandwidth from 15gb/s to 110gb/s (6.5× speedup)</li>
+                        <li>added 1d block tiling to improve register reuse, achieving 8.5 tflops</li>
+                    </ul>
+                </div>
+                <div class="experience-item">
+                    <div class="exp-header">
+                        <h3>bare metal neural network</h3>
+                    </div>
+                    <p class="meta">python, numpy • <a href="https://github.com/AliesTaha/BareNeuralNetwork" target="_blank">github</a></p>
+                    <ul>
+                        <li>built neural network from scratch using only numpy</li>
+                        <li>implemented dense layers, activation, and loss functions</li>
+                        <li>built custom optimizers (sgd, adam) and mini-batch gradient descent</li>
+                    </ul>
+                </div>
+            `,
+            contact: `
+                <h1>get in touch</h1>
+                <p>feel free to reach out for opportunities, collaborations, or just to chat about gpus and performance optimization.</p>
+                <div class="contact-links">
+                    <div class="contact-item">
+                        <span class="label">email</span>
+                        <a href="mailto:ali.taha@uwaterloo.ca">ali.taha@uwaterloo.ca</a>
+                    </div>
+                    <div class="contact-item">
+                        <span class="label">github</span>
+                        <a href="https://github.com/aliestaha" target="_blank">github.com/aliestaha</a>
+                    </div>
+                    <div class="contact-item">
+                        <span class="label">linkedin</span>
+                        <a href="https://www.linkedin.com/in/aliestaha/" target="_blank">linkedin.com/in/aliestaha</a>
+                    </div>
+                </div>
+            `
+        };
+
+        // Update clock
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const displayHours = hours % 12 || 12;
+            document.getElementById('clock').textContent = `${displayHours}:${minutes} ${ampm}`;
+        }
+        updateClock();
+        setInterval(updateClock, 60000);
+
+        // Desktop icon interactions
+        document.querySelectorAll('.desktop-icon').forEach(icon => {
+            let clickCount = 0;
+            let clickTimer = null;
+
+            icon.addEventListener('click', (e) => {
+                clickCount++;
+                
+                if (clickCount === 1) {
+                    // Single click - select
+                    document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
+                    icon.classList.add('selected');
+                    
+                    clickTimer = setTimeout(() => {
+                        clickCount = 0;
+                    }, 300);
+                } else if (clickCount === 2) {
+                    // Double click - open
+                    clearTimeout(clickTimer);
+                    clickCount = 0;
+                    e.preventDefault();
+                    
+                    const windowId = icon.dataset.window;
+                    const url = icon.dataset.url;
+                    const label = icon.querySelector('.icon-label').textContent;
+                    
+                    if (windowId && pageContent[windowId]) {
+                        // Open window with embedded content
+                        windowManager.createWindow(windowId, label, pageContent[windowId]);
+                    } else if (windowId === 'readme') {
+                        // Special case for README
+                        windowManager.createWindow('readme', 'README.md', `
+                            <h1>ali taha</h1>
+                            <p>Personal website built with desktop OS interface.</p>
+                            <h2>About</h2>
+                            <p>Computer Engineering student @ UWaterloo</p>
+                            <p>Performance Engineering enthusiast</p>
+                            <h2>Tech Stack</h2>
+                            <ul>
+                                <li>HTML, CSS, JavaScript</li>
+                                <li>Desktop OS-inspired interface</li>
+                                <li>Window management system</li>
+                            </ul>
+                        `);
+                    } else {
+                        // Other icons
+                        showNotification(`Opening ${label}...`);
+                    }
+                }
+            });
+        });
+
+        // Dock interactions
+        document.querySelectorAll('.dock-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const page = item.dataset.page;
+                if (page) {
+                    // Extract window name from page
+                    const windowId = page.replace('.html', '');
+                    const title = item.getAttribute('title');
+                    if (pageContent[windowId]) {
+                        windowManager.createWindow(windowId, title + '.mdx', pageContent[windowId]);
+                    }
+                }
+            });
+        });
+
+        // Simple notification system
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 2000);
+        }
+
+        // Easter eggs
+        document.querySelector('.trash-icon').addEventListener('dblclick', (e) => {
+            e.preventDefault();
+            showNotification('🗑️ Trash is empty');
+        });
+    </script>
 </body>
 </html>
+
