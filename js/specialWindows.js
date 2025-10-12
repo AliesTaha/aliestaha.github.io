@@ -99,7 +99,7 @@ function createTrashWindow(windowManager) {
                 </div>
             </div>
             <div class="trash-file" onclick="window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank')" style="cursor: pointer; padding: 15px; background: rgba(0,0,0,0.02); border-radius: 8px; display: flex; align-items: center; gap: 12px; transition: background 0.2s;">
-                <span style="font-size: 32px;">📋</span>
+                <span style="font-size: 32px;">📄</span>
                 <div>
                     <div style="font-weight: 500;">NDA.txt</div>
                     <div style="font-size: 14px; color: #888;">Don't look at this</div>
