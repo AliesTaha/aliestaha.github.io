@@ -320,9 +320,25 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
+    gap: 15px;
     min-height: 200px;
     color: #888;
     font-size: 14px;
+}
+
+/* Loading Spinner */
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-top-color: #1a1a1a;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
 /* Writing/Blog items in windows */
@@ -583,6 +599,11 @@ body {
     word-wrap: break-word;
 }
 
+.desktop-icon.dragging-icon {
+    opacity: 0.8;
+    cursor: grabbing !important;
+}
+
 /* Central Feature Card */
 .central-feature {
     position: absolute;
@@ -769,13 +790,30 @@ body {
 
 /* Mobile Responsive (simplified) */
 @media (max-width: 768px) {
+    body {
+        overflow: auto;
+        height: auto;
+    }
+
+    .desktop {
+        position: relative;
+        min-height: 100vh;
+        bottom: auto;
+    }
+
     .desktop-icons {
-        grid-template-columns: repeat(2, 90px);
+        grid-template-columns: repeat(3, 80px);
         gap: 15px;
+        position: relative;
+        padding: 20px;
+    }
+
+    .desktop-icon {
+        width: 80px;
     }
 
     .feature-card {
-        padding: 18px 22px;
+        padding: 15px 18px;
     }
 
     .profile-image {
@@ -784,18 +822,39 @@ body {
     }
 
     .greeting {
-        font-size: 18px;
+        font-size: 16px;
     }
 
     .central-feature {
-        top: 10px;
-        right: 10px;
+        position: relative;
+        top: auto;
+        right: auto;
+        left: auto;
+        transform: none;
+        padding: 15px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .desktop-shortcuts {
+        position: relative;
+        bottom: auto;
+        right: auto;
+        flex-direction: row;
+        padding: 20px;
+        justify-content: center;
     }
 
     .dock {
-        bottom: 4px;
-        padding: 6px 12px;
-        gap: 4px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        border-radius: 0;
+        padding: 8px 12px;
+        gap: 8px;
+        justify-content: center;
     }
 
     .dock-item {
@@ -808,29 +867,63 @@ body {
     }
 
     .menu-bar {
-        font-size: 12px;
+        font-size: 11px;
+        padding: 15px 12px;
     }
 
     .menu-left {
-        gap: 10px;
+        gap: 8px;
     }
 
     .menu-item {
         padding: 2px 6px;
     }
 
+    .menu-item.logo {
+        font-size: 12px;
+    }
+
+    /* Hide non-essential menu items on mobile */
+    .menu-item:not(.logo) {
+        display: none;
+    }
+
     /* Window responsiveness */
+    #windows-container {
+        top: 0;
+        bottom: 0;
+    }
+
     .window {
-        min-width: 90vw !important;
-        min-height: 70vh !important;
-        left: 5vw !important;
+        min-width: 95vw !important;
+        min-height: 80vh !important;
+        left: 2.5vw !important;
         top: 10vh !important;
-        width: 90vw !important;
-        height: 70vh !important;
+        width: 95vw !important;
+        height: 80vh !important;
     }
 
     .window-content {
-        padding: 20px;
+        padding: 15px 20px;
+        font-size: 16px;
+    }
+
+    .window-title-bar {
+        padding: 10px 12px;
+    }
+
+    .window-title {
+        font-size: 12px;
+    }
+
+    /* Hide resize handles on mobile */
+    .resize-handle {
+        display: none !important;
+    }
+
+    /* Disable snap preview on mobile */
+    .snap-preview {
+        display: none !important;
     }
 }
 
