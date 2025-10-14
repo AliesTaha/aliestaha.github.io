@@ -48,12 +48,20 @@ class WindowManager {
         windowEl.dataset.windowId = id;
         windowEl.style.zIndex = ++this.zIndexCounter;
         
-        const offsetX = Math.random() * 100 - 50;
-        const offsetY = Math.random() * 60 - 30;
-        windowEl.style.left = `calc(50% - 300px + ${offsetX}px)`;
-        windowEl.style.top = `calc(50% - 200px + ${offsetY}px)`;
-        windowEl.style.width = '600px';
-        windowEl.style.height = '500px';
+        // Calculate larger default window size (80% of available space)
+        const menuBarHeight = 28;
+        const dockHeight = 70;
+        const availableWidth = window.innerWidth;
+        const availableHeight = window.innerHeight - menuBarHeight - dockHeight;
+        const defaultWidth = Math.floor(availableWidth * 0.8);
+        const defaultHeight = Math.floor(availableHeight * 0.8);
+        
+        const offsetX = Math.random() * 40 - 20;
+        const offsetY = Math.random() * 30 - 15;
+        windowEl.style.left = `calc(50% - ${defaultWidth / 2}px + ${offsetX}px)`;
+        windowEl.style.top = `calc(50% - ${defaultHeight / 2}px + ${offsetY}px)`;
+        windowEl.style.width = `${defaultWidth}px`;
+        windowEl.style.height = `${defaultHeight}px`;
 
         windowEl.innerHTML = `
             <div class="window-title-bar">
@@ -86,7 +94,7 @@ class WindowManager {
         
         this.windowStates.set(id, {
             state: 'normal',
-            normalPosition: { left: offsetX, top: offsetY, width: 600, height: 500 }
+            normalPosition: { left: offsetX, top: offsetY, width: defaultWidth, height: defaultHeight }
         });
 
         this.setupWindowEvents(windowEl, id);
@@ -355,8 +363,8 @@ class WindowManager {
         if (state.state === 'maximized') {
             state.state = 'normal';
             const normal = state.normalPosition;
-            windowEl.style.left = `calc(50% - 300px + ${normal.left}px)`;
-            windowEl.style.top = `calc(50% - 200px + ${normal.top}px)`;
+            windowEl.style.left = `calc(50% - ${normal.width / 2}px + ${normal.left}px)`;
+            windowEl.style.top = `calc(50% - ${normal.height / 2}px + ${normal.top}px)`;
             windowEl.style.width = `${normal.width}px`;
             windowEl.style.height = `${normal.height}px`;
             windowEl.classList.remove('maximized');
