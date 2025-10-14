@@ -535,22 +535,22 @@ body {
     top: 20px;
     left: 20px;
     display: grid;
-    grid-template-columns: repeat(3, 90px);
-    grid-template-rows: repeat(auto-fill, 100px);
-    gap: 20px;
+    grid-template-columns: repeat(2, 110px);
+    grid-template-rows: repeat(auto-fill, 120px);
+    gap: 22px;
     z-index: 100;
 }
 
 .desktop-icon {
-    width: 90px;
+    width: 110px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
     cursor: pointer;
     text-decoration: none;
-    padding: 8px;
-    border-radius: 8px;
+    padding: 10px;
+    border-radius: 10px;
     transition: background 0.2s ease, transform 0.15s ease;
     user-select: none;
 }
@@ -565,15 +565,15 @@ body {
 }
 
 .icon-image {
-    width: 64px;
-    height: 64px;
-    font-size: 48px;
+    width: 80px;
+    height: 80px;
+    font-size: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
-    border-radius: 12px;
+    border-radius: 14px;
     border: 1px solid rgba(0, 0, 0, 0.06);
     box-shadow: 
         0 4px 12px rgba(0, 0, 0, 0.08),
@@ -590,12 +590,12 @@ body {
 
 .icon-label {
     color: #1a1a1a;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
     text-align: center;
     text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
     line-height: 1.3;
-    max-width: 90px;
+    max-width: 110px;
     word-wrap: break-word;
 }
 
@@ -607,8 +607,9 @@ body {
 /* Central Feature Card */
 .central-feature {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     z-index: 50;
 }
 
@@ -620,12 +621,11 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    transform: scale(1.1);
 }
 
 .profile-image {
-    width: 160px;
-    height: 160px;
+    width: 240px;
+    height: 240px;
     border-radius: 12px;
     object-fit: cover;
     border: 1px solid rgba(0, 0, 0, 0.06);
@@ -651,7 +651,7 @@ body {
 }
 
 .special-icon {
-    width: 90px;
+    width: 110px;
 }
 
 /* Dock (macOS style) */
@@ -664,10 +664,10 @@ body {
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
     border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 16px;
-    padding: 8px 16px;
+    border-radius: 20px;
+    padding: 10px 18px;
     display: flex;
-    gap: 8px;
+    gap: 10px;
     align-items: center;
     box-shadow: 
         0 8px 32px rgba(0, 0, 0, 0.1),
@@ -676,8 +676,8 @@ body {
 }
 
 .dock-item {
-    width: 60px;
-    height: 60px;
+    width: 75px;
+    height: 75px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -685,7 +685,7 @@ body {
     cursor: pointer;
     transition: transform 0.2s ease;
     position: relative;
-    gap: 2px;
+    gap: 3px;
 }
 
 .dock-item:hover {
@@ -693,17 +693,17 @@ body {
 }
 
 .dock-icon {
-    font-size: 28px;
+    font-size: 36px;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .dock-label {
-    font-size: 9px;
+    font-size: 11px;
     color: #1a1a1a;
     font-weight: 500;
     text-align: center;
     line-height: 1;
-    max-width: 60px;
+    max-width: 75px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -711,9 +711,9 @@ body {
 
 .dock-separator {
     width: 1px;
-    height: 40px;
+    height: 50px;
     background: rgba(0, 0, 0, 0.1);
-    margin: 0 4px;
+    margin: 0 6px;
 }
 
 /* Minimized Window Indicators in Dock */
@@ -812,14 +812,14 @@ body {
     }
 
     .desktop-icons {
-        grid-template-columns: repeat(3, 80px);
-        gap: 15px;
+        grid-template-columns: repeat(2, 100px);
+        gap: 18px;
         position: relative;
         padding: 20px;
     }
 
     .desktop-icon {
-        width: 80px;
+        width: 100px;
     }
 
     .feature-card {
@@ -868,12 +868,12 @@ body {
     }
 
     .dock-item {
-        width: 44px;
-        height: 44px;
+        width: 55px;
+        height: 55px;
     }
 
     .dock-icon {
-        font-size: 28px;
+        font-size: 32px;
     }
 
     .menu-bar {
