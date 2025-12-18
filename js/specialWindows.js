@@ -64,10 +64,10 @@ function createRoadmapWindow(windowManager) {
                 <text x="320" y="130" text-anchor="middle" font-weight="500" font-size="13" fill="#1a1a1a">Modular</text>
                 <text x="320" y="145" text-anchor="middle" font-size="11" fill="#888">2025</text>
                 
-                <!-- Mystery 1 -->
-                <circle cx="420" cy="80" r="20" fill="#e0e0e0" stroke="#999" stroke-width="2"/>
-                <text x="420" y="87" text-anchor="middle" fill="#666" font-weight="bold" font-size="18">?</text>
-                <text x="420" y="110" text-anchor="middle" font-weight="500" font-size="13" fill="#888">???</text>
+                <!-- BaseTen -->
+                <circle cx="420" cy="80" r="20" fill="#4CAF50" stroke="#2E7D32" stroke-width="2"/>
+                <text x="420" y="110" text-anchor="middle" font-weight="500" font-size="13" fill="#1a1a1a">BaseTen</text>
+                <text x="420" y="125" text-anchor="middle" font-size="11" fill="#888">2026</text>
                 
                 <!-- Mystery 2 -->
                 <circle cx="520" cy="80" r="20" fill="#e0e0e0" stroke="#999" stroke-width="2"/>

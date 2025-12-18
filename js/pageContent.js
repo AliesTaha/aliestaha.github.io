@@ -55,6 +55,16 @@ const pageContent = {
         <h1>experience</h1>
         <div class="experience-item">
             <div class="exp-header">
+                <h3>model performance intern</h3>
+                <span class="company">baseten</span>
+            </div>
+            <p class="meta">jan – august 2026 • san francisco, ca</p>
+            <ul>
+                <li>incoming model performance</li>
+            </ul>
+        </div>
+        <div class="experience-item">
+            <div class="exp-header">
                 <h3>performance engineering intern</h3>
                 <span class="company">modular</span>
             </div>
