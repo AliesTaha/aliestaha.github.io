@@ -154,8 +154,8 @@ const pageContent = {
         <p class="books-intro">books that shaped my thinking. the best ones become part of how you see the world.</p>
         <div class="books-grid">
             <div class="book-card">
-                <div class="book-cover" style="background: linear-gradient(135deg, #8B4513 0%, #654321 100%);">
-                    <span class="book-spine"></span>
+                <div class="book-cover">
+                    <img src="images/books/napoleone.jpg" alt="Napoleone by Emil Ludwig">
                 </div>
                 <div class="book-info">
                     <h3>Napoleone</h3>
@@ -165,9 +165,8 @@ const pageContent = {
                 </div>
             </div>
             <div class="book-card">
-                <div class="book-cover" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
-                    <span class="book-spine"></span>
-                    <span class="book-title-overlay">ONE</span>
+                <div class="book-cover">
+                    <img src="images/books/zero-to-one.jpg" alt="Zero To One by Peter Thiel">
                 </div>
                 <div class="book-info">
                     <h3>Zero To One</h3>
@@ -177,8 +176,8 @@ const pageContent = {
                 </div>
             </div>
             <div class="book-card">
-                <div class="book-cover" style="background: linear-gradient(135deg, #b8860b 0%, #8b6914 100%);">
-                    <span class="book-spine"></span>
+                <div class="book-cover">
+                    <img src="images/books/crime-and-punishment.jpg" alt="Crime and Punishment by Fyodor Dostoevsky">
                 </div>
                 <div class="book-info">
                     <h3>Crime and Punishment</h3>
@@ -188,9 +187,8 @@ const pageContent = {
                 </div>
             </div>
             <div class="book-card">
-                <div class="book-cover" style="background: linear-gradient(135deg, #2d5a27 0%, #1e3d1a 100%);">
-                    <span class="book-spine"></span>
-                    <span class="book-title-overlay">WORK</span>
+                <div class="book-cover">
+                    <img src="images/books/deep-work.jpg" alt="Deep Work by Cal Newport">
                 </div>
                 <div class="book-info">
                     <h3>Deep Work</h3>
@@ -200,8 +198,8 @@ const pageContent = {
                 </div>
             </div>
             <div class="book-card">
-                <div class="book-cover" style="background: linear-gradient(135deg, #c9a227 0%, #a68523 100%);">
-                    <span class="book-spine"></span>
+                <div class="book-cover">
+                    <img src="images/books/art-of-the-deal.jpg" alt="Trump: The Art of the Deal">
                 </div>
                 <div class="book-info">
                     <h3>Trump: The Art of the Deal</h3>

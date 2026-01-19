@@ -1150,30 +1150,24 @@ html {
 }
 
 .book-cover {
-    height: 160px;
+    height: 200px;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    background: #f0f0f0;
 }
 
-.book-spine {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 12px;
-    background: rgba(0, 0, 0, 0.2);
-    box-shadow: inset -2px 0 4px rgba(0, 0, 0, 0.1);
+.book-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
 }
 
-.book-title-overlay {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 24px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+.book-card:hover .book-cover img {
+    transform: scale(1.05);
 }
 
 .book-info {
