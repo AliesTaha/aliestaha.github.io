@@ -149,6 +149,69 @@ const pageContent = {
             </div>
         </div>
     `,
+    books: `
+        <h1>bookshelf</h1>
+        <p class="books-intro">books that shaped my thinking. the best ones become part of how you see the world.</p>
+        <div class="books-grid">
+            <div class="book-card">
+                <div class="book-cover" style="background: linear-gradient(135deg, #8B4513 0%, #654321 100%);">
+                    <span class="book-spine"></span>
+                </div>
+                <div class="book-info">
+                    <h3>Napoleone</h3>
+                    <p class="book-author">Emil Ludwig</p>
+                    <span class="book-tag tag-history">History</span>
+                    <span class="book-status status-finished">Finished</span>
+                </div>
+            </div>
+            <div class="book-card">
+                <div class="book-cover" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+                    <span class="book-spine"></span>
+                    <span class="book-title-overlay">ONE</span>
+                </div>
+                <div class="book-info">
+                    <h3>Zero To One</h3>
+                    <p class="book-author">Peter Thiel</p>
+                    <span class="book-tag tag-business">Business & Economics</span>
+                    <span class="book-status status-finished">Finished</span>
+                </div>
+            </div>
+            <div class="book-card">
+                <div class="book-cover" style="background: linear-gradient(135deg, #b8860b 0%, #8b6914 100%);">
+                    <span class="book-spine"></span>
+                </div>
+                <div class="book-info">
+                    <h3>Crime and Punishment</h3>
+                    <p class="book-author">Fyodor Dostoevsky</p>
+                    <span class="book-tag tag-philosophy">Philosophy</span>
+                    <span class="book-status status-finished">Finished</span>
+                </div>
+            </div>
+            <div class="book-card">
+                <div class="book-cover" style="background: linear-gradient(135deg, #2d5a27 0%, #1e3d1a 100%);">
+                    <span class="book-spine"></span>
+                    <span class="book-title-overlay">WORK</span>
+                </div>
+                <div class="book-info">
+                    <h3>Deep Work</h3>
+                    <p class="book-author">Cal Newport</p>
+                    <span class="book-tag tag-selfhelp">Self-Help</span>
+                    <span class="book-status status-finished">Finished</span>
+                </div>
+            </div>
+            <div class="book-card">
+                <div class="book-cover" style="background: linear-gradient(135deg, #c9a227 0%, #a68523 100%);">
+                    <span class="book-spine"></span>
+                </div>
+                <div class="book-info">
+                    <h3>Trump: The Art of the Deal</h3>
+                    <p class="book-author">Donald Trump</p>
+                    <span class="book-tag tag-business">Business</span>
+                    <span class="book-status status-toread">To Read</span>
+                </div>
+            </div>
+        </div>
+    `,
     timer: `
         <h1>Study Timer</h1>
         <div class="timer-container">
