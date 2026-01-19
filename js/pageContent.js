@@ -151,7 +151,7 @@ const pageContent = {
     `,
     books: `
         <h1>bookshelf</h1>
-        <p class="books-intro">books that shaped my thinking. the best ones become part of how you see the world.</p>
+        <p class="books-intro">books that shaped my thinking: some through agreement, some through disagreement</p>
         <div class="books-grid">
             <div class="book-card">
                 <div class="book-cover">
@@ -205,7 +205,18 @@ const pageContent = {
                     <h3>Trump: The Art of the Deal</h3>
                     <p class="book-author">Donald Trump</p>
                     <span class="book-tag tag-business">Business</span>
-                    <span class="book-status status-toread">To Read</span>
+                    <span class="book-status status-reading">Currently Reading</span>
+                </div>
+            </div>
+            <div class="book-card">
+                <div class="book-cover">
+                    <img src="images/books/elements.jpg" alt="Elements: Transfiguration of Elijah">
+                </div>
+                <div class="book-info">
+                    <h3>Elements: Transfiguration of Elijah</h3>
+                    <p class="book-author">A Priest of the Oriental Church</p>
+                    <span class="book-tag tag-philosophy">Philosophy</span>
+                    <span class="book-status status-finished">Finished</span>
                 </div>
             </div>
         </div>
