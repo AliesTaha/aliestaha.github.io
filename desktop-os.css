@@ -856,24 +856,7 @@ body {
     }
 
     .dock {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        width: 100%;
-        border-radius: 0;
-        padding: 8px 12px;
-        gap: 8px;
-        justify-content: center;
-    }
-
-    .dock-item {
-        width: 55px;
-        height: 55px;
-    }
-
-    .dock-icon {
-        font-size: 32px;
+        display: none;
     }
 
     .menu-bar {
