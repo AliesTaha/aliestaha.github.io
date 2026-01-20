@@ -14,6 +14,39 @@ initializeIconHandlers(windowManager);
 initializeDockHandlers(windowManager);
 initializeSpecialWindows(windowManager);
 
+// Deep linking - open window from URL path or hash
+function openWindowById(windowId) {
+    if (windowId && pageContent[windowId]) {
+        // Find the label from the desktop icon or use the windowId as title
+        const icon = document.querySelector(`.desktop-icon[data-window="${windowId}"]`);
+        const label = icon ? icon.querySelector('.icon-label').textContent : windowId;
+        windowManager.createWindow(windowId, label, pageContent[windowId]);
+        return true;
+    }
+    return false;
+}
+
+function handleDeepLink() {
+    // First, check for redirect from 404.html (clean URL like /philosophy)
+    const redirectPath = sessionStorage.getItem('redirect_path');
+    if (redirectPath) {
+        sessionStorage.removeItem('redirect_path');
+        if (openWindowById(redirectPath)) {
+            return;
+        }
+    }
+    
+    // Fallback: check URL hash (like #philosophy)
+    const hash = window.location.hash.slice(1);
+    openWindowById(hash);
+}
+
+// Handle initial page load
+handleDeepLink();
+
+// Handle hash changes (browser back/forward or manual URL change)
+window.addEventListener('hashchange', handleDeepLink);
+
 // Global mouse event listeners for window dragging and resizing
 document.addEventListener('mousemove', (e) => {
     windowManager.handleDragging(e);

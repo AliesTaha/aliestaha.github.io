@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting...</title>
+    <script>
+        // GitHub Pages 404 redirect trick for clean URLs
+        // Captures the path and redirects to index.html
+        const path = window.location.pathname.slice(1); // Remove leading '/'
+        if (path && path !== 'index.html') {
+            sessionStorage.setItem('redirect_path', path);
+        }
+        window.location.replace('/');
+    </script>
+</head>
+<body>
+    <p>Redirecting...</p>
+</body>
+</html>
