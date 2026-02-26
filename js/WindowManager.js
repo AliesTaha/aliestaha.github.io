@@ -89,9 +89,12 @@ class WindowManager {
             <div class="resize-handle resize-nw"></div>
         `;
 
+        // Start with opening animation
+        windowEl.classList.add('window-opening');
+
         this.container.appendChild(windowEl);
         this.windows.set(id, windowEl);
-        
+
         this.windowStates.set(id, {
             state: 'normal',
             normalPosition: { left: offsetX, top: offsetY, width: defaultWidth, height: defaultHeight }
@@ -104,6 +107,11 @@ class WindowManager {
         } else if (content) {
             windowEl.querySelector('.window-content').innerHTML = content;
         }
+
+        // Remove animation class after it completes
+        windowEl.addEventListener('animationend', () => {
+            windowEl.classList.remove('window-opening');
+        }, { once: true });
     }
 
     setupWindowEvents(windowEl, id) {
@@ -543,10 +551,13 @@ class WindowManager {
     closeWindow(id) {
         const windowEl = this.windows.get(id);
         if (windowEl) {
-            windowEl.remove();
-            this.windows.delete(id);
-            this.windowStates.delete(id);
-            this.removeMinimizedIndicator(id);
+            windowEl.classList.add('window-closing');
+            windowEl.addEventListener('animationend', () => {
+                windowEl.remove();
+                this.windows.delete(id);
+                this.windowStates.delete(id);
+                this.removeMinimizedIndicator(id);
+            }, { once: true });
         }
     }
 }

@@ -34,54 +34,62 @@ function initializeSpecialWindows(windowManager) {
 
 function createRoadmapWindow(windowManager) {
     windowManager.createWindow('roadmap', 'Roadmap', `
-        <div style="padding: 20px;">
-            <svg width="100%" height="340" viewBox="0 0 700 340" style="transform: scale(1.2); transform-origin: center center;">
-                <!-- Path line -->
-                <path d="M 80 280 L 160 220 L 240 160 L 320 100 L 420 80 L 520 80 L 620 80" 
-                      stroke="#1a1a1a" 
-                      stroke-width="2" 
-                      stroke-dasharray="5,5" 
-                      fill="none" 
-                      opacity="0.3"/>
-                
-                <!-- BlackBerry -->
-                <circle cx="80" cy="280" r="20" fill="#4CAF50" stroke="#2E7D32" stroke-width="2"/>
-                <text x="80" y="310" text-anchor="middle" font-weight="500" font-size="13" fill="#1a1a1a">BlackBerry</text>
-                <text x="80" y="325" text-anchor="middle" font-size="11" fill="#888">2023</text>
-                
-                <!-- Ford -->
-                <circle cx="160" cy="220" r="20" fill="#4CAF50" stroke="#2E7D32" stroke-width="2"/>
-                <text x="160" y="250" text-anchor="middle" font-weight="500" font-size="13" fill="#1a1a1a">Ford</text>
-                <text x="160" y="265" text-anchor="middle" font-size="11" fill="#888">2024</text>
-                
-                <!-- Tesla -->
-                <circle cx="240" cy="160" r="20" fill="#4CAF50" stroke="#2E7D32" stroke-width="2"/>
-                <text x="240" y="190" text-anchor="middle" font-weight="500" font-size="13" fill="#1a1a1a">Tesla</text>
-                <text x="240" y="205" text-anchor="middle" font-size="11" fill="#888">2024</text>
-                
-                <!-- Modular -->
-                <circle cx="320" cy="100" r="20" fill="#4CAF50" stroke="#2E7D32" stroke-width="2"/>
-                <text x="320" y="130" text-anchor="middle" font-weight="500" font-size="13" fill="#1a1a1a">Modular</text>
-                <text x="320" y="145" text-anchor="middle" font-size="11" fill="#888">2025</text>
-                
-                <!-- BaseTen -->
-                <circle cx="420" cy="80" r="20" fill="#4CAF50" stroke="#2E7D32" stroke-width="2"/>
-                <text x="420" y="110" text-anchor="middle" font-weight="500" font-size="13" fill="#1a1a1a">BaseTen</text>
-                <text x="420" y="125" text-anchor="middle" font-size="11" fill="#888">2026</text>
-                
-                <!-- Mystery 2 -->
-                <circle cx="520" cy="80" r="20" fill="#e0e0e0" stroke="#999" stroke-width="2"/>
-                <text x="520" y="87" text-anchor="middle" fill="#666" font-weight="bold" font-size="18">?</text>
-                <text x="520" y="110" text-anchor="middle" font-weight="500" font-size="13" fill="#888">???</text>
-                
-                <!-- World Domination -->
-                <g transform="translate(620, 80)">
-                    <line x1="-12" y1="-12" x2="12" y2="12" stroke="#D32F2F" stroke-width="4" stroke-linecap="round"/>
-                    <line x1="12" y1="-12" x2="-12" y2="12" stroke="#D32F2F" stroke-width="4" stroke-linecap="round"/>
-                    <circle cx="0" cy="0" r="18" fill="none" stroke="#D32F2F" stroke-width="2"/>
-                </g>
-                <text x="620" y="110" text-anchor="middle" font-weight="600" font-size="13" fill="#D32F2F">World Domination</text>
-            </svg>
+        <div class="roadmap-timeline">
+            <div class="roadmap-entry">
+                <div class="roadmap-date">2023</div>
+                <div class="roadmap-dot"></div>
+                <div class="roadmap-details">
+                    <div class="roadmap-company">BlackBerry QNX</div>
+                    <div class="roadmap-role">embedded systems</div>
+                </div>
+            </div>
+            <div class="roadmap-entry">
+                <div class="roadmap-date">2024</div>
+                <div class="roadmap-dot"></div>
+                <div class="roadmap-details">
+                    <div class="roadmap-company">Ford Motor Co.</div>
+                    <div class="roadmap-role">vehicle software platform</div>
+                </div>
+            </div>
+            <div class="roadmap-entry">
+                <div class="roadmap-date">2024</div>
+                <div class="roadmap-dot"></div>
+                <div class="roadmap-details">
+                    <div class="roadmap-company">Tesla</div>
+                    <div class="roadmap-role">computer vision</div>
+                </div>
+            </div>
+            <div class="roadmap-entry">
+                <div class="roadmap-date">2025</div>
+                <div class="roadmap-dot"></div>
+                <div class="roadmap-details">
+                    <div class="roadmap-company">Modular</div>
+                    <div class="roadmap-role">mojo compiler performance</div>
+                </div>
+            </div>
+            <div class="roadmap-entry roadmap-current">
+                <div class="roadmap-date">2026</div>
+                <div class="roadmap-dot"></div>
+                <div class="roadmap-details">
+                    <div class="roadmap-company">BaseTen</div>
+                    <div class="roadmap-role">gpu inference infrastructure</div>
+                </div>
+            </div>
+            <div class="roadmap-entry roadmap-future">
+                <div class="roadmap-date">???</div>
+                <div class="roadmap-dot"></div>
+                <div class="roadmap-details">
+                    <div class="roadmap-company">tbd</div>
+                    <div class="roadmap-role">something meaningful</div>
+                </div>
+            </div>
+            <div class="roadmap-entry roadmap-future roadmap-end">
+                <div class="roadmap-date"></div>
+                <div class="roadmap-dot"></div>
+                <div class="roadmap-details">
+                    <div class="roadmap-company" style="text-decoration: line-through; color: #ccc;">world domination</div>
+                </div>
+            </div>
         </div>
     `);
 }

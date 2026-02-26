@@ -30,6 +30,12 @@
 
     <!-- Desktop Area -->
     <div class="desktop">
+        <!-- Game of Life Canvas Background -->
+        <canvas id="game-of-life"></canvas>
+
+        <!-- Words of Wisdom Overlay -->
+        <div class="wisdom-overlay" id="wisdom-overlay"></div>
+
         <!-- Desktop Icons -->
         <div class="desktop-icons">
             <!-- Row 1 -->
@@ -58,6 +64,11 @@
                 <div class="icon-image">📄</div>
                 <div class="icon-label">books</div>
             </div>
+
+            <div class="desktop-icon special-icon roadmap-icon">
+                <div class="icon-image">📄</div>
+                <div class="icon-label">roadmap</div>
+            </div>
         </div>
 
         <!-- Central Feature Area -->
@@ -65,16 +76,13 @@
             <div class="feature-card">
                 <img src="me_sf.png" alt="ali taha" class="profile-image">
                 <p class="greeting">hey, i'm ali</p>
+                <p class="tagline">performance engineer</p>
+                <p class="explore-hint" id="explore-hint">double-click to explore</p>
             </div>
         </div>
 
         <!-- Special Desktop Elements -->
         <div class="desktop-shortcuts">
-            <div class="desktop-icon special-icon roadmap-icon">
-                <div class="icon-image">📄</div>
-                <div class="icon-label">Roadmap</div>
-            </div>
-
             <div class="desktop-icon special-icon trash-icon">
                 <div class="icon-image">🗑️</div>
                 <div class="icon-label">Trash</div>
@@ -118,6 +126,7 @@
     <script src="js/iconHandlers.js"></script>
     <script src="js/dockHandlers.js"></script>
     <script src="js/specialWindows.js"></script>
+    <script src="js/gameOfLife.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>
