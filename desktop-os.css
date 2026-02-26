@@ -14,6 +14,17 @@ body {
     position: relative;
 }
 
+/* Paper grain texture overlay */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    pointer-events: none;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
 /* Windows System */
 #windows-container {
     position: fixed;
@@ -256,19 +267,22 @@ body {
 
 /* Window content styling */
 .window-content h1 {
-    font-size: 32px;
-    font-weight: 450;
-    margin-bottom: 20px;
+    font-size: 34px;
+    font-weight: 550;
+    margin-bottom: 8px;
     color: #1a1a1a;
+    letter-spacing: -0.02em;
 }
 
 .window-content h2 {
-    font-size: 20px;
-    font-weight: 450;
+    font-size: 13px;
+    font-weight: 500;
     margin: 40px 0 20px;
-    color: #1a1a1a;
+    color: #888;
     padding-top: 30px;
     border-top: 1px solid rgba(0, 0, 0, 0.08);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
 }
 
 .window-content h2:first-child {
@@ -278,24 +292,26 @@ body {
 }
 
 .window-content h3 {
-    font-size: 20px;
-    font-weight: 450;
+    font-size: 21px;
+    font-weight: 500;
     margin: 25px 0 10px;
     color: #1a1a1a;
+    letter-spacing: -0.01em;
 }
 
 .window-content p {
     margin-bottom: 20px;
-    color: #1a1a1a;
-    font-size: 17px;
-    font-weight: 300;
-    line-height: 1.7;
+    color: #444;
+    font-size: 16px;
+    font-weight: 350;
+    line-height: 1.75;
 }
 
 .window-content a {
     color: #1a1a1a;
     text-decoration: none;
-    border-bottom: 1.5px solid rgba(0, 0, 0, 0.25);
+    font-weight: 420;
+    border-bottom: 1.5px solid rgba(0, 0, 0, 0.2);
     transition: border-color 0.3s ease;
 }
 
@@ -310,10 +326,10 @@ body {
 
 .window-content li {
     margin-bottom: 12px;
-    color: #1a1a1a;
-    font-size: 17px;
-    line-height: 1.7;
-    font-weight: 300;
+    color: #444;
+    font-size: 16px;
+    line-height: 1.75;
+    font-weight: 350;
 }
 
 .window-loading {
@@ -355,26 +371,27 @@ body {
 }
 
 .window-content .writing-item .date {
-    color: #888;
-    font-size: 14px;
-    margin-bottom: 8px;
-    font-weight: 400;
+    color: #999;
+    font-size: 12px;
+    margin-bottom: 10px;
+    font-weight: 450;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.1em;
 }
 
 .window-content .writing-item h3 {
-    font-size: 22px;
-    font-weight: 450;
+    font-size: 20px;
+    font-weight: 500;
     margin: 0 0 8px 0;
+    letter-spacing: -0.01em;
 }
 
 .window-content .writing-item .description {
     color: #666;
-    font-size: 16px;
-    line-height: 1.6;
+    font-size: 15px;
+    line-height: 1.65;
     margin: 0;
-    font-weight: 300;
+    font-weight: 350;
 }
 
 /* Contact items in windows */
@@ -390,10 +407,12 @@ body {
 }
 
 .window-content .contact-item .label {
-    color: #888;
-    font-size: 15px;
+    color: #999;
+    font-size: 12px;
     min-width: 90px;
-    font-weight: 400;
+    font-weight: 450;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
 }
 
 /* Experience items in windows */
@@ -410,20 +429,23 @@ body {
 }
 
 .window-content .experience-item .exp-header h3 {
-    margin: 0 0 5px 0;
+    margin: 0 0 3px 0;
+    font-weight: 520;
 }
 
 .window-content .experience-item .company {
-    font-size: 17px;
+    font-size: 16px;
     color: #666;
     font-weight: 400;
+    letter-spacing: -0.005em;
 }
 
 .window-content .experience-item .meta {
-    color: #888;
-    font-size: 15px;
+    color: #999;
+    font-size: 13px;
     margin: 8px 0 15px 0;
     font-weight: 400;
+    letter-spacing: 0.02em;
 }
 
 .window-content .experience-item ul {
@@ -433,6 +455,8 @@ body {
 
 .window-content .experience-item li {
     margin-bottom: 10px;
+    font-size: 15px;
+    color: #555;
 }
 
 /* About layout in windows */
@@ -441,13 +465,17 @@ body {
 }
 
 .window-content .intro-text {
-    font-size: 19px;
-    line-height: 1.8;
+    font-size: 18px;
+    line-height: 1.85;
     margin-bottom: 30px;
+    font-weight: 350;
+    color: #333;
 }
 
 .window-content .contact-text {
-    font-size: 17px;
+    font-size: 15px;
+    color: #666;
+    font-weight: 350;
 }
 
 /* Menu Bar (macOS style) */
@@ -527,6 +555,51 @@ body {
         radial-gradient(circle at 80% 80%, rgba(230, 220, 200, 0.2), transparent 50%),
         #f5f1e8;
     overflow: hidden;
+}
+
+/* Game of Life Canvas */
+#game-of-life {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+/* Words of Wisdom Overlay */
+.wisdom-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.wisdom-word {
+    position: absolute;
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.07);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    user-select: none;
+    opacity: 0;
+    animation: wisdomFadeIn 2s ease forwards;
+}
+
+.wisdom-category {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.09);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+@keyframes wisdomFadeIn {
+    0% { opacity: 0; transform: translateY(4px) rotate(var(--rot, 0deg)); }
+    100% { opacity: 1; }
 }
 
 /* Desktop Icons Grid */
@@ -624,12 +697,18 @@ body {
 }
 
 .profile-image {
-    width: 240px;
-    height: 240px;
+    width: 180px;
+    height: 180px;
     border-radius: 12px;
     object-fit: cover;
     border: 1px solid rgba(0, 0, 0, 0.06);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    animation: breathe 6s ease-in-out infinite;
+}
+
+@keyframes breathe {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-4px); }
 }
 
 .greeting {
@@ -637,6 +716,35 @@ body {
     color: #1a1a1a;
     font-weight: 500;
     margin: 0;
+}
+
+.tagline {
+    font-size: 13px;
+    color: #999;
+    font-weight: 400;
+    margin: 0;
+    letter-spacing: 0.04em;
+}
+
+.explore-hint {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0);
+    font-weight: 400;
+    margin: 12px 0 0 0;
+    letter-spacing: 0.02em;
+    animation: hintFadeIn 0.8s ease 2.5s forwards;
+}
+
+@keyframes hintFadeIn {
+    to { color: rgba(0, 0, 0, 0.25); }
+}
+
+.explore-hint.hidden {
+    animation: hintFadeOut 0.4s ease forwards;
+}
+
+@keyframes hintFadeOut {
+    to { color: rgba(0, 0, 0, 0); }
 }
 
 /* Special Desktop Icons (bottom right) */
@@ -792,6 +900,46 @@ body {
     transform: translateY(0);
 }
 
+/* Window open/close animations */
+@keyframes windowOpen {
+    0% {
+        opacity: 0;
+        transform: scale(0.88);
+        filter: blur(4px);
+    }
+    60% {
+        opacity: 1;
+        filter: blur(0px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0px);
+    }
+}
+
+@keyframes windowClose {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0px);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.92);
+        filter: blur(3px);
+    }
+}
+
+.window.window-opening {
+    animation: windowOpen 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.window.window-closing {
+    animation: windowClose 0.2s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+    pointer-events: none;
+}
+
 /* Animations */
 @keyframes float {
     0%, 100% { transform: translateY(0px); }
@@ -809,6 +957,11 @@ body {
         position: relative;
         min-height: 100vh;
         bottom: auto;
+    }
+
+    #game-of-life,
+    .wisdom-overlay {
+        display: none;
     }
 
     .desktop-icons {
@@ -833,6 +986,14 @@ body {
 
     .greeting {
         font-size: 12px;
+    }
+
+    .tagline {
+        font-size: 11px;
+    }
+
+    .explore-hint {
+        display: none;
     }
 
     .central-feature {
@@ -918,6 +1079,115 @@ body {
     .snap-preview {
         display: none !important;
     }
+}
+
+/* Roadmap Timeline */
+.roadmap-timeline {
+    padding: 10px 0 30px;
+    position: relative;
+}
+
+.roadmap-entry {
+    display: grid;
+    grid-template-columns: 56px 16px 1fr;
+    gap: 0 20px;
+    align-items: start;
+    min-height: 64px;
+    position: relative;
+}
+
+/* Vertical line connecting dots */
+.roadmap-entry:not(:last-child) .roadmap-dot::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: calc(100% + 56px);
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.roadmap-date {
+    font-size: 12px;
+    font-weight: 450;
+    color: #999;
+    text-align: right;
+    padding-top: 1px;
+    letter-spacing: 0.06em;
+    font-variant-numeric: tabular-nums;
+}
+
+.roadmap-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    margin-top: 5px;
+    position: relative;
+    justify-self: center;
+}
+
+.roadmap-details {
+    padding-bottom: 32px;
+}
+
+.roadmap-company {
+    font-size: 16px;
+    font-weight: 500;
+    color: #1a1a1a;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+}
+
+.roadmap-role {
+    font-size: 13px;
+    font-weight: 350;
+    color: #999;
+    margin-top: 3px;
+    letter-spacing: 0.01em;
+}
+
+/* Current position highlight */
+.roadmap-current .roadmap-dot {
+    width: 9px;
+    height: 9px;
+    margin-top: 4px;
+    background: #1a1a1a;
+    box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.12);
+}
+
+.roadmap-current .roadmap-company {
+    font-weight: 550;
+}
+
+/* Future entries */
+.roadmap-future .roadmap-dot {
+    background: #ccc;
+}
+
+.roadmap-future .roadmap-company {
+    color: #bbb;
+    font-weight: 400;
+}
+
+.roadmap-future .roadmap-role {
+    color: #ccc;
+}
+
+.roadmap-future .roadmap-date {
+    color: #ccc;
+}
+
+.roadmap-end .roadmap-details {
+    padding-bottom: 0;
+}
+
+.roadmap-end .roadmap-dot {
+    width: 5px;
+    height: 5px;
+    margin-top: 6px;
+    background: #ddd;
 }
 
 /* Smooth scrolling for future stages */
@@ -1123,13 +1393,18 @@ html {
     border-radius: 12px;
     overflow: hidden;
     border: 1px solid rgba(0, 0, 0, 0.06);
-    transition: all 0.25s ease;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transform-style: preserve-3d;
+    perspective: 800px;
 }
 
 .book-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-6px) rotateX(2deg) rotateY(-3deg);
+    box-shadow:
+        0 14px 36px rgba(0, 0, 0, 0.12),
+        0 4px 12px rgba(0, 0, 0, 0.06),
+        -4px 8px 20px rgba(0, 0, 0, 0.04);
 }
 
 .book-cover {
@@ -1142,15 +1417,29 @@ html {
     background: #f0f0f0;
 }
 
+.book-cover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 100%);
+    transition: background 0.35s ease;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.book-card:hover .book-cover::after {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0.05) 100%);
+}
+
 .book-cover img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .book-card:hover .book-cover img {
-    transform: scale(1.05);
+    transform: scale(1.08);
 }
 
 .book-info {
