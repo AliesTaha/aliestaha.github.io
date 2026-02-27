@@ -95,29 +95,32 @@ function createRoadmapWindow(windowManager) {
 }
 
 function createTrashWindow(windowManager) {
-    windowManager.createWindow('trash', '🗑️ Trash', `
+    const fileIcon = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M6 4h12l8 8v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4z" fill="#f5f0eb" stroke="#b0a090" stroke-width="1.2"/><path d="M18 4v8h8" fill="#e8e0d8" stroke="#b0a090" stroke-width="1.2"/><line x1="10" y1="16" x2="22" y2="16" stroke="#c0b0a0" stroke-width="0.8"/><line x1="10" y1="20" x2="22" y2="20" stroke="#c0b0a0" stroke-width="0.8"/><line x1="10" y1="24" x2="17" y2="24" stroke="#c0b0a0" stroke-width="0.8"/></svg>`;
+    const videoIcon = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect x="4" y="6" width="24" height="20" rx="2" fill="#f5f0eb" stroke="#b0a090" stroke-width="1.2"/><polygon points="13,12 13,22 22,17" fill="#b0a090"/></svg>`;
+
+    windowManager.createWindow('trash', 'Trash', `
         <h1>Trash</h1>
         <p style="color: #666; margin-bottom: 30px;">3 items</p>
         <div style="display: flex; flex-direction: column; gap: 15px;">
-            <div class="trash-file" onclick="window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank')" style="cursor: pointer; padding: 15px; background: rgba(0,0,0,0.02); border-radius: 8px; display: flex; align-items: center; gap: 12px; transition: background 0.2s;">
-                <span style="font-size: 32px;">📄</span>
+            <div class="trash-file" onclick="openTrashManifesto('top_secret')" style="cursor: pointer; padding: 15px; background: rgba(0,0,0,0.02); border-radius: 8px; display: flex; align-items: center; gap: 12px; transition: background 0.2s;">
+                ${fileIcon}
                 <div>
                     <div style="font-weight: 500;">TOP_SECRET.txt</div>
                     <div style="font-size: 14px; color: #888;">Very classified stuff</div>
                 </div>
             </div>
-            <div class="trash-file" onclick="window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank')" style="cursor: pointer; padding: 15px; background: rgba(0,0,0,0.02); border-radius: 8px; display: flex; align-items: center; gap: 12px; transition: background 0.2s;">
-                <span style="font-size: 32px;">📄</span>
+            <div class="trash-file" onclick="openTrashManifesto('nda')" style="cursor: pointer; padding: 15px; background: rgba(0,0,0,0.02); border-radius: 8px; display: flex; align-items: center; gap: 12px; transition: background 0.2s;">
+                ${fileIcon}
                 <div>
                     <div style="font-weight: 500;">NDA.txt</div>
                     <div style="font-size: 14px; color: #888;">Don't look at this</div>
                 </div>
             </div>
             <div class="trash-file" onclick="window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank')" style="cursor: pointer; padding: 15px; background: rgba(0,0,0,0.02); border-radius: 8px; display: flex; align-items: center; gap: 12px; transition: background 0.2s;">
-                <span style="font-size: 32px;">🎬</span>
+                ${videoIcon}
                 <div>
                     <div style="font-weight: 500;">spicy.mov</div>
-                    <div style="font-size: 14px; color: #888;">🌶️ Handle with care</div>
+                    <div style="font-size: 14px; color: #888;">Handle with care</div>
                 </div>
             </div>
         </div>
@@ -127,6 +130,69 @@ function createTrashWindow(windowManager) {
             }
         </style>
     `);
+}
+
+function openTrashManifesto(type) {
+    const wm = window.windowManager;
+    if (!wm) return;
+
+    if (type === 'top_secret') {
+        wm.createWindow('top-secret', 'TOP_SECRET.txt', `
+            <div style="padding: 20px; font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.8;">
+                <p style="color: red; font-weight: bold; text-align: center; font-size: 16px;">--- CLASSIFIED: EYES ONLY ---</p>
+                <br>
+                <p>TO: Whoever is reading this</p>
+                <p>FROM: Ali Taha, Chief Performance Officer</p>
+                <p>RE: The Truth About Software Engineering</p>
+                <br>
+                <p>After years of classified research, I can confirm the following:</p>
+                <br>
+                <p>1. Nobody actually understands DNS. We all just pretend.</p>
+                <br>
+                <p>2. Every senior engineer's debugging process is just adding print statements with increasing desperation.</p>
+                <br>
+                <p>3. The cloud is literally just someone else's computer that costs 400% more.</p>
+                <br>
+                <p>4. 90% of all Jira tickets could be replaced with the sentence "make it work better."</p>
+                <br>
+                <p>5. The person who wrote the legacy code you're cursing at is almost certainly you, 6 months ago.</p>
+                <br>
+                <p>6. "It works on my machine" is technically a valid deployment strategy if your machine IS the server.</p>
+                <br>
+                <p>7. Stack Overflow is down? Guess the entire industry is taking the day off.</p>
+                <br>
+                <p style="color: red; text-align: center;">--- END TRANSMISSION ---</p>
+                <p style="color: #aaa; text-align: center; font-size: 11px;">This document will self-destruct never because I put it in the trash instead.</p>
+            </div>
+        `);
+    } else if (type === 'nda') {
+        wm.createWindow('nda', 'NDA.txt', `
+            <div style="padding: 20px; font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.8;">
+                <p style="text-align: center; font-weight: bold; font-size: 16px; text-decoration: underline;">NON-DISCLOSURE AGREEMENT</p>
+                <br>
+                <p>By opening this file, YOU ("the Snooper") hereby agree to the following terms:</p>
+                <br>
+                <p><strong>Section 1: Acknowledgment</strong></p>
+                <p>The Snooper acknowledges that they were explicitly told "Don't look at this" and chose to look anyway. This makes them a rebel, which is honestly kind of cool.</p>
+                <br>
+                <p><strong>Section 2: Confidential Information</strong></p>
+                <p>The Snooper shall not disclose the following trade secrets:</p>
+                <p style="padding-left: 20px;">a) Ali's actual daily routine is 70% staring at profiler output and 30% questioning life choices.</p>
+                <p style="padding-left: 20px;">b) The matmul kernel that "beat cuBLAS" was achieved through a blood pact with the GPU gods. No further questions.</p>
+                <p style="padding-left: 20px;">c) This entire website was built to avoid doing actual work.</p>
+                <br>
+                <p><strong>Section 3: Penalties</strong></p>
+                <p>Violation of this NDA will result in:</p>
+                <p style="padding-left: 20px;">- A mass email to your company Slack saying you read files from people's trash cans</p>
+                <p style="padding-left: 20px;">- Being forced to explain what a "tensor core" is to your non-technical relatives at Thanksgiving</p>
+                <p style="padding-left: 20px;">- 500 hours of mandatory CUDA debugging with no printf allowed</p>
+                <br>
+                <p style="text-align: center;">Signed,</p>
+                <p style="text-align: center; font-style: italic;">Ali Taha, Esq. (not a real lawyer)</p>
+                <p style="text-align: center; color: #aaa; font-size: 11px;">This NDA is legally binding in zero jurisdictions.</p>
+            </div>
+        `);
+    }
 }
 
 // Timer state

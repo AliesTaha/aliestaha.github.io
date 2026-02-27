@@ -702,11 +702,12 @@ body::after {
 
 /* 3D statue container — absolutely positioned so text doesn't push it down */
 .statue-container {
-    width: 400px;
-    height: 500px;
+    width: 700px;
+    height: 700px;
     opacity: 0;
     transition: opacity 0.8s ease;
     cursor: grab;
+    overflow: visible;
 }
 
 .statue-container:active {
