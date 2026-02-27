@@ -40,33 +40,68 @@
         <div class="desktop-icons">
             <!-- Row 1 -->
             <div class="desktop-icon" data-window="technical" data-url="technical.html">
-                <div class="icon-image">📄</div>
+                <div class="icon-image">
+                    <svg width="44" height="44" viewBox="0 0 40 40" fill="none" stroke="#6b5e4f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="8" width="32" height="24" rx="3"/>
+                        <polyline points="11,18 16,22 11,26"/>
+                        <line x1="19" y1="26" x2="27" y2="26"/>
+                    </svg>
+                </div>
                 <div class="icon-label">technical blog posts</div>
             </div>
 
             <div class="desktop-icon" data-window="philosophy" data-url="philosophy.html">
-                <div class="icon-image">📄</div>
+                <div class="icon-image">
+                    <svg width="44" height="44" viewBox="0 0 40 40" fill="none" stroke="#6b5e4f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 20C10 11 30 11 36 20C30 29 10 29 4 20Z"/>
+                        <circle cx="20" cy="20" r="4.5"/>
+                        <circle cx="20" cy="20" r="1.8" fill="#6b5e4f" stroke="none"/>
+                    </svg>
+                </div>
                 <div class="icon-label">philosophy blog posts</div>
             </div>
 
             <!-- Row 2 -->
             <div class="desktop-icon" data-window="experience" data-url="experience.html">
-                <div class="icon-image">📄</div>
+                <div class="icon-image">
+                    <svg width="44" height="44" viewBox="0 0 40 40" fill="none" stroke="#6b5e4f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="5" y="14" width="30" height="20" rx="3"/>
+                        <path d="M15 14V10C15 8.5 16 7 18 7H22C24 7 25 8.5 25 10V14"/>
+                        <line x1="5" y1="23" x2="35" y2="23"/>
+                    </svg>
+                </div>
                 <div class="icon-label">resume</div>
             </div>
 
             <div class="desktop-icon" data-window="contact" data-url="contact.html">
-                <div class="icon-image">📄</div>
+                <div class="icon-image">
+                    <svg width="44" height="44" viewBox="0 0 40 40" fill="none" stroke="#6b5e4f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 20L34 8L22 33L18 22Z"/>
+                        <line x1="34" y1="8" x2="18" y2="22"/>
+                    </svg>
+                </div>
                 <div class="icon-label">contact info</div>
             </div>
 
             <div class="desktop-icon" data-window="books" data-url="books.html">
-                <div class="icon-image">📄</div>
+                <div class="icon-image">
+                    <svg width="44" height="44" viewBox="0 0 40 40" fill="none" stroke="#6b5e4f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 12C16 10 10 9 4 10V31C10 30 16 30 20 33C24 30 30 30 36 31V10C30 9 24 10 20 12Z"/>
+                        <line x1="20" y1="12" x2="20" y2="33"/>
+                    </svg>
+                </div>
                 <div class="icon-label">books</div>
             </div>
 
             <div class="desktop-icon special-icon roadmap-icon">
-                <div class="icon-image">📄</div>
+                <div class="icon-image">
+                    <svg width="44" height="44" viewBox="0 0 40 40" fill="none" stroke="#6b5e4f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10 33C10 25 18 28 20 20C22 12 30 15 30 7"/>
+                        <circle cx="10" cy="33" r="2.5" fill="#6b5e4f" stroke="none"/>
+                        <circle cx="20" cy="20" r="2" fill="#6b5e4f" stroke="none"/>
+                        <circle cx="30" cy="7" r="2.5" fill="none"/>
+                    </svg>
+                </div>
                 <div class="icon-label">roadmap</div>
             </div>
         </div>
@@ -74,7 +109,8 @@
         <!-- Central Feature Area -->
         <div class="central-feature">
             <div class="feature-card">
-                <img src="me_sf.png" alt="ali taha" class="profile-image">
+                <div id="statue-container" class="statue-container"></div>
+                <img id="statue-fallback" src="greek_statue.png" alt="ali taha" class="profile-image">
                 <p class="greeting">hey, i'm ali</p>
                 <p class="tagline">performance engineer</p>
                 <p class="explore-hint" id="explore-hint">double-click to explore</p>
@@ -84,49 +120,55 @@
         <!-- Special Desktop Elements -->
         <div class="desktop-shortcuts">
             <div class="desktop-icon special-icon trash-icon">
-                <div class="icon-image">🗑️</div>
+                <div class="icon-image">
+                    <svg width="44" height="44" viewBox="0 0 40 40" fill="none" stroke="#6b5e4f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 14L14 34H26L28 14"/>
+                        <line x1="8" y1="14" x2="32" y2="14"/>
+                        <path d="M16 14V10C16 9 17 8 18.5 8H21.5C23 8 24 9 24 10V14"/>
+                        <line x1="17" y1="19" x2="17.5" y2="30" stroke-width="1.2"/>
+                        <line x1="20" y1="19" x2="20" y2="30" stroke-width="1.2"/>
+                        <line x1="23" y1="19" x2="22.5" y2="30" stroke-width="1.2"/>
+                    </svg>
+                </div>
                 <div class="icon-label">Trash</div>
             </div>
         </div>
     </div>
 
-    <!-- Dock (bottom) -->
-    <div class="dock">
-        <div class="dock-item" title="technical" data-window="technical">
-            <div class="dock-icon">📄</div>
-            <div class="dock-label">technical</div>
+    <!-- Terminal -->
+    <div class="terminal" id="terminal">
+        <div class="terminal-header" id="terminal-header">
+            <div class="terminal-title">Terminal</div>
+            <span class="terminal-toggle">&#9650;</span>
         </div>
-        <div class="dock-item" title="philosophy" data-window="philosophy">
-            <div class="dock-icon">📄</div>
-            <div class="dock-label">philosophy</div>
-        </div>
-        <div class="dock-item" title="experience" data-window="experience">
-            <div class="dock-icon">📄</div>
-            <div class="dock-label">experience</div>
-        </div>
-        <div class="dock-item" title="contact" data-window="contact">
-            <div class="dock-icon">📄</div>
-            <div class="dock-label">contact</div>
-        </div>
-        <div class="dock-item" title="books" data-window="books">
-            <div class="dock-icon">📄</div>
-            <div class="dock-label">books</div>
-        </div>
-        <div class="dock-separator"></div>
-        <div class="dock-item trash-dock-icon" title="Trash">
-            <div class="dock-icon">🗑️</div>
-            <div class="dock-label">trash</div>
+        <div class="terminal-body">
+            <div class="terminal-output" id="terminal-output"></div>
+            <div class="terminal-input-line">
+                <span class="terminal-prompt" id="terminal-prompt">ali@desktop ~ $ </span>
+                <input type="text" class="terminal-input" id="terminal-input" spellcheck="false" autocomplete="off">
+            </div>
         </div>
     </div>
+
+    <!-- Three.js -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"
+            }
+        }
+    </script>
+    <script type="module" src="js/statue3d.js"></script>
 
     <!-- JavaScript Modules -->
     <script src="js/WindowManager.js"></script>
     <script src="js/pageContent.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/iconHandlers.js"></script>
-    <script src="js/dockHandlers.js"></script>
     <script src="js/specialWindows.js"></script>
     <script src="js/gameOfLife.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/terminal.js"></script>
 </body>
 </html>

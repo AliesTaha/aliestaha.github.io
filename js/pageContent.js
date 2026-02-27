@@ -18,6 +18,11 @@ const pageContent = {
         <h1>technical</h1>
         <h2>articles</h2>
         <div class="writing-item">
+            <p class="date">february 18, 2026</p>
+            <h3><a href="https://www.baseten.co/blog/four-bits/" target="_blank">four bits</a></h3>
+            <p class="description">achieving a 1.6x speed improvement with no perceptible quality loss through 4-bit quantization of the flux.2 [dev] model.</p>
+        </div>
+        <div class="writing-item">
             <p class="date">september 19, 2025</p>
             <h3><a href="https://www.modular.com/blog/matrix-multiplication-on-blackwell-part-4---breaking-sota" target="_blank">part 4: breaking sota: achieving 103% of peak performance on blackwell</a></h3>
             <p class="description">the final optimization techniques that push our matmul kernel past nvidia's cublas, reaching 103% of theoretical peak performance on blackwell gpus.</p>

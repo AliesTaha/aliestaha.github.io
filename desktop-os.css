@@ -31,9 +31,10 @@ body::after {
     top: 28px;
     left: 0;
     right: 0;
-    bottom: 70px;
+    bottom: 28px;
     z-index: 1000;
     pointer-events: none;
+    transition: bottom 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .window {
@@ -549,7 +550,7 @@ body::after {
     top: 28px;
     left: 0;
     right: 0;
-    bottom: 70px;
+    bottom: 28px;
     background: 
         radial-gradient(circle at 20% 50%, rgba(210, 200, 180, 0.3), transparent 50%),
         radial-gradient(circle at 80% 80%, rgba(230, 220, 200, 0.2), transparent 50%),
@@ -640,7 +641,6 @@ body::after {
 .icon-image {
     width: 80px;
     height: 80px;
-    font-size: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -648,7 +648,7 @@ body::after {
     backdrop-filter: blur(10px);
     border-radius: 14px;
     border: 1px solid rgba(0, 0, 0, 0.06);
-    box-shadow: 
+    box-shadow:
         0 4px 12px rgba(0, 0, 0, 0.08),
         0 1px 3px rgba(0, 0, 0, 0.06);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -680,7 +680,7 @@ body::after {
 /* Central Feature Card */
 .central-feature {
     position: absolute;
-    top: 50%;
+    top: 45%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 50;
@@ -688,22 +688,34 @@ body::after {
 
 .feature-card {
     background: transparent;
-    padding: 5px 6px;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 0;
 }
 
+.feature-card .greeting {
+    margin-top: 4px;
+}
+
+
+/* 3D statue container — absolutely positioned so text doesn't push it down */
+.statue-container {
+    width: 400px;
+    height: 500px;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    cursor: grab;
+}
+
+.statue-container:active {
+    cursor: grabbing;
+}
+
+/* Hide fallback image on desktop via CSS — no flash */
 .profile-image {
-    width: 180px;
-    height: 180px;
-    border-radius: 12px;
-    object-fit: cover;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    animation: breathe 6s ease-in-out infinite;
+    display: none;
 }
 
 @keyframes breathe {
@@ -801,8 +813,10 @@ body::after {
 }
 
 .dock-icon {
-    font-size: 36px;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
 }
 
 .dock-label {
@@ -979,9 +993,14 @@ body::after {
         padding: 15px 18px;
     }
 
+    .statue-container {
+        width: 280px;
+        height: 350px;
+        margin-bottom: 20px;
+    }
+
     .profile-image {
-        width: 100px;
-        height: 100px;
+        display: none !important;
     }
 
     .greeting {
@@ -1016,7 +1035,7 @@ body::after {
         justify-content: center;
     }
 
-    .dock {
+    .terminal {
         display: none;
     }
 
@@ -1523,20 +1542,176 @@ html {
         grid-template-columns: repeat(2, 1fr);
         gap: 16px;
     }
-    
+
     .book-cover {
         height: 120px;
     }
-    
+
     .book-info {
         padding: 12px;
     }
-    
+
     .book-info h3 {
         font-size: 13px;
     }
-    
+
     .book-author {
         font-size: 11px;
     }
+}
+
+/* ===================== */
+/* Terminal              */
+/* ===================== */
+.terminal {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 28px;
+    background: rgba(38, 33, 28, 0.94);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    overflow: hidden;
+    transition: height 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.terminal.open {
+    height: 180px;
+}
+
+.terminal-header {
+    height: 28px;
+    min-height: 28px;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.terminal-header:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.terminal-title {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.3);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+}
+
+.terminal-toggle {
+    color: rgba(255, 255, 255, 0.2);
+    font-size: 10px;
+    margin-left: 8px;
+    transition: transform 0.25s ease;
+}
+
+.terminal.open .terminal-toggle {
+    transform: rotate(180deg);
+}
+
+.terminal-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.terminal.open .terminal-body {
+    opacity: 1;
+}
+
+.terminal-output {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 14px 4px;
+    color: #c8c0b4;
+}
+
+.terminal-output::-webkit-scrollbar {
+    width: 6px;
+}
+
+.terminal-output::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.terminal-output::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.terminal-input-line {
+    display: flex;
+    align-items: center;
+    padding: 4px 14px 10px;
+}
+
+.terminal-prompt {
+    color: #a89880;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.terminal-input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: #c8c0b4;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    outline: none;
+    caret-color: #a89880;
+    padding: 0;
+    margin: 0;
+}
+
+/* Terminal text classes */
+.term-line {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.term-prompt-echo {
+    color: #a89880;
+}
+
+.term-muted {
+    color: rgba(200, 192, 180, 0.4);
+}
+
+.term-dir {
+    color: #8fad86;
+}
+
+.term-cmd-name {
+    color: #c4a87a;
+}
+
+.term-accent {
+    color: #c4a87a;
+    font-weight: 600;
+}
+
+.term-label {
+    color: #a89880;
+}
+
+.term-file {
+    color: #c8c0b4;
 }
