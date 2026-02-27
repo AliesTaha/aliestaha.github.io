@@ -2,6 +2,7 @@
 
 // Initialize window manager
 const windowManager = new WindowManager();
+window.windowManager = windowManager;
 
 // Initialize clock
 initializeClock();
@@ -17,7 +18,6 @@ initWisdom();
 
 // Initialize all handlers
 initializeIconHandlers(windowManager);
-initializeDockHandlers(windowManager);
 initializeSpecialWindows(windowManager);
 
 // Deep linking - open window from URL path or hash
