@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
 const container = document.getElementById('statue-container');
 if (container) {
@@ -43,7 +44,10 @@ function init() {
 
     let model = null;
     let baseY = 0;
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/libs/draco/');
     const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
 
     loader.load(
         'atlas.glb',
