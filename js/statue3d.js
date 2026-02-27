@@ -42,6 +42,19 @@ function init() {
     rimLight.position.set(0, 3, -4);
     scene.add(rimLight);
 
+    // Loading spinner
+    const spinner = document.createElement('div');
+    spinner.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:10;';
+    spinner.innerHTML = '<div style="width:28px;height:28px;border:2px solid rgba(107,94,79,0.15);border-top-color:#6b5e4f;border-radius:50%;animation:spin 0.8s linear infinite;"></div>';
+    if (!document.getElementById('spinner-style')) {
+        const style = document.createElement('style');
+        style.id = 'spinner-style';
+        style.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+        document.head.appendChild(style);
+    }
+    container.style.position = 'relative';
+    container.appendChild(spinner);
+
     let model = null;
     let baseY = 0;
     const dracoLoader = new DRACOLoader();
@@ -52,6 +65,7 @@ function init() {
     loader.load(
         'atlas.glb',
         function (gltf) {
+            spinner.remove();
             model = gltf.scene;
 
             // Compute bounding box
@@ -147,6 +161,7 @@ function init() {
         },
         undefined,
         function (err) {
+            spinner.remove();
             console.warn('3D model failed to load:', err);
             container.style.display = 'none';
             const fb = document.getElementById('statue-fallback');
