@@ -5,25 +5,21 @@
             url: 'https://notion.so',
             name: 'Notion'
         },
-        comet: {
-            url: 'https://comet.com',
-            name: 'Comet'
+        'notion-calendar': {
+            url: 'https://calendar.notion.so',
+            name: 'Notion Calendar'
         },
-        calendar: {
-            url: 'https://calendar.google.com',
-            name: 'Calendar'
+        perplexity: {
+            url: 'https://perplexity.ai',
+            name: 'Perplexity'
         },
-        anthropic: {
+        claude: {
             url: 'https://claude.ai',
             name: 'Claude'
         },
         terminal: {
             action: 'terminal',
             name: 'Terminal'
-        },
-        stats: {
-            action: 'timer',
-            name: 'Stats'
         }
     };
 
@@ -37,46 +33,22 @@
             if (appConfig.url) {
                 window.open(appConfig.url, '_blank');
             } else if (appConfig.action === 'terminal') {
-                // Open terminal window
-                if (window.windowManager) {
+                // Open interactive terminal window
+                if (window.windowManager && typeof initTerminal === 'function') {
                     const terminalContent = `
-                        <div style="font-family: 'SF Mono', Monaco, monospace; padding: 20px; background: #1e1e1e; color: #c8c0b4; border-radius: 8px;">
-                            <div style="margin-bottom: 12px;">
-                                <span style="color: #a89880;">ali@desktop</span>:<span style="color: #8fad86;">~</span>$ <span style="color: #c4a87a;">whoami</span>
-                            </div>
-                            <div style="margin-bottom: 12px;">ali</div>
-                            <div style="margin-bottom: 12px;">
-                                <span style="color: #a89880;">ali@desktop</span>:<span style="color: #8fad86;">~</span>$ <span style="color: #c4a87a;">cat about.txt</span>
-                            </div>
-                            <div style="margin-bottom: 12px;">performance engineer @ uwaterloo<br>building fast kernels on gpus</div>
-                            <div style="margin-bottom: 12px;">
-                                <span style="color: #a89880;">ali@desktop</span>:<span style="color: #8fad86;">~</span>$ <span style="color: #c4a87a;">ls -la</span>
-                            </div>
-                            <div style="line-height: 1.6;">
-                                <div>drwxr-xr-x  blog/</div>
-                                <div>-rw-r--r--  experience</div>
-                                <div>-rw-r--r--  contact</div>
-                                <div>-rw-r--r--  books</div>
-                                <div>-rw-r--r--  roadmap</div>
-                                <div>drwx------  .trash/</div>
-                            </div>
-                            <div style="margin-top: 12px;">
-                                <span style="color: #a89880;">ali@desktop</span>:<span style="color: #8fad86;">~</span>$ <span class="terminal-cursor" style="background: #a89880; animation: blink 1s step-end infinite;">█</span>
+                        <div class="terminal-container" style="font-family: 'SF Mono', Monaco, monospace; background: #1e1e1e; color: #c8c0b4; border-radius: 8px; padding: 16px; height: 400px; display: flex; flex-direction: column;">
+                            <div class="terminal-output" id="terminal-output-window" style="flex: 1; overflow-y: auto; margin-bottom: 8px; line-height: 1.6;"></div>
+                            <div style="display: flex; align-items: center;">
+                                <span id="terminal-prompt-window" style="color: #a89880; white-space: nowrap; user-select: none;">ali@desktop ~ $ </span>
+                                <input type="text" id="terminal-input-window" spellcheck="false" autocomplete="off" style="flex: 1; background: none; border: none; color: #c8c0b4; font-family: inherit; font-size: inherit; outline: none; caret-color: #a89880; margin-left: 4px;" autofocus>
                             </div>
                         </div>
-                        <style>
-                            @keyframes blink {
-                                0%, 50% { opacity: 1; }
-                                51%, 100% { opacity: 0; }
-                            }
-                        </style>
                     `;
-                    window.windowManager.createWindow('terminal-demo', 'Terminal', terminalContent);
-                }
-            } else if (appConfig.action === 'timer') {
-                // Open timer/stats window
-                if (window.windowManager && window.pageContent && window.pageContent.timer) {
-                    window.windowManager.createWindow('timer', 'Stats', window.pageContent.timer);
+                    const win = window.windowManager.createWindow('terminal-interactive', 'Terminal', terminalContent);
+                    // Initialize terminal after window is created
+                    setTimeout(function() {
+                        initTerminal(window.windowManager);
+                    }, 100);
                 }
             }
         });

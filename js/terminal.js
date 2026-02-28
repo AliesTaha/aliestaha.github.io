@@ -1,8 +1,13 @@
 // Interactive terminal emulator
 function initTerminal(windowManager) {
-    const output = document.getElementById('terminal-output');
-    const input = document.getElementById('terminal-input');
-    const promptSpan = document.getElementById('terminal-prompt');
+    const output = document.getElementById('terminal-output-window') || document.getElementById('terminal-output');
+    const input = document.getElementById('terminal-input-window') || document.getElementById('terminal-input');
+    const promptSpan = document.getElementById('terminal-prompt-window') || document.getElementById('terminal-prompt');
+
+    if (!output || !input || !promptSpan) {
+        console.warn('Terminal elements not found');
+        return;
+    }
 
     let cwd = '~';
     let history = [];
