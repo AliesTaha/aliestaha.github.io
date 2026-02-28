@@ -137,18 +137,71 @@
         </div>
     </div>
 
-    <!-- Terminal -->
-    <div class="terminal" id="terminal">
-        <div class="terminal-header" id="terminal-header">
-            <div class="terminal-title">Terminal</div>
-            <span class="terminal-toggle">&#9650;</span>
-        </div>
-        <div class="terminal-body">
-            <div class="terminal-output" id="terminal-output"></div>
-            <div class="terminal-input-line">
-                <span class="terminal-prompt" id="terminal-prompt">ali@desktop ~ $ </span>
-                <input type="text" class="terminal-input" id="terminal-input" spellcheck="false" autocomplete="off">
+    <!-- Dock -->
+    <div class="dock" id="dock">
+        <div class="dock-app" data-app="notion">
+            <div class="dock-icon">
+                <svg viewBox="0 0 100 100" fill="none">
+                    <rect width="100" height="100" rx="22" fill="white"/>
+                    <path d="M25 30h12v40h-12z M40 30h20v5h-15v12h12v5h-12v13h15v5h-20z" fill="black"/>
+                </svg>
             </div>
+            <div class="dock-indicator"></div>
+        </div>
+        <div class="dock-app" data-app="comet">
+            <div class="dock-icon">
+                <svg viewBox="0 0 100 100" fill="none">
+                    <rect width="100" height="100" rx="22" fill="#1a1a1a"/>
+                    <circle cx="35" cy="50" r="8" fill="#00d9ff" opacity="0.8"/>
+                    <circle cx="50" cy="50" r="12" fill="#00d9ff"/>
+                    <circle cx="65" cy="50" r="8" fill="#00d9ff" opacity="0.6"/>
+                    <path d="M35 42 L28 30 M50 38 L48 22 M65 42 L72 30" stroke="#00d9ff" stroke-width="2" opacity="0.5"/>
+                </svg>
+            </div>
+            <div class="dock-indicator"></div>
+        </div>
+        <div class="dock-app" data-app="calendar">
+            <div class="dock-icon">
+                <svg viewBox="0 0 100 100" fill="none">
+                    <rect width="100" height="100" rx="22" fill="white"/>
+                    <rect x="10" y="15" width="80" height="70" rx="8" fill="#ff3b30"/>
+                    <text x="50" y="55" font-size="32" font-weight="bold" fill="white" text-anchor="middle">21</text>
+                    <rect x="10" y="15" width="80" height="20" rx="8" fill="#d32f2f"/>
+                </svg>
+            </div>
+            <div class="dock-indicator"></div>
+        </div>
+        <div class="dock-app" data-app="anthropic">
+            <div class="dock-icon">
+                <svg viewBox="0 0 100 100" fill="none">
+                    <rect width="100" height="100" rx="22" fill="#191919"/>
+                    <path d="M30 70 L40 40 L50 70 M55 70 L65 40 L75 70" stroke="#d4a574" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="dock-indicator"></div>
+        </div>
+        <div class="dock-separator"></div>
+        <div class="dock-app active" data-app="terminal">
+            <div class="dock-icon">
+                <svg viewBox="0 0 100 100" fill="none">
+                    <rect width="100" height="100" rx="22" fill="#2d2d2d"/>
+                    <path d="M25 35 L40 50 L25 65" stroke="#4af626" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <line x1="45" y1="65" x2="70" y2="65" stroke="#4af626" stroke-width="4" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="dock-indicator active"></div>
+        </div>
+        <div class="dock-app" data-app="stats">
+            <div class="dock-icon">
+                <svg viewBox="0 0 100 100" fill="none">
+                    <rect width="100" height="100" rx="22" fill="#2d2d2d"/>
+                    <rect x="20" y="60" width="12" height="20" fill="#a78bfa" rx="2"/>
+                    <rect x="37" y="45" width="12" height="35" fill="#c084fc" rx="2"/>
+                    <rect x="54" y="30" width="12" height="50" fill="#e879f9" rx="2"/>
+                    <rect x="71" y="50" width="12" height="30" fill="#f0abfc" rx="2"/>
+                </svg>
+            </div>
+            <div class="dock-indicator"></div>
         </div>
     </div>
 
@@ -171,6 +224,6 @@
     <script src="js/specialWindows.js"></script>
     <script src="js/gameOfLife.js"></script>
     <script src="js/main.js"></script>
-    <script src="js/terminal.js"></script>
+    <script src="js/dock.js"></script>
 </body>
 </html>
