@@ -18,6 +18,21 @@ const pageContent = {
         <h1>technical</h1>
         <h2>articles</h2>
         <div class="writing-item">
+            <p class="date">2026</p>
+            <h3><a href="https://x.com/AliesTaha/status/2037272772305707405" target="_blank">turboquant</a></h3>
+            <p class="description">turboquant</p>
+        </div>
+        <div class="writing-item">
+            <p class="date">2026</p>
+            <h3><a href="https://x.com/AliesTaha/status/2030074784894308770" target="_blank">quantization-aware distillation for qwen 2512</a></h3>
+            <p class="description">qad pipeline achieving full fp4 quantization across 60 transformer blocks with imperceptible quality loss.</p>
+        </div>
+        <div class="writing-item">
+            <p class="date">2026</p>
+            <h3><a href="https://x.com/AliesTaha/status/2024493443905683859" target="_blank">optimizing flux.2 on b200</a></h3>
+            <p class="description">profiling, kernel fusion, autotuning, and quantizing non-sensitive layers for sota image generation throughput.</p>
+        </div>
+        <div class="writing-item">
             <p class="date">february 18, 2026</p>
             <h3><a href="https://www.baseten.co/blog/four-bits/" target="_blank">four bits</a></h3>
             <p class="description">achieving a 1.6x speed improvement with no perceptible quality loss through 4-bit quantization of the flux.2 [dev] model.</p>
