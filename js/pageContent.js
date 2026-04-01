@@ -60,12 +60,13 @@ const pageContent = {
         <h1>experience</h1>
         <div class="experience-item">
             <div class="exp-header">
-                <h3>model performance intern</h3>
+                <h3>model performance engineering</h3>
                 <span class="company">baseten</span>
             </div>
-            <p class="meta">jan – august 2026 • san francisco, ca</p>
+            <p class="meta">jan 2026 – present • san francisco, ca</p>
             <ul>
-                <li>incoming model performance</li>
+                <li>researched and deployed quantization-aware distillation (qad) pipeline for qwen 2512 diffusion model on sglang, achieving full fp4 quantization across 60 transformer blocks with imperceptible quality loss (<a href="https://x.com/AliesTaha/status/2030074784894308770" target="_blank">article</a>)</li>
+                <li>optimized flux.2 image generation throughput on b200 — profiling, torch traces, kernel fusion & autotuning, benchmarking, and used modelopt to quantize non-sensitive layers to achieve sota perf (<a href="https://x.com/AliesTaha/status/2024493443905683859" target="_blank">article</a>)</li>
             </ul>
         </div>
         <div class="experience-item">
