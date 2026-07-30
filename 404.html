@@ -1,19 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Redirecting...</title>
-    <script>
-        // GitHub Pages 404 redirect trick for clean URLs
-        // Captures the path and redirects to index.html
-        const path = window.location.pathname.slice(1); // Remove leading '/'
-        if (path && path !== 'index.html') {
-            sessionStorage.setItem('redirect_path', path);
-        }
-        window.location.replace('/');
-    </script>
-</head>
-<body>
-    <p>Redirecting...</p>
-</body>
-</html>
+---
+layout: default
+title: "Page not found"
+description: "The page you were looking for does not exist."
+permalink: /404.html
+---
+
+<main class="not-found">
+  <p class="eyebrow">404</p>
+  <h1>Nothing here.</h1>
+  <p>The page may have moved, or the address may be wrong.</p>
+  <a href="{{ '/' | relative_url }}">Back to the writing</a>
+</main>

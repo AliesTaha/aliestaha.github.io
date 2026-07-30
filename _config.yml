@@ -1,0 +1,18 @@
+title: "Ali Taha"
+description: "Technical notes and personal essays by Ali Taha."
+url: "https://aliestaha.com"
+baseurl: ""
+lang: "en"
+timezone: "America/Los_Angeles"
+
+permalink: /writing/:title/
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor
