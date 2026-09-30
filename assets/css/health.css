@@ -14,18 +14,28 @@
 .health-ranges button { padding: 7px 11px; border: 0; border-radius: 3px; background: transparent; color: var(--muted); font-size: 11px; cursor: pointer; }
 .health-ranges button[aria-pressed="true"] { background: var(--accent); color: var(--paper); }
 .health-ranges button:hover:not([aria-pressed="true"]) { background: var(--soft); color: var(--ink); }
-.health-body-map { display: grid; grid-template-columns: minmax(0, 1fr) 140px minmax(0, 1fr); grid-template-rows: repeat(3, minmax(178px, auto)); gap: 32px 24px; }
-.health-figure { grid-column: 2; grid-row: 1 / 4; min-width: 0; }
-.health-figure svg { width: 100%; height: 100%; display: block; overflow: visible; }
-.health-body-stroke { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-.health-body-connectors { fill: none; stroke: var(--health-muted-accent); stroke-width: 1; stroke-dasharray: 2 4; }
-.health-body-points { fill: var(--health-accent); }
-.health-figure-heart { fill: var(--health-accent); }
-.health-figure path, .health-figure ellipse { vector-effect: non-scaling-stroke; }
-.health-card { min-width: 0; padding-top: 12px; border-top: 1px solid var(--line); }
+.health-body-map { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 220px minmax(0, 1fr); grid-template-rows: repeat(3, minmax(178px, auto)); gap: 32px 24px; }
+.health-figure { position: relative; grid-column: 2; grid-row: 1 / 4; min-width: 0; }
+.health-figure svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
+.health-connections-overlay { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.health-body-connector { fill: none; stroke: var(--health-muted-accent); stroke-width: 1; stroke-dasharray: 2 4; stroke-linecap: round; opacity: .7; }
+.health-body-linework path { vector-effect: non-scaling-stroke; }
+.health-heart-pulse { transform-box: fill-box; transform-origin: center; }
+.health-page[data-heartbeat="true"] .health-heart-pulse { animation: health-heartbeat var(--heartbeat-duration) ease-in-out infinite; }
+.health-page[data-motion-paused="true"] .health-heart-pulse { animation-play-state: paused; }
+@keyframes health-heartbeat {
+  0%, 42%, 100% { transform: scale(1); }
+  12% { transform: scale(1.22); }
+  25% { transform: scale(.98); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .health-page[data-heartbeat="true"] .health-heart-pulse { animation: none; }
+}
+.health-card { position: relative; min-width: 0; padding-top: 12px; border-top: 1px solid var(--line); }
 .health-card-sleep { grid-column: 1; grid-row: 1; }
 .health-card-recovery { grid-column: 3; grid-row: 1; }
 .health-card-strain { grid-column: 1; grid-row: 2; }
+.health-card-heart { grid-column: 3; grid-row: 2; }
 .health-card-workout { grid-column: 1; grid-row: 3; }
 .health-card-steps { grid-column: 3; grid-row: 3; }
 .health-card h2 { margin: 0 0 4px; color: var(--muted); font: 12px/1.4 var(--health-sans); font-weight: 400; }
@@ -38,9 +48,10 @@
 .health-svg-line { fill: none; stroke: var(--health-accent); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .health-svg-point { fill: var(--health-accent); stroke: var(--paper); stroke-width: 1.5; }
 .health-svg-empty { fill: var(--muted); font: 10px var(--health-sans); }
+.health-visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 @media (max-width: 640px) {
-  .health-body-map { grid-template-columns: minmax(0, 1fr) 86px minmax(0, 1fr); gap: 26px 12px; }
-  .health-figure-head { transform-box: fill-box; transform-origin: center; transform: scaleX(1.35); }
+  .health-body-map { grid-template-columns: minmax(0, 1fr) 110px minmax(0, 1fr); gap: 26px 8px; }
+  .health-body-linework { stroke-width: 1.35; }
   .health-chart-toolbar { gap: 10px; flex-wrap: wrap; margin-bottom: 26px; }
   .health-ranges { margin-left: auto; }
   .health-ranges button { padding: 7px 9px; }
@@ -52,7 +63,7 @@
   .health-svg-label { font-size: 8px; }
 }
 @media (max-width: 360px) {
-  .health-body-map { grid-template-columns: minmax(0, 1fr) 66px minmax(0, 1fr); column-gap: 10px; }
+  .health-body-map { grid-template-columns: minmax(0, 1fr) 90px minmax(0, 1fr); column-gap: 8px; }
   .health-card-value { font-size: 26px; }
   .health-card h2 { font-size: 10px; }
 }

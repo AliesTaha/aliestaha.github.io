@@ -1,7 +1,7 @@
 "use strict";
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { METRICS, normalizeDaily, selectRange, metricSummary, splitSegments, publicationState, validDate, cardModels } = require("../assets/js/health.js");
+const { METRICS, normalizeDaily, selectRange, metricSummary, splitSegments, publicationState, validDate, cardModels, heartbeatModel } = require("../assets/js/health.js");
 
 test("week, month, and all windows use calendar days, not received record counts", () => {
   const rows = normalizeDaily([
@@ -17,7 +17,7 @@ test("week, month, and all windows use calendar days, not received record counts
   assert.throws(() => selectRange(rows, "Y"), /Unknown chart range/);
 });
 
-test("all five cards use the selected range mean, excluding null and including genuine zero", () => {
+test("five cards use range means while resting heart rate uses the latest valid reading", () => {
   const values = [
     ["2026-08-01", 10], ["2026-09-01", 8], ["2026-09-23", 4], ["2026-09-24", null], ["2026-09-29", 0]
   ];
@@ -25,18 +25,25 @@ test("all five cards use the selected range mean, excluding null and including g
     sleep_performance: value === null ? null : value * 10,
     recovery: value === null ? null : value * 8,
     strain: value,
+    resting_hr: value === null ? null : value * 5,
     workout_minutes: value === null ? null : value * 6,
     steps: value === null ? null : value * 1000
   })));
-  const multipliers = { sleep_performance: 10, recovery: 8, strain: 1, workout_minutes: 6, steps: 1000 };
+  const multipliers = { sleep_performance: 10, recovery: 8, strain: 1, resting_hr: 5, workout_minutes: 6, steps: 1000 };
   assert.deepEqual(Object.keys(METRICS), Object.keys(multipliers));
   for (const [range, expected, count] of [["W", 2, 2], ["M", 4, 3], ["ALL", 5.5, 4]]) {
-    const cards = cardModels(selectRange(rows, range).rows);
-    assert.equal(cards.length, 5);
+    const cards = cardModels(selectRange(rows, range).rows, rows);
+    assert.equal(cards.length, 6);
     for (const card of cards) {
-      assert.equal(card.value, expected * multipliers[card.key], `${range} ${card.key} mean`);
+      assert.equal(card.summary.mean, expected * multipliers[card.key], `${range} ${card.key} plotted mean`);
       assert.equal(card.summary.count, count);
-      assert.equal(card.detail, `Average · ${count} days`);
+      if (card.key === "resting_hr") {
+        assert.equal(card.value, 20, `${range} latest positive pulse`);
+        assert.equal(card.detail, "Recorded · Sep 23");
+      } else {
+        assert.equal(card.value, expected * multipliers[card.key], `${range} ${card.key} displayed mean`);
+        assert.equal(card.detail, `Average · ${count} days`);
+      }
     }
   }
 });
@@ -68,11 +75,11 @@ test("empty and single-day card models do not invent observations or trends", ()
 
 test("only strain and steps flag observed values from an ongoing physiological cycle", () => {
   const cards = new Map(cardModels(normalizeDaily([{ date: "2026-09-29", cycle_complete: false,
-    sleep_performance: 70, recovery: 60, strain: 4, workout_minutes: 0, steps: 2000
+    sleep_performance: 70, recovery: 60, strain: 4, resting_hr: 45, workout_minutes: 0, steps: 2000
   }])).map(card => [card.key, card]));
   assert.match(cards.get("strain").detail, /ongoing cycle/);
   assert.match(cards.get("steps").detail, /ongoing cycle/);
-  for (const key of ["sleep_performance", "recovery", "workout_minutes"]) assert.doesNotMatch(cards.get(key).detail, /ongoing cycle/);
+  for (const key of ["sleep_performance", "recovery", "resting_hr", "workout_minutes"]) assert.doesNotMatch(cards.get(key).detail, /ongoing cycle/);
 });
 
 test("normalization rejects duplicate dates and ignores invalid and nonnumeric measurements", () => {
@@ -92,4 +99,50 @@ test("publication becomes stale after three hours independently of the observati
   assert.equal(publicationState("2026-09-29T08:59:00Z", now).stale, true);
   assert.equal(publicationState("not-a-date", now).valid, false);
   assert.equal(publicationState("not-a-date", now).stale, true);
+});
+
+test("heartbeat period is exactly sixty divided by the unrounded recorded BPM", () => {
+  for (const bpm of [67, 45, 67.25]) {
+    const pulse = heartbeatModel([{ date: "2026-09-29", resting_hr: bpm }]);
+    assert.equal(pulse.bpm, bpm);
+    assert.equal(pulse.periodSeconds, 60 / bpm);
+    const card = cardModels([{ date: "2026-09-29", resting_hr: bpm }]).find(card => card.key === "resting_hr");
+    assert.equal(Number(card.displayValue), pulse.bpm);
+  }
+  assert.equal(heartbeatModel([{ date: "2026-09-29", resting_hr: 45 }]).periodSeconds, 4 / 3);
+});
+
+test("heartbeat follows the latest valid date in the whole history, independently of range averages", () => {
+  const unsorted = [
+    { date: "2026-09-29", resting_hr: 45 },
+    { date: "2026-08-01", resting_hr: 60 },
+    { date: "2026-09-28", resting_hr: 43 }
+  ];
+  const pulse = heartbeatModel(unsorted);
+  assert.deepEqual(pulse, { date: "2026-09-29", bpm: 45, periodSeconds: 4 / 3 });
+  const rows = normalizeDaily(unsorted);
+  for (const [range, expected] of [["W", 44], ["M", 44], ["ALL", 148 / 3]]) {
+    const card = cardModels(selectRange(rows, range).rows, rows).find(card => card.key === "resting_hr");
+    assert.equal(card.summary.mean, expected);
+    assert.equal(card.value, heartbeatModel(rows).bpm);
+    assert.equal(card.value, 45);
+    assert.equal(card.detail, "Recorded · Sep 29");
+  }
+});
+
+test("invalid pulse records cannot animate the heart or replace an older valid record", () => {
+  const invalid = [0, -1, 301, null, undefined, NaN, Infinity, "67"].map((resting_hr, index) => ({ date: `2026-09-${String(20 + index).padStart(2, "0")}`, resting_hr }));
+  invalid.push({ date: "invalid", resting_hr: 67 }, { date: "2026-02-30", resting_hr: 67 });
+  assert.equal(heartbeatModel(invalid), null);
+  assert.equal(heartbeatModel([]), null);
+  assert.deepEqual(heartbeatModel([{ date: "2026-09-01", resting_hr: 67 }, ...invalid]), { date: "2026-09-01", bpm: 67, periodSeconds: 60 / 67 });
+  assert.equal(heartbeatModel([{ date: "2026-09-29", resting_hr: 300 }]).periodSeconds, .2);
+});
+
+test("the resting heart card and heartbeat are unavailable together without a valid reading", () => {
+  const rows = normalizeDaily([{ date: "2026-09-29", resting_hr: 0 }, { date: "2026-09-30", resting_hr: null }]);
+  const card = cardModels(rows, rows).find(card => card.key === "resting_hr");
+  assert.equal(card.value, null);
+  assert.equal(card.detail, "No recorded pulse");
+  assert.equal(heartbeatModel(rows), null);
 });

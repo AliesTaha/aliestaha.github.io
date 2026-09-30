@@ -1,0 +1,65 @@
+<svg class="health-body-figure" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 560" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false" fill="none" style="overflow:visible">
+
+
+  <g class="health-body-linework" stroke="var(--accent, #725943)" stroke-width="2.05" stroke-linecap="round" stroke-linejoin="round">
+    <!-- A slight tilt, a swept crown, and a quiet expression. -->
+    <g transform="rotate(-5 113 82)">
+      <path d="M93 62C91 48 101 40 115 41C130 41 140 53 138 71L137 86C134 101 125 112 114 113C102 112 94 101 91 86L89 82C84 80 83 71 87 68C89 67 91 69 92 72"/>
+      <path d="M92 66C86 51 92 40 103 37C113 32 130 36 137 45C142 50 142 59 138 66M93 56C104 61 118 54 126 45M127 45C131 52 134 56 139 58"/>
+      <g stroke-width="1.35">
+        <path d="M100 73Q104 71 108 73M123 73Q127 71 130 74"/>
+        <path d="M117 74L115 86Q118 88 121 86M108 96Q116 100 123 95"/>
+        <path d="M87 73L90 78M101 103Q104 106 108 107" opacity=".65"/>
+      </g>
+    </g>
+
+    <!-- Neck, shoulders, and torso keep a gentle counter-curve to the hips. -->
+    <path d="M101 109C104 120 102 127 96 132C87 135 79 139 74 147"/>
+    <path d="M126 109C122 119 125 127 133 132C142 136 148 142 153 151"/>
+    <path d="M82 159C80 179 82 200 87 221C91 239 95 253 93 269"/>
+    <path d="M143 157C147 177 143 197 138 216C134 231 134 247 138 262"/>
+    <path d="M94 137Q112 149 132 139" stroke-width="1.5"/>
+    <path d="M93 164Q103 162 110 167M124 165Q132 160 139 163" stroke-width="1.25" opacity=".7"/>
+    <path d="M113 180C111 200 112 213 117 228M113 245L114 247" stroke-width="1.3" opacity=".5"/>
+
+    <!-- The left arm hangs naturally; the right forearm rests lightly at the hip. -->
+    <path d="M74 147C64 159 60 179 59 199C57 218 59 238 62 259L64 280"/>
+    <path d="M81 172C75 185 74 201 73 214C71 234 72 255 73 275"/>
+    <path d="M64 280C61 289 63 298 68 303Q72 306 74 301L76 283Q76 278 73 275"/>
+    <path d="M68 286L68 298M71 287L71 299" stroke-width="1.2" opacity=".65"/>
+    <path d="M153 151C164 166 171 184 170 201C168 220 154 237 139 247"/>
+    <path d="M144 174C151 184 157 194 156 202C152 213 145 224 133 235"/>
+    <path d="M139 247C132 253 123 255 119 251Q117 248 122 244L128 238Q127 233 130 232L133 235"/>
+    <path d="M124 246L134 241M126 250L137 244" stroke-width="1.2" opacity=".65"/>
+    <path d="M61 212Q65 216 71 215M158 199L164 202" stroke-width="1.3" opacity=".55"/>
+
+    <!-- One weight-bearing leg, one slightly open knee: balanced rather than rigid. -->
+    <path d="M93 269C87 283 83 302 84 323L82 366C81 376 81 384 79 394C73 424 72 460 66 496L66 507"/>
+    <path d="M138 262C145 281 145 303 141 324L132 366C130 378 132 390 135 401C143 433 143 466 147 497L148 509"/>
+    <path d="M109 299C105 323 104 346 100 369L95 396C91 425 87 460 82 496L81 508"/>
+    <path d="M109 299C117 320 119 342 117 365C115 381 117 397 121 412C128 441 129 474 131 501L133 514"/>
+    <path d="M92 273Q114 282 139 271M104 294Q109 300 115 296" stroke-width="1.5"/>
+    <path d="M82 386Q87 391 95 387M119 389Q125 394 132 389" stroke-width="1.45" opacity=".7"/>
+    <path d="M78 419C82 432 81 448 78 461M132 427C137 442 137 455 136 469" stroke-width="1.2" opacity=".4"/>
+
+    <!-- Feet turn outward just enough to give the stance a grounded finish. -->
+    <path d="M66 507C63 512 54 516 46 519Q40 522 43 526C47 530 61 528 69 527L80 524Q83 519 81 508"/>
+    <path d="M133 514C134 521 139 525 146 526L170 527Q175 526 172 522C167 517 155 516 148 509"/>
+    <path d="M45 525Q60 526 76 521M139 522L167 523" stroke-width="1.15" opacity=".55"/>
+  </g>
+
+  <g class="health-body-points" fill="var(--health-accent, #b89a65)">
+    <circle data-body-anchor="sleep_performance" cx="94" cy="72" r="2.7"/>
+    <circle data-body-anchor="recovery" cx="124" cy="126" r="2.7"/>
+    <circle data-body-anchor="strain" cx="67" cy="179" r="2.7"/>
+    <circle data-body-anchor="workout_minutes" cx="87" cy="390" r="2.7"/>
+    <circle data-body-anchor="steps" cx="150" cy="514" r="2.7"/>
+    <circle data-body-anchor="resting_hr" cx="127" cy="181" r=".5" fill="transparent"/>
+  </g>
+
+  <!-- Only this small chest group receives the heartbeat transform. -->
+  <g class="health-heart-pulse">
+    <circle class="health-heart-halo" cx="127" cy="181" r="17" fill="var(--health-accent, #b89a65)" opacity=".10"/>
+    <path class="health-heart-shape" d="M127 190C124 187 117 183 117 177C117 171 124 170 127 175C131 169 138 172 137 178C137 183 131 187 127 190Z" stroke="var(--health-accent, #b89a65)" stroke-width="1.8" fill="var(--health-accent, #b89a65)" fill-opacity=".12" stroke-linejoin="round"/>
+  </g>
+</svg>
