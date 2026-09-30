@@ -13,44 +13,48 @@
         <button type="button" data-range="ALL" aria-pressed="false" aria-label="All time">All</button>
       </div>
     </div>
+    <div class="health-chart-legend" aria-label="Chart lines">
+      <span class="health-legend-daily">Daily</span>
+      <span class="health-legend-ema" id="health-ema-label">7-day EMA</span>
+    </div>
     <div class="health-body-map">
       <svg class="health-connections-overlay" aria-hidden="true" focusable="false"></svg>
       <div class="health-figure" aria-hidden="true">
         {% include health-figure.svg %}
       </div>
       <article class="health-card health-card-sleep" data-health-metric="sleep_performance" aria-labelledby="sleep-score-label">
-        <h2 id="sleep-score-label">Sleep score</h2>
+        <div class="health-card-heading"><h2 id="sleep-score-label">Sleep score</h2><span class="health-card-trend" data-metric-trend></span></div>
         <p class="health-card-value" data-metric-value></p>
         <div class="health-card-chart" data-metric-chart></div>
         <p class="health-card-detail" data-metric-detail></p>
       </article>
       <article class="health-card health-card-recovery" data-health-metric="recovery" aria-labelledby="recovery-label">
-        <h2 id="recovery-label">Recovery</h2>
+        <div class="health-card-heading"><h2 id="recovery-label">Recovery</h2><span class="health-card-trend" data-metric-trend></span></div>
         <p class="health-card-value" data-metric-value></p>
         <div class="health-card-chart" data-metric-chart></div>
         <p class="health-card-detail" data-metric-detail></p>
       </article>
       <article class="health-card health-card-strain" data-health-metric="strain" aria-labelledby="strain-label">
-        <h2 id="strain-label">Daily strain</h2>
+        <div class="health-card-heading"><h2 id="strain-label">Daily strain</h2><span class="health-card-trend" data-metric-trend></span></div>
         <p class="health-card-value" data-metric-value></p>
         <div class="health-card-chart" data-metric-chart></div>
         <p class="health-card-detail" data-metric-detail></p>
       </article>
       <article class="health-card health-card-heart" data-health-metric="resting_hr" aria-labelledby="heart-rate-label" aria-describedby="heart-pulse-note">
-        <h2 id="heart-rate-label">Resting heart rate</h2>
+        <div class="health-card-heading"><h2 id="heart-rate-label">Resting heart rate</h2><span class="health-card-trend" data-metric-trend></span></div>
         <p class="health-card-value" data-metric-value></p>
         <div class="health-card-chart" data-metric-chart></div>
         <p class="health-card-detail" data-metric-detail></p>
         <span class="health-visually-hidden" id="heart-pulse-note" data-heartbeat-label></span>
       </article>
       <article class="health-card health-card-workout" data-health-metric="workout_minutes" aria-labelledby="workout-label">
-        <h2 id="workout-label">Workout time</h2>
+        <div class="health-card-heading"><h2 id="workout-label">Workout time</h2><span class="health-card-trend" data-metric-trend></span></div>
         <p class="health-card-value" data-metric-value></p>
         <div class="health-card-chart" data-metric-chart></div>
         <p class="health-card-detail" data-metric-detail></p>
       </article>
       <article class="health-card health-card-steps" data-health-metric="steps" aria-labelledby="steps-label">
-        <h2 id="steps-label">Steps</h2>
+        <div class="health-card-heading"><h2 id="steps-label">Steps</h2><span class="health-card-trend" data-metric-trend></span></div>
         <p class="health-card-value" data-metric-value></p>
         <div class="health-card-chart" data-metric-chart></div>
         <p class="health-card-detail" data-metric-detail></p>
