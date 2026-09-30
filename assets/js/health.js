@@ -73,6 +73,21 @@
       return { key, label: metric.label, value, displayValue, detail, summary };
     });
   }
+  function nearestCalendarDay(window, fraction) {
+    if (!window.start || !window.end || !Number.isFinite(fraction)) return null;
+    const days = Math.round((timestamp(window.end) - timestamp(window.start)) / DAY);
+    const index = Math.round(Math.max(0, Math.min(1, fraction)) * days);
+    return isoDay(timestamp(window.start) + index * DAY);
+  }
+  function inspectionModel(model, rows, date = null) {
+    if (!date) return model;
+    const row = rows.find(row => row.date === date);
+    const value = row && validValue(row[model.key]) ? row[model.key] : null;
+    const displayValue = model.key === "resting_hr" && validValue(value) ? String(value) : formatValue(value, model.key, false);
+    let detail = `${formatDate(date, true)}${value === null ? " · No measurement" : ""}`;
+    if (value !== null && ["strain", "steps"].includes(model.key) && row.cycle_complete === false) detail += " · ongoing cycle";
+    return { ...model, value, displayValue, detail, date };
+  }
   function heartbeatModel(rows) {
     const latest = rows.reduce((selected, row) => {
       if (!row || !validDate(row.date) || !validValue(row.resting_hr) || row.resting_hr <= 0 || row.resting_hr > 300) return selected;
@@ -97,7 +112,7 @@
     const generated = Date.parse(generatedAt);
     return { valid: Number.isFinite(generated), stale: !Number.isFinite(generated) || now - generated > 3 * 3600000 };
   }
-  const helpers = { METRICS, validDate, normalizeDaily, selectRange, metricSummary, splitSegments, cardModels, heartbeatModel, formatValue, publicationState };
+  const helpers = { METRICS, validDate, normalizeDaily, selectRange, metricSummary, splitSegments, cardModels, nearestCalendarDay, inspectionModel, heartbeatModel, formatValue, publicationState };
   if (typeof module !== "undefined" && module.exports) module.exports = helpers;
   if (typeof document === "undefined") return;
 
@@ -119,6 +134,8 @@
   let chartNumber = 0;
   let pulseRecordKey;
   let pulseBpm;
+  const chartStates = new Map();
+  const chartAnnouncements = new Map();
   function svgEl(tag, attrs = {}, text) {
     const node = document.createElementNS(NS, tag);
     Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, String(value)));
@@ -135,14 +152,13 @@
     const plotHeight = height - pad.t - pad.b;
     const description = `${label}: ${formatValue(summary.mean, key)} average in plotted range, ${summary.count} daily ${summary.count === 1 ? "observation" : "observations"}, ${formatSpan(window.start, window.end)}.`;
     const svg = svgEl("svg", { viewBox: `0 0 ${width} ${height}`, role: "img", "aria-label": description });
-    svg.append(svgEl("title", {}, description));
+    const title = svgEl("title", {}, description);
+    svg.append(title);
     if (!summary.count) {
       svg.append(svgEl("text", { x: width / 2, y: height / 2, "text-anchor": "middle", class: "health-svg-empty" }, "No observations"));
-      container.append(svg);
-      return;
     }
-    let low = summary.min;
-    let high = summary.max;
+    let low = summary.min ?? 0;
+    let high = summary.max ?? 1;
     if (METRICS[key].bounds) [low, high] = METRICS[key].bounds;
     else {
       const padding = Math.max((high - low) * .2, high === low ? Math.max(Math.abs(high) * .06, .5) : .1);
@@ -158,13 +174,13 @@
     defs.append(gradient);
     svg.append(defs);
     splitSegments(rows, key).forEach(segment => {
-      if (segment.length === 1) {
-        svg.append(svgEl("circle", { cx: x(segment[0].date), cy: y(segment[0][key]), r: 3, class: "health-svg-point" }));
-        return;
-      }
+      if (segment.length === 1) return;
       const path = segment.map((row, i) => `${i ? "L" : "M"}${x(row.date).toFixed(2)},${y(row[key]).toFixed(2)}`).join(" ");
       svg.append(svgEl("path", { d: `${path} L${x(segment[segment.length - 1].date)},${height - pad.b} L${x(segment[0].date)},${height - pad.b} Z`, fill: `url(#${gradientId})` }));
       svg.append(svgEl("path", { d: path, class: "health-svg-line" }));
+    });
+    if (range === "W") summary.observations.forEach(row => {
+      svg.append(svgEl("circle", { cx: x(row.date), cy: y(row[key]), r: 2.5, class: "health-svg-day-point" }));
     });
     if (window.start === window.end) {
       svg.append(svgEl("text", { x: width / 2, y: height - 3, "text-anchor": "middle", class: "health-svg-label" }, formatDate(window.end)));
@@ -172,7 +188,88 @@
       svg.append(svgEl("text", { x: pad.l, y: height - 3, class: "health-svg-label" }, formatDate(window.start)));
       svg.append(svgEl("text", { x: width - pad.r, y: height - 3, "text-anchor": "end", class: "health-svg-label" }, formatDate(window.end)));
     }
+    const hoverLine = svgEl("line", { y1: pad.t, y2: height - pad.b, class: "health-svg-hover-line", visibility: "hidden" });
+    const hoverPoint = svgEl("circle", { r: 3.5, class: "health-svg-hover-point", visibility: "hidden" });
+    svg.append(hoverLine, hoverPoint);
     container.append(svg);
+    return { svg, title, description, width, pad, plotWidth, x, y, hoverLine, hoverPoint };
+  }
+  function writeReadout(card, model) {
+    const value = card.querySelector("[data-metric-value]");
+    value.textContent = model.displayValue;
+    if (validValue(model.value) && METRICS[model.key].unit) {
+      const unit = document.createElement("small");
+      unit.textContent = METRICS[model.key].unit;
+      value.append(unit);
+    }
+    card.querySelector("[data-metric-detail]").textContent = model.detail;
+  }
+  function setInspection(card, date, force = false) {
+    const state = chartStates.get(card);
+    if (!state || (!force && state.selectedDate === date)) return;
+    state.selectedDate = date;
+    const readout = inspectionModel(state.model, state.window.rows, date);
+    writeReadout(card, readout);
+    const { hoverLine, hoverPoint, x, y } = state.geometry;
+    hoverLine.setAttribute("visibility", date ? "visible" : "hidden");
+    hoverPoint.setAttribute("visibility", date && validValue(readout.value) ? "visible" : "hidden");
+    if (date) {
+      hoverLine.setAttribute("x1", x(date));
+      hoverLine.setAttribute("x2", x(date));
+      if (validValue(readout.value)) {
+        hoverPoint.setAttribute("cx", x(date));
+        hoverPoint.setAttribute("cy", y(readout.value));
+      }
+    }
+    const unit = validValue(readout.value) && METRICS[readout.key].unit ? ` ${METRICS[readout.key].unit}` : "";
+    const announcement = `${readout.label}: ${readout.displayValue}${unit}. ${readout.detail}.`;
+    state.container.setAttribute("aria-label", `${announcement} Use left and right arrows to inspect days, Home or End to jump, and Escape to restore the overview.`);
+    state.geometry.svg.setAttribute("aria-label", date ? announcement : state.geometry.description);
+    state.geometry.title.textContent = date ? announcement : state.geometry.description;
+    chartAnnouncements.get(card).textContent = announcement;
+    scheduleConnections();
+  }
+  function inspectPointer(card, event) {
+    const state = chartStates.get(card);
+    if (!state) return;
+    const bounds = state.geometry.svg.getBoundingClientRect();
+    if (!bounds.width) return;
+    const svgX = (event.clientX - bounds.left) * state.geometry.width / bounds.width;
+    const date = nearestCalendarDay(state.window, (svgX - state.geometry.pad.l) / state.geometry.plotWidth);
+    if (date) setInspection(card, date);
+  }
+  function setupChartInteraction(card) {
+    const container = card.querySelector("[data-metric-chart]");
+    container.classList.add("health-chart-interactive");
+    container.tabIndex = 0;
+    container.setAttribute("role", "group");
+    const announcement = document.createElement("span");
+    announcement.className = "health-visually-hidden";
+    announcement.setAttribute("aria-live", "polite");
+    announcement.setAttribute("aria-atomic", "true");
+    card.append(announcement);
+    chartAnnouncements.set(card, announcement);
+    container.addEventListener("pointermove", event => inspectPointer(card, event), { passive: true });
+    container.addEventListener("pointerdown", event => inspectPointer(card, event), { passive: true });
+    container.addEventListener("pointerleave", event => {
+      if (event.pointerType !== "touch") setInspection(card, null);
+    });
+    container.addEventListener("pointercancel", () => setInspection(card, null));
+    container.addEventListener("focus", () => {
+      const state = chartStates.get(card);
+      if (state && !state.selectedDate) setInspection(card, state.window.end);
+    });
+    container.addEventListener("blur", () => setInspection(card, null));
+    container.addEventListener("keydown", event => {
+      const state = chartStates.get(card);
+      if (!state || !["ArrowLeft", "ArrowRight", "Home", "End", "Escape"].includes(event.key)) return;
+      event.preventDefault();
+      if (event.key === "Escape") { setInspection(card, null); return; }
+      if (event.key === "Home") { setInspection(card, state.window.start); return; }
+      if (event.key === "End") { setInspection(card, state.window.end); return; }
+      const next = timestamp(state.selectedDate || state.window.end) + (event.key === "ArrowLeft" ? -DAY : DAY);
+      setInspection(card, isoDay(Math.max(timestamp(state.window.start), Math.min(timestamp(state.window.end), next))));
+    });
   }
   const layoutSize = () => [
     ...cards.map(card => card.querySelector("[data-metric-chart]").clientWidth),
@@ -244,15 +341,12 @@
     page.querySelectorAll("[data-range]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.range === range)));
     cards.forEach(card => {
       const model = models.get(card.dataset.healthMetric);
-      const value = card.querySelector("[data-metric-value]");
-      value.textContent = model.displayValue;
-      if (validValue(model.value) && METRICS[model.key].unit) {
-        const unit = document.createElement("small");
-        unit.textContent = METRICS[model.key].unit;
-        value.append(unit);
-      }
-      card.querySelector("[data-metric-detail]").textContent = model.detail;
-      drawChart(card.querySelector("[data-metric-chart]"), window.rows, model, window);
+      const container = card.querySelector("[data-metric-chart]");
+      const previous = chartStates.get(card);
+      const selectedDate = previous?.range === range && previous.selectedDate >= window.start && previous.selectedDate <= window.end ? previous.selectedDate : null;
+      const geometry = drawChart(container, window.rows, model, window);
+      chartStates.set(card, { container, model, window, range, geometry, selectedDate });
+      setInspection(card, selectedDate, true);
     });
     renderedSize = layoutSize();
     scheduleConnections();
@@ -320,6 +414,13 @@
       fetchInFlight = false;
     }
   }
+  cards.forEach(setupChartInteraction);
+  document.addEventListener("pointerdown", event => {
+    cards.forEach(card => {
+      const container = card.querySelector("[data-metric-chart]");
+      if (!container.contains(event.target)) setInspection(card, null);
+    });
+  }, { passive: true });
   page.querySelectorAll("[data-range]").forEach(button => button.addEventListener("click", () => {
     range = button.dataset.range;
     renderCharts();
