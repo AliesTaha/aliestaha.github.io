@@ -5,3 +5,6 @@ _site/
 .jekyll-metadata
 .bundle/
 vendor/
+__pycache__/
+.pytest_cache/
+*.pyc

@@ -1,0 +1,97 @@
+---
+layout: default
+title: Health
+description: "My health, in the open. Sleep, recovery, heart rate, and training trends from WHOOP."
+permalink: /health/
+---
+
+<link rel="stylesheet" href="{{ '/assets/css/health.css' | relative_url }}">
+<main class="health-page" data-health-url="{{ '/assets/data/health.json' | relative_url }}">
+  <nav class="health-sections" aria-label="Explore">
+    <a href="{{ '/' | relative_url }}#technical">Technical</a>
+    <a href="{{ '/' | relative_url }}#personal">Personal</a>
+    <a href="{{ '/health/' | relative_url }}" aria-current="page">Health</a>
+  </nav>
+
+  <section class="health-intro" aria-labelledby="health-title">
+    <p class="eyebrow">A public practice</p>
+    <h1 id="health-title">Health, in the open.</h1>
+    <p class="intro-copy">More sleep. Consistent movement. A little accountability.<br class="health-desktop-break"> These are the numbers behind the habits I’m building.</p>
+    <p class="health-identity">Age <strong>22</strong><span aria-hidden="true">·</span>Measured by WHOOP<span aria-hidden="true">·</span>Published hourly</p>
+  </section>
+
+  <div class="health-status" id="health-status" role="status">
+    <span class="health-status-dot" aria-hidden="true"></span>
+    <span id="health-status-text">Loading the latest measurements…</span>
+    <button id="health-retry" type="button" hidden>Try again</button>
+  </div>
+  <noscript><p class="health-notice">JavaScript is needed to explore the charts. The <a href="{{ '/assets/data/health.json' | relative_url }}">published daily measurements</a> are also available as JSON.</p></noscript>
+
+  <div id="health-dashboard" hidden>
+    <section class="health-latest" aria-labelledby="health-latest-title">
+      <h2 class="health-small-heading" id="health-latest-title">Latest measurements</h2>
+      <div class="health-latest-grid" id="health-latest-grid"></div>
+    </section>
+
+    <section class="health-explorer" aria-labelledby="health-explorer-title">
+      <div class="health-explorer-heading">
+        <div>
+          <p class="health-small-heading">The long view</p>
+          <h2 id="health-explorer-title">One day at a time.</h2>
+        </div>
+        <label class="health-metric-control" for="health-metric">Explore a metric
+          <select id="health-metric"></select>
+        </label>
+      </div>
+      <div class="health-chart-toolbar">
+        <p id="health-range-label"></p>
+        <div class="health-ranges" role="group" aria-label="Chart time range">
+          <button type="button" data-range="D" aria-pressed="false" aria-label="Past day">D</button>
+          <button type="button" data-range="W" aria-pressed="false" aria-label="Past week">W</button>
+          <button type="button" data-range="M" aria-pressed="true" aria-label="Past month">M</button>
+          <button type="button" data-range="Y" aria-pressed="false" aria-label="Past year">Y</button>
+          <button type="button" data-range="ALL" aria-pressed="false" aria-label="All time">ALL</button>
+        </div>
+      </div>
+      <div class="health-chart-readout" aria-live="polite" aria-atomic="true">
+        <div>
+          <p id="health-focus-label"></p>
+          <p class="health-focus-value" id="health-focus-value"></p>
+        </div>
+        <p class="health-chart-comparison" id="health-focus-detail"></p>
+      </div>
+      <div class="health-main-chart" id="health-main-chart" tabindex="0" role="group" aria-label="Daily health chart. Use left and right arrow keys to explore measurements."></div>
+      <div class="health-chart-caption">
+        <p id="health-chart-caption"></p>
+        <p>Hover or use ← → to explore.</p>
+      </div>
+      <div class="health-range-summary" id="health-range-summary" aria-live="polite"></div>
+    </section>
+
+    <section class="health-trends" aria-labelledby="health-trends-title">
+      <div class="health-section-heading">
+        <h2 id="health-trends-title">The bigger picture</h2>
+        <p id="health-trends-range">Daily observations</p>
+      </div>
+      <div class="health-trend-grid" id="health-trend-grid"></div>
+    </section>
+
+    <section class="health-methods" aria-labelledby="health-methods-title">
+      <h2 id="health-methods-title">A note on the numbers</h2>
+      <p>These are personal wearable measurements, shared to make my habits visible. The useful comparison is with my own history.</p>
+      <details>
+        <summary>What’s measured, and what isn’t</summary>
+        <div class="health-methods-body">
+          <p><strong>Daily, not continuous.</strong> Each point is a daily observation. D shows one day’s value, W the last 7 days, M the last 30 days, Y the last 365 days, and ALL the full published history. Every window ends on the latest recorded day. Missing measurements stay missing; lines break across gaps.</p>
+          <p><strong>Sleep.</strong> Main sleep is assigned to the local day it ends. Total sleep includes light, deep, and REM sleep, excluding awake time. Naps are shown separately. Sleep debt is the value reported for that sleep, and is not a running total.</p>
+          <p><strong>Recovery and heart.</strong> Recovery, overnight HRV, resting heart rate, and strain are aligned to the local wake date of the main sleep associated with their WHOOP cycle. Without an associated sleep, they use the cycle’s local start date. The newest cycle may still be in progress. Workout time is grouped by each workout’s local start day.</p>
+          <p><strong>Dates.</strong> Days follow WHOOP’s recorded local offset, including travel. The latest tiles show the newest available measurement for each metric and its date. Charts show recorded daily values, with no smoothing or interpolation. Range averages give each observed day equal weight. The first-to-last change is a difference, not a comparison with an earlier period; pp means percentage points. Zero workouts means no recorded workout, not proof of no exercise.</p>
+          <p><strong>Age and biological age.</strong> Age 22 is self-reported as of September 2026. Biological age / WHOOP Age is not available through the public WHOOP API, so no value is estimated here. This page also has no continuous live heart-rate feed.</p>
+          <p><strong>Source.</strong> The charts read a published daily summary from <a href="https://developer.whoop.com/api/">WHOOP’s official API</a>. Account credentials are kept outside this website. WHOOP may revise scores after syncing; the latest successful publication is shown above. This page checks for a newer summary every five minutes while open and visible.</p>
+          <p class="health-coverage" id="health-coverage"></p>
+        </div>
+      </details>
+    </section>
+  </div>
+</main>
+<script src="{{ '/assets/js/health.js' | relative_url }}" defer></script>
