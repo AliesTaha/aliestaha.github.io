@@ -1,8 +1,9 @@
 # Public health dashboard
 
-The homepage has Mind (technical posts), Body (health), and Heart (personal
-posts) sections beneath one shared intro. Body opens in place at `/#body`;
-legacy `/health/` links redirect there. The dashboard reads only
+The homepage is titled "Mind, Body, Soul" and has Mind (technical posts), Body
+(health), and Soul (personal posts) sections beneath one shared intro. Soul
+opens at `/#soul`; legacy `/#heart` and `/#personal` links select Soul. Body
+opens in place at `/#body`; legacy `/health/` links redirect there. The dashboard reads only
 `assets/data/health.json`, a deliberately public daily summary from the owner's
 WHOOP account. It uses the site's Jekyll layout and local CSS/JavaScript; there
 are no browser API credentials, external chart libraries, or health analytics
@@ -21,18 +22,26 @@ timestamps, individual workout details, profile information, weight, raw API
 records, and credentials are excluded. Published snapshots are public and
 remain in Git history; stopping future updates does not erase prior copies.
 
-The public interface shows five fixed charts around a stick figure: sleep
-score at the head, recovery at the heart, daily strain at the arm, and workout
-time and steps at the feet. Sleep score uses WHOOP's
+The public interface shows six fixed charts around a line-art figure: sleep
+score at the head, recovery at the neck, daily strain at the bicep, resting
+heart rate at the heart, workout time at the knee, and steps at the foot.
+Sleep score uses WHOOP's
 `sleep_performance_percentage`. There is no metric selector.
 
-One Week/Month/All control updates all five charts, using 7/30/all calendar days
-ending on the latest recorded day. Each prominent number is the selected
-range's daily average, weighting observed days equally and excluding nulls.
+One Week/Month/All control updates all six charts, using 7/30/all calendar days
+ending on the latest recorded day. Five prominent numbers are the selected
+range's daily averages, weighting observed days equally and excluding nulls.
+Resting heart rate displays the latest valid recorded reading and its date,
+while its chart shows the selected range's history. The heart animates at that
+exact reading: one beat every 60 / BPM seconds. It represents a recorded pulse,
+not a live measurement. The animation pauses when Body or the browser tab is
+hidden, and is disabled for visitors who prefer reduced motion.
 Missing days remain gaps. Open-cycle measurements can change as WHOOP syncs.
 The dashboard uses the site's cream background, serif numbers, and brown/gold
-accents. The figure and its connectors are decorative SVG; each chart has its
-own readable label and accessible description.
+accents. The portrait combines a generated brown contour illustration of the
+owner in a classic bodybuilding pose with decorative SVG connectors and an
+animated heart. Each chart has its own readable label and accessible description.
+The illustration brief is recorded in `scripts/design/body-portrait-prompts.md`.
 
 Sleep, recovery, and cycle metrics use the associated main sleep's local wake
 date, with a disclosed cycle-start fallback when no main sleep is available.

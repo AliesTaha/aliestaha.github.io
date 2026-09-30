@@ -6,6 +6,7 @@
     sleep_performance: { label: "Sleep score", unit: "%", digits: 0, bounds: [0, 100] },
     recovery: { label: "Recovery", unit: "%", digits: 0, bounds: [0, 100] },
     strain: { label: "Daily strain", unit: "/ 21", digits: 1, bounds: [0, 21] },
+    resting_hr: { label: "Resting heart rate", unit: "bpm", digits: 0 },
     workout_minutes: { label: "Workout time", unit: "min", digits: 0 },
     steps: { label: "Steps", unit: "", digits: 0 }
   };
@@ -59,15 +60,25 @@
     if (segment.length) segments.push(segment);
     return segments;
   }
-  function cardModels(rows) {
+  function cardModels(rows, history = rows) {
     return Object.entries(METRICS).map(([key, metric]) => {
       const summary = metricSummary(rows, key);
       const provisional = ["strain", "steps"].includes(key) && summary.observations.some(row => row.cycle_complete === false);
-      const detail = summary.count
-        ? `Average · ${summary.count} ${summary.count === 1 ? "day" : "days"}${provisional ? " · ongoing cycle" : ""}`
-        : "No observations";
-      return { key, label: metric.label, value: summary.mean, detail, summary };
+      const pulse = key === "resting_hr" ? heartbeatModel(history) : null;
+      const detail = key === "resting_hr"
+        ? pulse ? `Recorded · ${formatDate(pulse.date)}` : "No recorded pulse"
+        : summary.count ? `Average · ${summary.count} ${summary.count === 1 ? "day" : "days"}${provisional ? " · ongoing cycle" : ""}` : "No observations";
+      const value = key === "resting_hr" ? pulse?.bpm ?? null : summary.mean;
+      const displayValue = key === "resting_hr" && pulse ? String(pulse.bpm) : formatValue(value, key, false);
+      return { key, label: metric.label, value, displayValue, detail, summary };
     });
+  }
+  function heartbeatModel(rows) {
+    const latest = rows.reduce((selected, row) => {
+      if (!row || !validDate(row.date) || !validValue(row.resting_hr) || row.resting_hr <= 0 || row.resting_hr > 300) return selected;
+      return !selected || row.date > selected.date ? row : selected;
+    }, null);
+    return latest ? { date: latest.date, bpm: latest.resting_hr, periodSeconds: 60 / latest.resting_hr } : null;
   }
   function formatValue(value, key, includeUnit = true) {
     if (!validValue(value)) return "—";
@@ -86,7 +97,7 @@
     const generated = Date.parse(generatedAt);
     return { valid: Number.isFinite(generated), stale: !Number.isFinite(generated) || now - generated > 3 * 3600000 };
   }
-  const helpers = { METRICS, validDate, normalizeDaily, selectRange, metricSummary, splitSegments, cardModels, formatValue, publicationState };
+  const helpers = { METRICS, validDate, normalizeDaily, selectRange, metricSummary, splitSegments, cardModels, heartbeatModel, formatValue, publicationState };
   if (typeof module !== "undefined" && module.exports) module.exports = helpers;
   if (typeof document === "undefined") return;
 
@@ -94,6 +105,8 @@
   if (!page) return;
   const $ = selector => page.querySelector(selector);
   const cards = Array.from(page.querySelectorAll("[data-health-metric]")).filter(card => Object.hasOwn(METRICS, card.dataset.healthMetric));
+  const bodyMap = $(".health-body-map");
+  const figure = $(".health-figure");
   const NS = "http://www.w3.org/2000/svg";
   let allRows = [];
   let range = "M";
@@ -101,8 +114,11 @@
   let refreshFailed = false;
   let fetchInFlight = false;
   let resizeTimer;
-  let renderedWidths = "";
+  let renderedSize = "";
+  let connectionFrame = 0;
   let chartNumber = 0;
+  let pulseRecordKey;
+  let pulseBpm;
   function svgEl(tag, attrs = {}, text) {
     const node = document.createElementNS(NS, tag);
     Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, String(value)));
@@ -117,7 +133,7 @@
     const pad = { l: 3, r: 3, t: 8, b: 18 };
     const plotWidth = width - pad.l - pad.r;
     const plotHeight = height - pad.t - pad.b;
-    const description = `${label}: ${formatValue(model.value, key)} average, ${summary.count} daily ${summary.count === 1 ? "observation" : "observations"}, ${formatSpan(window.start, window.end)}.`;
+    const description = `${label}: ${formatValue(summary.mean, key)} average in plotted range, ${summary.count} daily ${summary.count === 1 ? "observation" : "observations"}, ${formatSpan(window.start, window.end)}.`;
     const svg = svgEl("svg", { viewBox: `0 0 ${width} ${height}`, role: "img", "aria-label": description });
     svg.append(svgEl("title", {}, description));
     if (!summary.count) {
@@ -158,17 +174,78 @@
     }
     container.append(svg);
   }
-  const widths = () => cards.map(card => card.querySelector("[data-metric-chart]").clientWidth).join(",");
+  const layoutSize = () => [
+    ...cards.map(card => card.querySelector("[data-metric-chart]").clientWidth),
+    bodyMap?.clientWidth || 0, bodyMap?.clientHeight || 0,
+    figure?.clientWidth || 0, figure?.clientHeight || 0
+  ].join(",");
+  function drawConnections() {
+    connectionFrame = 0;
+    const overlay = bodyMap?.querySelector(".health-connections-overlay");
+    if (!overlay || page.hidden) return;
+    const mapRect = bodyMap.getBoundingClientRect();
+    if (!mapRect.width || !mapRect.height) return;
+    overlay.setAttribute("viewBox", `0 0 ${mapRect.width} ${mapRect.height}`);
+    const paths = [];
+    const figureRect = figure?.getBoundingClientRect();
+    const cardRects = new Map(cards.map(card => [card, card.getBoundingClientRect()]));
+    const leftCards = cards.filter(card => {
+      const rect = cardRects.get(card);
+      return rect.left + rect.width / 2 < mapRect.left + mapRect.width / 2;
+    });
+    const rightCards = cards.filter(card => !leftCards.includes(card));
+    const firstCardTop = Math.min(...Array.from(cardRects.values(), rect => rect.top));
+    const stacked = figureRect && figureRect.bottom <= firstCardTop + 1 && leftCards.length && rightCards.length;
+    const gutterLeft = stacked ? Math.max(...leftCards.map(card => cardRects.get(card).right)) - mapRect.left : 0;
+    const gutterRight = stacked ? Math.min(...rightCards.map(card => cardRects.get(card).left)) - mapRect.left : 0;
+    cards.forEach(card => {
+      const anchor = bodyMap.querySelector(`[data-body-anchor="${card.dataset.healthMetric}"]`);
+      const value = card.querySelector("[data-metric-value]");
+      if (!anchor || !value) return;
+      const cardRect = cardRects.get(card);
+      const valueRect = value.getBoundingClientRect();
+      const anchorRect = anchor.getBoundingClientRect();
+      if (!cardRect.width || !valueRect.height) return;
+      const isLeft = cardRect.left + cardRect.width / 2 < mapRect.left + mapRect.width / 2;
+      const startX = (isLeft ? cardRect.right : cardRect.left) - mapRect.left;
+      const startY = valueRect.top + valueRect.height / 2 - mapRect.top;
+      const endX = anchorRect.left + anchorRect.width / 2 - mapRect.left;
+      const endY = anchorRect.top + anchorRect.height / 2 - mapRect.top;
+      let d;
+      if (stacked) {
+        // Keep long mobile callouts between the chart columns, then fan into the portrait.
+        const sideCards = isLeft ? leftCards : rightCards;
+        const rank = sideCards.indexOf(card);
+        const halfGutter = Math.max(0, gutterRight - gutterLeft) / 2;
+        const inset = Math.min(4, halfGutter / 3);
+        const spacing = Math.max(1, (halfGutter - inset - 2) / Math.max(1, sideCards.length - 1));
+        const laneX = isLeft ? gutterLeft + inset + rank * spacing : gutterRight - inset - rank * spacing;
+        const fanY = figureRect.bottom - mapRect.top + Math.min(12, (firstCardTop - figureRect.bottom) / 2);
+        const turnY = Math.min(startY - 8, fanY);
+        const endControlY = Math.min(fanY - 12, endY + 32);
+        d = `M${startX},${startY} C${laneX},${startY} ${laneX},${startY - 8} ${laneX},${startY - 8} L${laneX},${turnY} C${laneX},${fanY - 32} ${endX},${endControlY} ${endX},${endY}`;
+      } else {
+        const bend = (endX - startX) * .4;
+        d = `M${startX},${startY} C${startX + bend},${startY} ${endX - bend},${endY} ${endX},${endY}`;
+      }
+      paths.push(svgEl("path", { d, class: "health-body-connector", fill: "none" }));
+    });
+    overlay.replaceChildren(...paths);
+  }
+  function scheduleConnections() {
+    if (connectionFrame) window.cancelAnimationFrame(connectionFrame);
+    connectionFrame = window.requestAnimationFrame(drawConnections);
+  }
   function renderCharts() {
     if (!allRows.length) return;
     const window = selectRange(allRows, range);
-    const models = new Map(cardModels(window.rows).map(model => [model.key, model]));
+    const models = new Map(cardModels(window.rows, allRows).map(model => [model.key, model]));
     $("#health-range-label").textContent = formatSpan(window.start, window.end);
     page.querySelectorAll("[data-range]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.range === range)));
     cards.forEach(card => {
       const model = models.get(card.dataset.healthMetric);
       const value = card.querySelector("[data-metric-value]");
-      value.textContent = formatValue(model.value, model.key, false);
+      value.textContent = model.displayValue;
       if (validValue(model.value) && METRICS[model.key].unit) {
         const unit = document.createElement("small");
         unit.textContent = METRICS[model.key].unit;
@@ -177,7 +254,29 @@
       card.querySelector("[data-metric-detail]").textContent = model.detail;
       drawChart(card.querySelector("[data-metric-chart]"), window.rows, model, window);
     });
-    renderedWidths = widths();
+    renderedSize = layoutSize();
+    scheduleConnections();
+  }
+  function updateHeartbeat() {
+    const pulse = heartbeatModel(allRows);
+    const key = pulse ? `${pulse.date}|${pulse.bpm}` : "none";
+    if (key === pulseRecordKey) return;
+    pulseRecordKey = key;
+    page.dataset.heartbeat = String(Boolean(pulse));
+    if (pulse) {
+      if (pulse.bpm !== pulseBpm) page.style.setProperty("--heartbeat-duration", `${pulse.periodSeconds}s`);
+      pulseBpm = pulse.bpm;
+    } else {
+      page.style.removeProperty("--heartbeat-duration");
+      pulseBpm = null;
+    }
+    const label = $("[data-heartbeat-label]");
+    if (label) label.textContent = pulse ? `Recorded pulse · ${formatDate(pulse.date)}` : "Recorded pulse unavailable";
+  }
+  function updateMotionState(section) {
+    const paused = document.hidden || page.hidden || (section !== undefined && section !== "body");
+    const value = String(paused);
+    if (page.dataset.motionPaused !== value) page.dataset.motionPaused = value;
   }
   function updateFreshness() {
     if (!publication) return;
@@ -206,6 +305,7 @@
       $("#health-status").removeAttribute("data-error");
       $("#health-dashboard").hidden = false;
       updateFreshness();
+      updateHeartbeat();
       renderCharts();
     } catch (error) {
       $("#health-status").dataset.error = "true";
@@ -227,23 +327,29 @@
   $("#health-retry").addEventListener("click", () => load());
   if (typeof ResizeObserver !== "undefined") {
     const observer = new ResizeObserver(() => {
-      if (!allRows.length || page.hidden || widths() === renderedWidths) return;
+      if (!allRows.length || page.hidden || layoutSize() === renderedSize) return;
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(renderCharts, 100);
     });
     cards.forEach(card => observer.observe(card.querySelector("[data-metric-chart]")));
+    if (bodyMap) observer.observe(bodyMap);
+    if (figure) observer.observe(figure);
   }
   window.setInterval(updateFreshness, 60000);
   window.setInterval(() => {
     if (!document.hidden && !page.hidden) load({ background: true });
   }, 5 * 60000);
   document.addEventListener("visibilitychange", () => {
+    updateMotionState();
     if (!document.hidden && !page.hidden) load({ background: true });
   });
   document.addEventListener("site:sectionchange", event => {
+    updateMotionState(event.detail?.section);
     if (event.detail?.section !== "body") return;
     renderCharts();
     if (!document.hidden && !page.hidden) load({ background: true });
   });
+  updateHeartbeat();
+  updateMotionState();
   load();
 })();

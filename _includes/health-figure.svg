@@ -1,0 +1,15 @@
+<svg class="health-body-figure" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1536" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false" fill="none">
+  <image class="health-body-portrait" href="{{ '/assets/images/body-portrait.png' | relative_url }}" width="1024" height="1536" style="mix-blend-mode:multiply" />
+  <g class="health-body-points" fill="var(--health-accent, #8b6539)">
+    <circle data-body-anchor="sleep_performance" cx="456" cy="145" r="7"/>
+    <circle data-body-anchor="recovery" cx="594" cy="253" r="7"/>
+    <circle data-body-anchor="strain" cx="409" cy="467" r="7"/>
+    <circle data-body-anchor="workout_minutes" cx="474" cy="1022" r="7"/>
+    <circle data-body-anchor="steps" cx="897" cy="1450" r="7"/>
+    <circle data-body-anchor="resting_hr" cx="610" cy="385" r=".5" fill="transparent"/>
+  </g>
+  <g class="health-heart-pulse">
+    <circle class="health-heart-halo" cx="610" cy="385" r="37" fill="var(--paper)" opacity=".92"/>
+    <path class="health-heart-shape" d="M610 409C603 402 582 390 582 377C582 361 601 358 610 371C620 357 640 363 638 379C637 391 618 403 610 409Z" stroke="var(--health-accent, #8b6539)" stroke-width="4.5" fill="var(--health-accent, #8b6539)" fill-opacity=".16" stroke-linejoin="round"/>
+  </g>
+</svg>
