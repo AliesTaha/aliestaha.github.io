@@ -4,8 +4,8 @@
   const postList = document.querySelector("#post-list");
   const bodyPanel = document.querySelector("#body-panel");
   const status = document.querySelector("#filter-status");
-  const sections = { mind: "technical", heart: "personal", body: null };
-  const aliases = { technical: "mind", personal: "heart", health: "body" };
+  const sections = { mind: "technical", soul: "personal", body: null };
+  const aliases = { technical: "mind", personal: "soul", heart: "soul", health: "body" };
   if (!buttons.length || !postList || !bodyPanel) return;
 
   const sectionFromHash = () => {

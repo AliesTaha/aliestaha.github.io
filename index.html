@@ -1,6 +1,6 @@
 ---
 layout: default
-title: "Mind, body, heart"
+title: "Mind, Body, Soul"
 description: "Ali Taha. Inference and research at Baseten."
 health_dashboard: true
 permalink: /
@@ -8,13 +8,13 @@ permalink: /
 
 <main>
   <section class="intro" aria-labelledby="page-title">
-    <h1 id="page-title">Mind, body, heart.</h1>
+    <h1 id="page-title">Mind, Body, Soul</h1>
     <p class="intro-copy">
       I’m Ali Taha. I work on inference and research at Baseten.
     </p>
   </section>
 
-  <section class="writing" aria-label="Mind, body, heart">
+  <section class="writing" aria-label="Mind, Body, Soul">
     <div class="writing-heading">
       <div class="filters" role="group" aria-label="Choose a section">
         <button class="filter-button" type="button" data-filter="mind" aria-pressed="true" aria-controls="post-list" aria-label="Mind: technical posts">
@@ -23,8 +23,8 @@ permalink: /
         <button class="filter-button" type="button" data-filter="body" aria-pressed="false" aria-controls="body-panel" aria-label="Body: health">
           Body
         </button>
-        <button class="filter-button" type="button" data-filter="heart" aria-pressed="false" aria-controls="post-list" aria-label="Heart: personal posts">
-          Heart
+        <button class="filter-button" type="button" data-filter="soul" aria-pressed="false" aria-controls="post-list" aria-label="Soul: personal posts">
+          Soul
         </button>
       </div>
     </div>
@@ -68,7 +68,7 @@ permalink: /
 {
   "@context": "https://schema.org",
   "@type": "Blog",
-  "name": {{ site.title | jsonify }},
+  "name": {{ page.title | jsonify }},
   "description": {{ site.description | jsonify }},
   "url": {{ site.url | jsonify }},
   "author": {

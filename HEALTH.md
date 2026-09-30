@@ -1,8 +1,9 @@
 # Public health dashboard
 
-The homepage has Mind (technical posts), Body (health), and Heart (personal
-posts) sections beneath one shared intro. Body opens in place at `/#body`;
-legacy `/health/` links redirect there. The dashboard reads only
+The homepage is titled "Mind, Body, Soul" and has Mind (technical posts), Body
+(health), and Soul (personal posts) sections beneath one shared intro. Soul
+opens at `/#soul`; legacy `/#heart` and `/#personal` links select Soul. Body
+opens in place at `/#body`; legacy `/health/` links redirect there. The dashboard reads only
 `assets/data/health.json`, a deliberately public daily summary from the owner's
 WHOOP account. It uses the site's Jekyll layout and local CSS/JavaScript; there
 are no browser API credentials, external chart libraries, or health analytics
@@ -37,8 +38,10 @@ not a live measurement. The animation pauses when Body or the browser tab is
 hidden, and is disabled for visitors who prefer reduced motion.
 Missing days remain gaps. Open-cycle measurements can change as WHOOP syncs.
 The dashboard uses the site's cream background, serif numbers, and brown/gold
-accents. The figure and its connectors are decorative SVG; each chart has its
-own readable label and accessible description.
+accents. The portrait combines a generated brown contour illustration of the
+owner in a classic bodybuilding pose with decorative SVG connectors and an
+animated heart. Each chart has its own readable label and accessible description.
+The illustration brief is recorded in `scripts/design/body-portrait-prompts.md`.
 
 Sleep, recovery, and cycle metrics use the associated main sleep's local wake
 date, with a disclosed cycle-start fallback when no main sleep is available.

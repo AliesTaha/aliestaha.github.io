@@ -187,11 +187,22 @@
     if (!mapRect.width || !mapRect.height) return;
     overlay.setAttribute("viewBox", `0 0 ${mapRect.width} ${mapRect.height}`);
     const paths = [];
+    const figureRect = figure?.getBoundingClientRect();
+    const cardRects = new Map(cards.map(card => [card, card.getBoundingClientRect()]));
+    const leftCards = cards.filter(card => {
+      const rect = cardRects.get(card);
+      return rect.left + rect.width / 2 < mapRect.left + mapRect.width / 2;
+    });
+    const rightCards = cards.filter(card => !leftCards.includes(card));
+    const firstCardTop = Math.min(...Array.from(cardRects.values(), rect => rect.top));
+    const stacked = figureRect && figureRect.bottom <= firstCardTop + 1 && leftCards.length && rightCards.length;
+    const gutterLeft = stacked ? Math.max(...leftCards.map(card => cardRects.get(card).right)) - mapRect.left : 0;
+    const gutterRight = stacked ? Math.min(...rightCards.map(card => cardRects.get(card).left)) - mapRect.left : 0;
     cards.forEach(card => {
       const anchor = bodyMap.querySelector(`[data-body-anchor="${card.dataset.healthMetric}"]`);
       const value = card.querySelector("[data-metric-value]");
       if (!anchor || !value) return;
-      const cardRect = card.getBoundingClientRect();
+      const cardRect = cardRects.get(card);
       const valueRect = value.getBoundingClientRect();
       const anchorRect = anchor.getBoundingClientRect();
       if (!cardRect.width || !valueRect.height) return;
@@ -200,8 +211,23 @@
       const startY = valueRect.top + valueRect.height / 2 - mapRect.top;
       const endX = anchorRect.left + anchorRect.width / 2 - mapRect.left;
       const endY = anchorRect.top + anchorRect.height / 2 - mapRect.top;
-      const bend = (endX - startX) * .4;
-      const d = `M${startX},${startY} C${startX + bend},${startY} ${endX - bend},${endY} ${endX},${endY}`;
+      let d;
+      if (stacked) {
+        // Keep long mobile callouts between the chart columns, then fan into the portrait.
+        const sideCards = isLeft ? leftCards : rightCards;
+        const rank = sideCards.indexOf(card);
+        const halfGutter = Math.max(0, gutterRight - gutterLeft) / 2;
+        const inset = Math.min(4, halfGutter / 3);
+        const spacing = Math.max(1, (halfGutter - inset - 2) / Math.max(1, sideCards.length - 1));
+        const laneX = isLeft ? gutterLeft + inset + rank * spacing : gutterRight - inset - rank * spacing;
+        const fanY = figureRect.bottom - mapRect.top + Math.min(12, (firstCardTop - figureRect.bottom) / 2);
+        const turnY = Math.min(startY - 8, fanY);
+        const endControlY = Math.min(fanY - 12, endY + 32);
+        d = `M${startX},${startY} C${laneX},${startY} ${laneX},${startY - 8} ${laneX},${startY - 8} L${laneX},${turnY} C${laneX},${fanY - 32} ${endX},${endControlY} ${endX},${endY}`;
+      } else {
+        const bend = (endX - startX) * .4;
+        d = `M${startX},${startY} C${startX + bend},${startY} ${endX - bend},${endY} ${endX},${endY}`;
+      }
       paths.push(svgEl("path", { d, class: "health-body-connector", fill: "none" }));
     });
     overlay.replaceChildren(...paths);
