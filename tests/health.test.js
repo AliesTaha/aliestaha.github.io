@@ -1,7 +1,7 @@
 "use strict";
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { METRICS, normalizeDaily, selectRange, metricSummary, splitSegments, publicationState, validDate, cardModels, heartbeatModel, nearestCalendarDay, inspectionModel } = require("../assets/js/health.js");
+const { METRICS, normalizeDaily, selectRange, metricSummary, splitSegments, publicationState, validDate, cardModels, heartbeatModel, nearestCalendarDay, inspectionModel, EMA_SPANS, emaSeries, emaTrend } = require("../assets/js/health.js");
 
 test("week, month, and all windows use calendar days, not received record counts", () => {
   const rows = normalizeDaily([
@@ -200,4 +200,106 @@ test("leaving inspection restores each overview without changing the latest hear
   assert.equal(heartbeatModel(rows).bpm, 45);
   assert.equal(inspectionModel(heart, rows, null).value, 45);
   assert.equal(inspectionModel(heart, rows, null).detail, "Recorded · Sep 30");
+});
+
+// EMA expectations below are fixed hand calculations, independent of chart rendering.
+test("EMA windows use the agreed 3, 7, and 14 day spans", () => {
+  assert.deepEqual(EMA_SPANS, { W: 3, M: 7, ALL: 14 });
+});
+
+test("EMA seeds at the first observation and ages across missing calendar days", () => {
+  const rows = normalizeDaily([
+    { date: "2026-09-01", steps: null },
+    { date: "2026-09-02", steps: 10 },
+    { date: "2026-09-03", steps: 20 },
+    { date: "2026-09-04", steps: null },
+    { date: "2026-09-06", steps: 30 },
+    { date: "2026-09-07", steps: 0 }
+  ]);
+  const series = emaSeries(rows, "steps", 3);
+  assert.deepEqual(series.map(point => point.date), rows.map(row => row.date));
+  // alpha=.5: 10 -> 15; three days to Sep 6 gives alpha=.875;
+  // Sep 6 = 15*.125 + 30*.875 = 28.125; a real zero then halves it.
+  assert.deepEqual(series.map(point => point.value), [null, 10, 15, null, 28.125, 14.0625]);
+});
+
+test("a visible window uses EMA warmed by the full history instead of reseeding", () => {
+  const rows = normalizeDaily([
+    { date: "2026-09-01", steps: 0 },
+    { date: "2026-09-02", steps: 100 },
+    { date: "2026-09-03", steps: 100 },
+    { date: "2026-09-04", steps: 100 }
+  ]);
+  const series = emaSeries(rows, "steps", 3);
+  assert.deepEqual(series.map(point => point.value), [0, 50, 75, 87.5]);
+  const trend = emaTrend(series, { start: "2026-09-03", end: "2026-09-04" });
+  assert.equal(trend.startDate, "2026-09-03");
+  assert.equal(trend.endDate, "2026-09-04");
+  assert.equal(trend.startValue, 75);
+  assert.equal(trend.endValue, 87.5);
+  assert.ok(Math.abs(trend.percent - 100 / 6) < 1e-10);
+  assert.equal(trend.direction, "up");
+});
+
+test("EMA trend clips to valid window endpoints and inspects the exact selected date", () => {
+  const series = [
+    { date: "2026-08-31", value: 10 },
+    { date: "2026-09-01", value: null },
+    { date: "2026-09-02", value: 20 },
+    { date: "2026-09-03", value: 30 },
+    { date: "2026-09-04", value: null },
+    { date: "2026-09-06", value: 40 },
+    { date: "2026-09-07", value: null },
+    { date: "2026-09-08", value: 90 }
+  ];
+  const window = { start: "2026-09-01", end: "2026-09-07" };
+  const idle = emaTrend(series, window);
+  assert.equal(idle.startDate, "2026-09-02");
+  assert.equal(idle.endDate, "2026-09-06");
+  assert.equal(idle.startValue, 20);
+  assert.equal(idle.endValue, 40);
+  assert.equal(idle.percent, 100);
+  const inspected = emaTrend(series, window, "2026-09-03");
+  assert.equal(inspected.endDate, "2026-09-03");
+  assert.equal(inspected.endValue, 30);
+  assert.equal(inspected.percent, 50);
+  for (const date of ["2026-09-01", "2026-09-04", "2026-09-05", "2026-08-31", "2026-09-08"]) {
+    const missing = emaTrend(series, window, date);
+    assert.equal(missing.percent, null, `${date} must not substitute a neighboring point`);
+    assert.equal(missing.direction, "unavailable");
+  }
+});
+
+test("EMA trends handle zero baselines and require two valid observations", () => {
+  const window = { start: "2026-09-01", end: "2026-09-02" };
+  const flat = emaTrend([{ date: window.start, value: 0 }, { date: window.end, value: 0 }], window);
+  assert.equal(flat.percent, 0);
+  assert.equal(flat.direction, "flat");
+  const risingFromZero = emaTrend([{ date: window.start, value: 0 }, { date: window.end, value: 5 }], window);
+  assert.equal(risingFromZero.percent, null);
+  assert.equal(risingFromZero.direction, "unavailable");
+  for (const series of [[], [{ date: window.start, value: null }], [{ date: window.end, value: 10 }]]) {
+    const insufficient = emaTrend(series, window);
+    assert.equal(insufficient.percent, null);
+    assert.equal(insufficient.direction, "unavailable");
+  }
+  const firstOnly = emaTrend([{ date: window.start, value: 10 }, { date: window.end, value: 20 }], window, window.start);
+  assert.equal(firstOnly.percent, null);
+  assert.equal(firstOnly.direction, "unavailable");
+});
+
+test("EMA direction follows one-decimal percent display and absolute baseline magnitude", () => {
+  const window = { start: "2026-09-01", end: "2026-09-02" };
+  for (const [endValue, expected] of [[100.049, "flat"], [99.951, "flat"], [100.051, "up"], [99.949, "down"]]) {
+    const trend = emaTrend([{ date: window.start, value: 100 }, { date: window.end, value: endValue }], window);
+    assert.equal(trend.direction, expected);
+  }
+  for (const [endValue, direction] of [[2001, "up"], [1999, "down"]]) {
+    const trend = emaTrend([{ date: window.start, value: 2000 }, { date: window.end, value: endValue }], window);
+    assert.equal(trend.direction, direction);
+    assert.equal(trend.magnitude, 0.1, "exact positive and negative 0.05% both round to 0.1%");
+  }
+  const negative = emaTrend([{ date: window.start, value: -10 }, { date: window.end, value: -5 }], window);
+  assert.equal(negative.percent, 50);
+  assert.equal(negative.direction, "up");
 });

@@ -43,6 +43,20 @@ show a dash. Leaving the chart restores its range average or latest recorded
 resting heart rate. Week shows a dot for every measured day; Month and All show
 the selected point. Keyboard arrows and touch also support daily inspection.
 The decorative heartbeat continues to use the latest recorded resting heart rate.
+Each chart also shows a dashed exponential moving average: 3 days for Week,
+7 for Month, and 14 for All. EMA is calculated over the full available history
+before clipping to the visible range, seeded with the first observed value.
+Its daily weight is `2 / (span + 1)`; after a gap of `d` calendar days since the
+last observation, the next observation receives weight `1 - (1 - alpha)^d`.
+Missing measurements remain gaps and are never treated as zero.
+
+The signed ticker at each chart's top compares the first visible EMA with the
+last visible EMA: `100 * (end - start) / abs(start)`. Hover compares the selected
+day's EMA with the same starting point. At least two measured days are needed;
+missing endpoints and a zero baseline followed by a nonzero value show a dash.
+An all-zero comparison displays 0.0%. Up and down indicate numerical direction,
+not a judgment about whether a health metric is better or worse.
+
 The dashboard uses the site's cream background, serif numbers, and brown/gold
 accents. The portrait combines a generated brown contour illustration of the
 owner in a classic bodybuilding pose with decorative SVG connectors and an

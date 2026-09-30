@@ -11,6 +11,7 @@
     steps: { label: "Steps", unit: "", digits: 0 }
   };
   const RANGE_DAYS = { W: 7, M: 30 };
+  const EMA_SPANS = { W: 3, M: 7, ALL: 14 };
   const validValue = value => typeof value === "number" && Number.isFinite(value);
   const timestamp = date => Date.parse(`${date}T00:00:00Z`);
   const isoDay = value => new Date(value).toISOString().slice(0, 10);
@@ -59,6 +60,40 @@
     });
     if (segment.length) segments.push(segment);
     return segments;
+  }
+  function emaSeries(rows, key, span) {
+    if (!Number.isFinite(span) || span < 1) throw new Error("Invalid EMA span.");
+    const alpha = 2 / (span + 1);
+    let previous = null;
+    let previousDate = null;
+    return rows.map(row => {
+      if (!validValue(row[key])) return { date: row.date, value: null };
+      if (previous === null) previous = row[key];
+      else {
+        const elapsed = Math.max(1, Math.round((timestamp(row.date) - timestamp(previousDate)) / DAY));
+        const weight = 1 - Math.pow(1 - alpha, elapsed);
+        previous += weight * (row[key] - previous);
+      }
+      previousDate = row.date;
+      return { date: row.date, value: previous };
+    });
+  }
+  function emaTrend(series, window, selectedDate = null) {
+    const observed = series.filter(row => row.date >= window.start && row.date <= window.end && validValue(row.value));
+    const eligible = selectedDate ? observed.filter(row => row.date <= selectedDate) : observed;
+    const first = observed[0];
+    const last = selectedDate ? observed.find(row => row.date === selectedDate) : observed[observed.length - 1];
+    let percent = null;
+    if (eligible.length >= 2 && first && last) {
+      if (first.value !== 0) percent = 100 * (last.value - first.value) / Math.abs(first.value);
+      else if (last.value === 0) percent = 0;
+    }
+    const magnitude = validValue(percent) ? Math.round(Math.abs(percent) * 10) / 10 : null;
+    return {
+      percent, magnitude, direction: magnitude === null ? "unavailable" : magnitude === 0 ? "flat" : percent > 0 ? "up" : "down",
+      startDate: first?.date ?? null, endDate: last?.date ?? null,
+      startValue: first?.value ?? null, endValue: last?.value ?? null
+    };
   }
   function cardModels(rows, history = rows) {
     return Object.entries(METRICS).map(([key, metric]) => {
@@ -112,7 +147,7 @@
     const generated = Date.parse(generatedAt);
     return { valid: Number.isFinite(generated), stale: !Number.isFinite(generated) || now - generated > 3 * 3600000 };
   }
-  const helpers = { METRICS, validDate, normalizeDaily, selectRange, metricSummary, splitSegments, cardModels, nearestCalendarDay, inspectionModel, heartbeatModel, formatValue, publicationState };
+  const helpers = { METRICS, EMA_SPANS, validDate, normalizeDaily, selectRange, metricSummary, splitSegments, emaSeries, emaTrend, cardModels, nearestCalendarDay, inspectionModel, heartbeatModel, formatValue, publicationState };
   if (typeof module !== "undefined" && module.exports) module.exports = helpers;
   if (typeof document === "undefined") return;
 
@@ -150,15 +185,16 @@
     const pad = { l: 3, r: 3, t: 8, b: 18 };
     const plotWidth = width - pad.l - pad.r;
     const plotHeight = height - pad.t - pad.b;
-    const description = `${label}: ${formatValue(summary.mean, key)} average in plotted range, ${summary.count} daily ${summary.count === 1 ? "observation" : "observations"}, ${formatSpan(window.start, window.end)}.`;
+    const description = `${label}: ${formatValue(summary.mean, key)} average in plotted range, ${summary.count} daily ${summary.count === 1 ? "observation" : "observations"}, ${formatSpan(window.start, window.end)}. Dashed line: ${model.emaSpan}-day exponential moving average.`;
     const svg = svgEl("svg", { viewBox: `0 0 ${width} ${height}`, role: "img", "aria-label": description });
     const title = svgEl("title", {}, description);
     svg.append(title);
     if (!summary.count) {
       svg.append(svgEl("text", { x: width / 2, y: height / 2, "text-anchor": "middle", class: "health-svg-empty" }, "No observations"));
     }
-    let low = summary.min ?? 0;
-    let high = summary.max ?? 1;
+    const plottedValues = [...summary.observations.map(row => row[key]), ...model.ema.filter(row => validValue(row.value)).map(row => row.value)];
+    let low = plottedValues.length ? Math.min(...plottedValues) : 0;
+    let high = plottedValues.length ? Math.max(...plottedValues) : 1;
     if (METRICS[key].bounds) [low, high] = METRICS[key].bounds;
     else {
       const padding = Math.max((high - low) * .2, high === low ? Math.max(Math.abs(high) * .06, .5) : .1);
@@ -178,6 +214,11 @@
       const path = segment.map((row, i) => `${i ? "L" : "M"}${x(row.date).toFixed(2)},${y(row[key]).toFixed(2)}`).join(" ");
       svg.append(svgEl("path", { d: `${path} L${x(segment[segment.length - 1].date)},${height - pad.b} L${x(segment[0].date)},${height - pad.b} Z`, fill: `url(#${gradientId})` }));
       svg.append(svgEl("path", { d: path, class: "health-svg-line" }));
+    });
+    splitSegments(model.ema, "value").forEach(segment => {
+      if (segment.length < 2) return;
+      const path = segment.map((row, i) => `${i ? "L" : "M"}${x(row.date).toFixed(2)},${y(row.value).toFixed(2)}`).join(" ");
+      svg.append(svgEl("path", { d: path, class: "health-svg-ema" }));
     });
     if (range === "W") summary.observations.forEach(row => {
       svg.append(svgEl("circle", { cx: x(row.date), cy: y(row[key]), r: 2.5, class: "health-svg-day-point" }));
@@ -204,12 +245,32 @@
     }
     card.querySelector("[data-metric-detail]").textContent = model.detail;
   }
+  function writeTrend(card, state, date) {
+    const trend = emaTrend(state.model.ema, state.window, date);
+    const node = card.querySelector("[data-metric-trend]");
+    if (!node) return "";
+    node.dataset.direction = trend.direction;
+    const span = state.model.emaSpan;
+    let description;
+    if (trend.direction === "unavailable") {
+      node.textContent = "—";
+      description = `${span}-day EMA percentage change unavailable: missing measurements, fewer than two measured days, or a zero starting value.`;
+    } else {
+      const magnitude = trend.magnitude.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+      node.textContent = trend.direction === "flat" ? "0.0%" : `${trend.direction === "up" ? "↑ +" : "↓ −"}${magnitude}%`;
+      description = `${span}-day EMA ${trend.direction === "flat" ? "unchanged" : `${trend.direction} ${magnitude}%`}, ${formatDate(trend.startDate, true)} to ${formatDate(trend.endDate, true)}.`;
+    }
+    node.title = description;
+    node.setAttribute("aria-label", description);
+    return description;
+  }
   function setInspection(card, date, force = false) {
     const state = chartStates.get(card);
     if (!state || (!force && state.selectedDate === date)) return;
     state.selectedDate = date;
     const readout = inspectionModel(state.model, state.window.rows, date);
     writeReadout(card, readout);
+    const trendDescription = writeTrend(card, state, date);
     const { hoverLine, hoverPoint, x, y } = state.geometry;
     hoverLine.setAttribute("visibility", date ? "visible" : "hidden");
     hoverPoint.setAttribute("visibility", date && validValue(readout.value) ? "visible" : "hidden");
@@ -222,7 +283,7 @@
       }
     }
     const unit = validValue(readout.value) && METRICS[readout.key].unit ? ` ${METRICS[readout.key].unit}` : "";
-    const announcement = `${readout.label}: ${readout.displayValue}${unit}. ${readout.detail}.`;
+    const announcement = `${readout.label}: ${readout.displayValue}${unit}. ${readout.detail}. ${trendDescription}`;
     state.container.setAttribute("aria-label", `${announcement} Use left and right arrows to inspect days, Home or End to jump, and Escape to restore the overview.`);
     state.geometry.svg.setAttribute("aria-label", date ? announcement : state.geometry.description);
     state.geometry.title.textContent = date ? announcement : state.geometry.description;
@@ -338,9 +399,13 @@
     const window = selectRange(allRows, range);
     const models = new Map(cardModels(window.rows, allRows).map(model => [model.key, model]));
     $("#health-range-label").textContent = formatSpan(window.start, window.end);
+    const emaSpan = EMA_SPANS[range];
+    $("#health-ema-label").textContent = `${emaSpan}-day EMA`;
     page.querySelectorAll("[data-range]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.range === range)));
     cards.forEach(card => {
       const model = models.get(card.dataset.healthMetric);
+      model.emaSpan = emaSpan;
+      model.ema = emaSeries(allRows, model.key, emaSpan).filter(row => row.date >= window.start && row.date <= window.end);
       const container = card.querySelector("[data-metric-chart]");
       const previous = chartStates.get(card);
       const selectedDate = previous?.range === range && previous.selectedDate >= window.start && previous.selectedDate <= window.end ? previous.selectedDate : null;
