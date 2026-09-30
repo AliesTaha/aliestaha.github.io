@@ -1,7 +1,7 @@
 "use strict";
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { METRICS, normalizeDaily, selectRange, metricSummary, splitSegments, publicationState, validDate, cardModels, heartbeatModel } = require("../assets/js/health.js");
+const { METRICS, normalizeDaily, selectRange, metricSummary, splitSegments, publicationState, validDate, cardModels, heartbeatModel, nearestCalendarDay, inspectionModel } = require("../assets/js/health.js");
 
 test("week, month, and all windows use calendar days, not received record counts", () => {
   const rows = normalizeDaily([
@@ -145,4 +145,59 @@ test("the resting heart card and heartbeat are unavailable together without a va
   assert.equal(card.value, null);
   assert.equal(card.detail, "No recorded pulse");
   assert.equal(heartbeatModel(rows), null);
+});
+
+test("pointer fractions snap to calendar days and clamp at the range endpoints", () => {
+  const window = { start: "2026-09-24", end: "2026-09-30" };
+  assert.equal(nearestCalendarDay(window, -.5), "2026-09-24");
+  assert.equal(nearestCalendarDay(window, 0), "2026-09-24");
+  assert.equal(nearestCalendarDay(window, .49), "2026-09-27");
+  assert.equal(nearestCalendarDay(window, .6), "2026-09-28");
+  assert.equal(nearestCalendarDay(window, 1), "2026-09-30");
+  assert.equal(nearestCalendarDay(window, 2), "2026-09-30");
+  assert.equal(nearestCalendarDay({ start: "2026-09-30", end: "2026-09-30" }, .8), "2026-09-30");
+  assert.equal(nearestCalendarDay(window, NaN), null);
+});
+
+test("inspection shows an absent or null calendar day instead of a neighboring observation", () => {
+  const rows = normalizeDaily([
+    { date: "2026-09-24", recovery: 60 },
+    { date: "2026-09-26", recovery: null },
+    { date: "2026-09-30", recovery: 80 }
+  ]);
+  const model = cardModels(rows).find(card => card.key === "recovery");
+  for (const date of ["2026-09-25", "2026-09-26"]) {
+    const reading = inspectionModel(model, rows, date);
+    assert.equal(reading.value, null);
+    assert.equal(reading.displayValue, "—");
+    assert.match(reading.detail, /No measurement/);
+  }
+  assert.equal(inspectionModel(model, rows, "2026-09-24").value, 60);
+});
+
+test("daily inspection retains zero and existing precision, including fractional recorded pulse", () => {
+  const rows = normalizeDaily([{ date: "2026-09-30", workout_minutes: 0, strain: 4.26, resting_hr: 67.25, steps: 1234, recovery: 72.4, sleep_performance: 84.6 }]);
+  const models = new Map(cardModels(rows).map(card => [card.key, card]));
+  for (const [key, expected] of [["workout_minutes", "0"], ["strain", "4.3"], ["resting_hr", "67.25"], ["steps", "1,234"], ["recovery", "72"], ["sleep_performance", "85"]]) {
+    const reading = inspectionModel(models.get(key), rows, "2026-09-30");
+    assert.equal(reading.displayValue, expected);
+    assert.equal(reading.detail, "Sep 30, 2026");
+  }
+});
+
+test("leaving inspection restores each overview without changing the latest heartbeat", () => {
+  const rows = normalizeDaily([
+    { date: "2026-09-24", workout_minutes: 0, resting_hr: 60 },
+    { date: "2026-09-30", workout_minutes: 60, resting_hr: 45 }
+  ]);
+  const models = new Map(cardModels(rows, rows).map(card => [card.key, card]));
+  const workout = models.get("workout_minutes");
+  assert.equal(inspectionModel(workout, rows, "2026-09-24").value, 0);
+  assert.equal(inspectionModel(workout, rows, null), workout);
+  assert.equal(inspectionModel(workout, rows, null).value, 30);
+  const heart = models.get("resting_hr");
+  assert.equal(inspectionModel(heart, rows, "2026-09-24").value, 60);
+  assert.equal(heartbeatModel(rows).bpm, 45);
+  assert.equal(inspectionModel(heart, rows, null).value, 45);
+  assert.equal(inspectionModel(heart, rows, null).detail, "Recorded · Sep 30");
 });

@@ -37,6 +37,12 @@ exact reading: one beat every 60 / BPM seconds. It represents a recorded pulse,
 not a live measurement. The animation pauses when Body or the browser tab is
 hidden, and is disabled for visitors who prefer reduced motion.
 Missing days remain gaps. Open-cycle measurements can change as WHOOP syncs.
+Hovering a chart highlights the nearest calendar day and temporarily replaces
+its prominent number with that day's measurement and date. Missing measurements
+show a dash. Leaving the chart restores its range average or latest recorded
+resting heart rate. Week shows a dot for every measured day; Month and All show
+the selected point. Keyboard arrows and touch also support daily inspection.
+The decorative heartbeat continues to use the latest recorded resting heart rate.
 The dashboard uses the site's cream background, serif numbers, and brown/gold
 accents. The portrait combines a generated brown contour illustration of the
 owner in a classic bodybuilding pose with decorative SVG connectors and an

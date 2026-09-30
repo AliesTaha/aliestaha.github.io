@@ -3,7 +3,7 @@ description: "Ali Taha. Inference and research at Baseten."
 url: "https://aliestaha.com"
 baseurl: ""
 lang: "en"
-asset_version: "20260930-section-divider"
+asset_version: "20260930-chart-inspection"
 timezone: "America/Los_Angeles"
 
 permalink: /writing/:title/
