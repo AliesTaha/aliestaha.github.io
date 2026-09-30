@@ -3,7 +3,7 @@ description: "Ali Taha. Inference and research at Baseten."
 url: "https://aliestaha.com"
 baseurl: ""
 lang: "en"
-asset_version: "20260930-ema-trends"
+asset_version: "20260930-trend-colors"
 timezone: "America/Los_Angeles"
 
 permalink: /writing/:title/
