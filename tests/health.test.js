@@ -1,7 +1,7 @@
 "use strict";
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { METRICS, normalizeDaily, selectRange, metricSummary, splitSegments, publicationState, validDate, cardModels, heartbeatModel, nearestCalendarDay, inspectionModel, EMA_SPANS, emaSeries, emaTrend } = require("../assets/js/health.js");
+const { METRICS, normalizeDaily, selectRange, metricSummary, splitSegments, publicationState, validDate, cardModels, heartbeatModel, nearestCalendarDay, inspectionModel, EMA_SPANS, emaSeries, emaTrend, indicatorDirection } = require("../assets/js/health.js");
 
 test("week, month, and all windows use calendar days, not received record counts", () => {
   const rows = normalizeDaily([
@@ -302,4 +302,22 @@ test("EMA direction follows one-decimal percent display and absolute baseline ma
   const negative = emaTrend([{ date: window.start, value: -10 }, { date: window.end, value: -5 }], window);
   assert.equal(negative.percent, 50);
   assert.equal(negative.direction, "up");
+});
+
+test("resting heart rate inverts only the indicator, preserving actual EMA changes and neutral states", () => {
+  const window = { start: "2026-09-01", end: "2026-09-03" };
+  const series = [{ date: window.start, value: 50 }, { date: "2026-09-02", value: 55 }, { date: window.end, value: 45 }];
+  const overview = emaTrend(series, window);
+  assert.equal(overview.percent, -10);
+  assert.equal(indicatorDirection("resting_hr", overview.direction), "up");
+  const inspected = emaTrend(series, window, "2026-09-02");
+  assert.equal(inspected.percent, 10);
+  assert.equal(indicatorDirection("resting_hr", inspected.direction), "down");
+  for (const key of Object.keys(METRICS)) {
+    for (const direction of ["flat", "unavailable"]) assert.equal(indicatorDirection(key, direction), direction);
+    if (key !== "resting_hr") {
+      assert.equal(indicatorDirection(key, "up"), "up");
+      assert.equal(indicatorDirection(key, "down"), "down");
+    }
+  }
 });

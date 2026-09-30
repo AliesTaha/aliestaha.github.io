@@ -46,8 +46,8 @@
 .health-card-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
 .health-card-heading h2 { min-width: 0; }
 .health-card-trend { flex-shrink: 0; color: var(--muted); font: 11px/1.4 var(--health-sans); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.health-card-trend[data-direction="up"] { color: var(--health-accent); }
-.health-card-trend[data-direction="down"] { color: #956047; }
+.health-card-trend[data-direction="up"] { color: #2f704e; }
+.health-card-trend[data-direction="down"] { color: #b04b40; }
 .health-card-value { margin: 0; color: var(--accent); font: 36px/1.2 Georgia, "Times New Roman", serif; letter-spacing: -.04em; font-variant-numeric: lining-nums tabular-nums; }
 .health-card-value small { margin-left: 4px; color: var(--muted); font: 11px/1 var(--health-sans); letter-spacing: 0; }
 .health-card-chart { margin-top: 12px; width: 100%; height: 84px; }

@@ -54,8 +54,12 @@ The signed ticker at each chart's top compares the first visible EMA with the
 last visible EMA: `100 * (end - start) / abs(start)`. Hover compares the selected
 day's EMA with the same starting point. At least two measured days are needed;
 missing endpoints and a zero baseline followed by a nonzero value show a dash.
-An all-zero comparison displays 0.0%. Up and down indicate numerical direction,
-not a judgment about whether a health metric is better or worse.
+An all-zero comparison displays 0.0%. Ticker arrows and colors follow the owner's
+display preference: a fall in resting heart rate points up in green, and a rise
+points down in red. Other cards use green/up for increases and red/down for
+decreases. Flat or unavailable trends stay neutral. The percentage sign always
+retains the actual numerical change; the RHR tooltip explains its inverted
+arrow. The chart lines remain brown/gold and retain their actual direction.
 
 The dashboard uses the site's cream background, serif numbers, and brown/gold
 accents. The portrait combines a generated brown contour illustration of the

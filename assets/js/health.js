@@ -95,6 +95,10 @@
       startValue: first?.value ?? null, endValue: last?.value ?? null
     };
   }
+  function indicatorDirection(key, direction) {
+    if (key !== "resting_hr") return direction;
+    return direction === "up" ? "down" : direction === "down" ? "up" : direction;
+  }
   function cardModels(rows, history = rows) {
     return Object.entries(METRICS).map(([key, metric]) => {
       const summary = metricSummary(rows, key);
@@ -147,7 +151,7 @@
     const generated = Date.parse(generatedAt);
     return { valid: Number.isFinite(generated), stale: !Number.isFinite(generated) || now - generated > 3 * 3600000 };
   }
-  const helpers = { METRICS, EMA_SPANS, validDate, normalizeDaily, selectRange, metricSummary, splitSegments, emaSeries, emaTrend, cardModels, nearestCalendarDay, inspectionModel, heartbeatModel, formatValue, publicationState };
+  const helpers = { METRICS, EMA_SPANS, validDate, normalizeDaily, selectRange, metricSummary, splitSegments, emaSeries, emaTrend, indicatorDirection, cardModels, nearestCalendarDay, inspectionModel, heartbeatModel, formatValue, publicationState };
   if (typeof module !== "undefined" && module.exports) module.exports = helpers;
   if (typeof document === "undefined") return;
 
@@ -249,7 +253,8 @@
     const trend = emaTrend(state.model.ema, state.window, date);
     const node = card.querySelector("[data-metric-trend]");
     if (!node) return "";
-    node.dataset.direction = trend.direction;
+    const indicator = indicatorDirection(state.model.key, trend.direction);
+    node.dataset.direction = indicator;
     const span = state.model.emaSpan;
     let description;
     if (trend.direction === "unavailable") {
@@ -257,8 +262,11 @@
       description = `${span}-day EMA percentage change unavailable: missing measurements, fewer than two measured days, or a zero starting value.`;
     } else {
       const magnitude = trend.magnitude.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-      node.textContent = trend.direction === "flat" ? "0.0%" : `${trend.direction === "up" ? "↑ +" : "↓ −"}${magnitude}%`;
+      node.textContent = trend.direction === "flat" ? "0.0%" : `${indicator === "up" ? "↑" : "↓"} ${trend.direction === "up" ? "+" : "−"}${magnitude}%`;
       description = `${span}-day EMA ${trend.direction === "flat" ? "unchanged" : `${trend.direction} ${magnitude}%`}, ${formatDate(trend.startDate, true)} to ${formatDate(trend.endDate, true)}.`;
+      if (state.model.key === "resting_hr" && trend.direction !== "flat") {
+        description += ` ${indicator === "up" ? "Upward" : "Downward"} arrow reflects the preference for a lower resting heart rate.`;
+      }
     }
     node.title = description;
     node.setAttribute("aria-label", description);
