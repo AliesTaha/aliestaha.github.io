@@ -1,8 +1,9 @@
 title: "Ali Taha"
-description: "Technical notes and personal essays by Ali Taha."
+description: "Ali Taha. Inference and research at Baseten."
 url: "https://aliestaha.com"
 baseurl: ""
 lang: "en"
+asset_version: "20260930-body"
 timezone: "America/Los_Angeles"
 
 permalink: /writing/:title/

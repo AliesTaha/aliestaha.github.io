@@ -1,0 +1,76 @@
+<section class="health-page" id="body-panel" data-health-url="{{ '/assets/data/health.json' | relative_url }}" aria-label="Health trends" hidden>
+  <div class="health-status" id="health-status" role="status">
+    <span class="health-status-dot" aria-hidden="true"></span>
+    <span id="health-status-text">Loading WHOOP data…</span>
+    <button id="health-retry" type="button" hidden>Retry</button>
+  </div>
+  <div id="health-dashboard" hidden>
+    <div class="health-chart-toolbar">
+      <p id="health-range-label"></p>
+      <div class="health-ranges" role="group" aria-label="Chart time range">
+        <button type="button" data-range="W" aria-pressed="false" aria-label="Past week">Week</button>
+        <button type="button" data-range="M" aria-pressed="true" aria-label="Past month">Month</button>
+        <button type="button" data-range="ALL" aria-pressed="false" aria-label="All time">All</button>
+      </div>
+    </div>
+    <div class="health-body-map">
+      <div class="health-figure" aria-hidden="true">
+        <svg viewBox="0 0 140 600" preserveAspectRatio="none" focusable="false">
+          <g class="health-body-connectors">
+            <path d="M-24 52 H30 L47 65" />
+            <path d="M164 52 H116 V189 H82" />
+            <path d="M-24 260 H20 L43 210" />
+            <path d="M-24 469 H17 L43 553" />
+            <path d="M164 469 H125 L101 553" />
+          </g>
+          <g class="health-body-stroke">
+            <ellipse class="health-figure-head" cx="70" cy="72" rx="25" ry="27" />
+            <path d="M70 99 V352" />
+            <path d="M70 160 L43 210 L20 180" />
+            <path d="M70 160 L106 229 L117 275" />
+            <path d="M70 352 L45 456 L43 553 L28 556" />
+            <path d="M70 352 L97 456 L101 553 L116 556" />
+          </g>
+          <path class="health-figure-heart" d="M70 185 C60 174 52 192 70 204 C88 192 80 174 70 185Z" />
+          <g class="health-body-points">
+            <circle cx="47" cy="65" r="3" />
+            <circle cx="82" cy="189" r="3" />
+            <circle cx="43" cy="210" r="3" />
+            <circle cx="43" cy="553" r="3" />
+            <circle cx="101" cy="553" r="3" />
+          </g>
+        </svg>
+      </div>
+      <article class="health-card health-card-sleep" data-health-metric="sleep_performance" aria-labelledby="sleep-score-label">
+        <h2 id="sleep-score-label">Sleep score</h2>
+        <p class="health-card-value" data-metric-value></p>
+        <div class="health-card-chart" data-metric-chart></div>
+        <p class="health-card-detail" data-metric-detail></p>
+      </article>
+      <article class="health-card health-card-recovery" data-health-metric="recovery" aria-labelledby="recovery-label">
+        <h2 id="recovery-label">Recovery</h2>
+        <p class="health-card-value" data-metric-value></p>
+        <div class="health-card-chart" data-metric-chart></div>
+        <p class="health-card-detail" data-metric-detail></p>
+      </article>
+      <article class="health-card health-card-strain" data-health-metric="strain" aria-labelledby="strain-label">
+        <h2 id="strain-label">Daily strain</h2>
+        <p class="health-card-value" data-metric-value></p>
+        <div class="health-card-chart" data-metric-chart></div>
+        <p class="health-card-detail" data-metric-detail></p>
+      </article>
+      <article class="health-card health-card-workout" data-health-metric="workout_minutes" aria-labelledby="workout-label">
+        <h2 id="workout-label">Workout time</h2>
+        <p class="health-card-value" data-metric-value></p>
+        <div class="health-card-chart" data-metric-chart></div>
+        <p class="health-card-detail" data-metric-detail></p>
+      </article>
+      <article class="health-card health-card-steps" data-health-metric="steps" aria-labelledby="steps-label">
+        <h2 id="steps-label">Steps</h2>
+        <p class="health-card-value" data-metric-value></p>
+        <div class="health-card-chart" data-metric-chart></div>
+        <p class="health-card-detail" data-metric-detail></p>
+      </article>
+    </div>
+  </div>
+</section>

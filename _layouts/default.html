@@ -28,13 +28,16 @@
     <meta property="og:image" content="{{ '/assets/og.png' | absolute_url }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="Ali Taha — Technical notes and personal essays.">
+    <meta property="og:image:alt" content="Ali Taha">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content="{{ '/assets/og.png' | absolute_url }}">
 
     <link rel="icon" href="data:,">
     <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="{{ '/feed.xml' | absolute_url }}">
-    <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
+    <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}?v={{ site.asset_version }}">
+    {% if page.health_dashboard %}
+      <link rel="stylesheet" href="{{ '/assets/css/health.css' | relative_url }}?v={{ site.asset_version }}">
+    {% endif %}
   </head>
   <body>
     <div class="site-shell">
