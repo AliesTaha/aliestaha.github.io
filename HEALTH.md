@@ -71,9 +71,12 @@ definitions and quality counts travel with the snapshot.
 
 ## Local refresh and publication
 
-The owner chose an hourly Codex heartbeat on their Mac. Codex must be running
-and the Mac awake and online for scheduled refreshes. The public site remains
-available independently. After three hours without a successful data fetch,
+The hourly refresh runs directly under macOS `launchd`, without Codex or an AI
+session. The per-user LaunchAgent runs at login and at minute 0 of each hour.
+Calendar events missed during sleep coalesce into one run when the Mac wakes.
+The user must be logged in and the Mac awake and online for a refresh to finish;
+the public site remains available independently. After three hours without a
+successful data fetch,
 the page labels its last publication stale and keeps the last good charts.
 An open Body section checks for a new snapshot every five minutes while visible
 and when returning to the tab or section, preserving the selected range.
@@ -82,6 +85,21 @@ The local installation is outside this repository at
 `~/.local/share/whoop-codex/`. Its virtual environment and authenticated
 connector are prerequisites, as is an authenticated GitHub CLI with repository
 write access. OAuth credentials remain under `~/.whoop-mcp/`.
+
+Install or update the independent scheduler from this checkout:
+
+```sh
+~/.local/share/whoop-codex/.venv/bin/python scripts/install_health_agent.py --install
+```
+
+This copies the runner, exporter, and publisher into
+`~/.local/share/whoop-codex/health-sync/scripts/`, outside the Desktop privacy
+boundary, and installs `~/Library/LaunchAgents/com.aliestaha.health-sync.plist`.
+The plist contains executable paths and the hourly schedule, never credentials.
+The running service no longer depends on the checkout staying in place.
+Re-run the installer after changing the refresh scripts to update its copies.
+The original Codex heartbeat is paused after an actual LaunchAgent run succeeds,
+so the two schedulers do not both perform routine refreshes.
 
 From this checkout, a refresh that validates but does not publish is:
 
@@ -101,7 +119,13 @@ and invokes a strict allowlist validator. The publisher updates only
 GitHub Contents API. GitHub Pages then rebuilds the site, which can add several
 minutes to the visible refresh. The hourly runner does not alter the checkout.
 It refuses to replace a newer public snapshot or publish unrecognized fields.
-Failed refreshes leave the published snapshot in place.
+Failed fetches and validation leave the published snapshot in place.
+The independent scheduled wrapper captures child output privately and waits for
+a successful Pages build plus the matching live publication timestamp before
+recording success. Its `scheduled-status.json` and sanitized, rotated
+`scheduled.log` live in the private `health-cache` directory. Deployment checks
+have a bounded retry window; a
+deployment failure is recorded separately from a verified successful update.
 
 The first fetch and weekly refreshes paginate all available WHOOP history.
 Other runs replace the latest 30-day window, including rescored or deleted
@@ -109,10 +133,25 @@ records. Raw history is stored only in the private local cache with directory
 mode 700 and file mode 600. `export_whoop.py --offline` rebuilds from the cache
 without advancing freshness; `--full` forces a full download.
 
-Pause or delete the **Refresh public WHOOP health** automation in Codex to stop
-future updates. Revoke the integration in WHOOP to stop API access. Keep the
-local checkout and private connector installation in place while using the
-automation.
+Inspect the background service with:
+
+```sh
+launchctl print gui/$(id -u)/com.aliestaha.health-sync
+cat ~/.local/share/whoop-codex/health-cache/scheduled-status.json
+```
+
+To stop future updates, disable and unload it:
+
+```sh
+launchctl disable gui/$(id -u)/com.aliestaha.health-sync
+launchctl bootout gui/$(id -u)/com.aliestaha.health-sync
+```
+
+Run the installer again to re-enable it. Revoke the integration in WHOOP to stop
+API access. Keep the private connector and `health-sync` installation in place.
+Closing Codex has no effect on this service; signing out of macOS or shutting
+down the Mac stops it until the next login. This is a Mac-hosted service, not a
+cloud-hosted scheduler.
 
 ## Validation
 
