@@ -39,7 +39,9 @@ def configuration(home, interpreter, gh):
             "PYTHONUNBUFFERED": "1",
             "GH_PROMPT_DISABLED": "1",
         },
-        "StartCalendarInterval": {"Minute": 0},
+        # Calendar ticks coalesce during sleep and run on wake. The runner gates
+        # these cheap checks to hourly refreshes, new wakes, and failure retries.
+        "StartCalendarInterval": [{"Minute": minute} for minute in range(60)],
         "RunAtLoad": True,
         "ProcessType": "Background",
         "Umask": 0o077,
@@ -69,7 +71,7 @@ def main():
     plist = agents / f"{LABEL}.plist"
     config = configuration(home, interpreter, Path(gh_command))
     if not args.install:
-        print(json.dumps({"installed": False, "label": LABEL, "schedule": "hourly at minute 0 and login", "plist": str(plist)}))
+        print(json.dumps({"installed": False, "label": LABEL, "schedule": "minute checks; hourly, wake, and retry refreshes", "plist": str(plist)}))
         return 0
 
     # The installed copy avoids Desktop-folder permissions and does not depend

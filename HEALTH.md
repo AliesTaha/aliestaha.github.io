@@ -1,6 +1,6 @@
 # Public health dashboard
 
-The homepage is titled "Mind, Body, Soul" and has Mind (technical posts), Body
+The homepage has Mind (technical posts), Body
 (health), and Soul (personal posts) sections beneath one shared intro. Soul
 opens at `/#soul`; legacy `/#heart` and `/#personal` links select Soul. Body
 opens in place at `/#body`; legacy `/health/` links redirect there. The dashboard reads only
@@ -75,9 +75,15 @@ definitions and quality counts travel with the snapshot.
 
 ## Local refresh and publication
 
-The hourly refresh runs directly under macOS `launchd`, without Codex or an AI
-session. The per-user LaunchAgent runs at login and at minute 0 of each hour.
-Calendar events missed during sleep coalesce into one run when the Mac wakes.
+The refresh runs directly under macOS `launchd`, without Codex or an AI
+session. The per-user LaunchAgent checks at login and once per calendar minute.
+The lightweight local check refreshes hourly after the last verified success,
+after a new native wake/boot event, or five minutes after an unsuccessful attempt.
+It allows 30 seconds after waking for the network to settle; a new wake normally
+starts a refresh 30–90 seconds later, rather than waiting for the next hour.
+GitHub Pages deployment can add several minutes before the website shows it.
+Calendar events missed during sleep coalesce when the Mac wakes. If the native
+wake clock is unavailable, hourly refresh and five-minute retries still work.
 The user must be logged in and the Mac awake and online for a refresh to finish;
 the public site remains available independently. After three hours without a
 successful data fetch,
@@ -99,7 +105,7 @@ Install or update the independent scheduler from this checkout:
 This copies the runner, exporter, and publisher into
 `~/.local/share/whoop-codex/health-sync/scripts/`, outside the Desktop privacy
 boundary, and installs `~/Library/LaunchAgents/com.aliestaha.health-sync.plist`.
-The plist contains executable paths and the hourly schedule, never credentials.
+The plist contains executable paths and minute checks, never credentials.
 The running service no longer depends on the checkout staying in place.
 Re-run the installer after changing the refresh scripts to update its copies.
 The original Codex heartbeat is paused after an actual LaunchAgent run succeeds,
@@ -130,6 +136,24 @@ recording success. Its `scheduled-status.json` and sanitized, rotated
 `scheduled.log` live in the private `health-cache` directory. Deployment checks
 have a bounded retry window; a
 deployment failure is recorded separately from a verified successful update.
+Idle minute checks preserve the last meaningful status and do not write log
+entries or call WHOOP/GitHub. Failed attempts retain `last_success_at` and report
+a fixed error category, distinguishing rejected WHOOP authorization, network
+failure, export failure, publication failure, and deployment failure. No raw
+provider error bodies, tokens, or health measurements enter scheduler logs.
+
+An `error.code` of `whoop_auth_failed` means the saved authorization was rejected.
+Reconnect with the existing local authorization helper:
+
+```sh
+~/.local/share/whoop-codex/.venv/bin/python ~/.local/share/whoop-codex/whoop_mcp_server.py auth
+```
+
+Complete WHOOP sign-in only in its browser page. The next due attempt uses the
+new locally stored tokens. Token refresh requests follow WHOOP's documented
+form fields, including `scope=offline`; the connector locks and reloads the
+shared token store for each rotation. A rejected refresh cannot be repaired by
+waiting, reopening Codex, or changing the website's cached snapshot.
 
 The first fetch and weekly refreshes paginate all available WHOOP history.
 Other runs replace the latest 30-day window, including rescored or deleted

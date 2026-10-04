@@ -349,6 +349,24 @@ def run(output: Path, cache: Path = CACHE, full: bool = False, offline: bool = F
     return {"coverage": payload["coverage"], "records": {kind: len(records) for kind, records in collections.items()}, "quality": payload["quality"], "public_bytes": output.stat().st_size, "full_refresh": full and not offline}
 
 
+def failure_code(exc: Exception) -> str:
+    """Classify privately; never return exception text, URLs, or provider data."""
+    message = str(exc)
+    status = getattr(getattr(exc, "response", None), "status_code", None)
+    if (re.search(r"WHOOP token refresh failed \((400|401|403)\)", message)
+            or message.startswith(("Not connected to WHOOP", "No refresh token stored"))
+            or status in (401, 403)):
+        return "whoop_auth_failed"
+    if status == 429 or message.startswith(("WHOOP rate limit reached", "WHOOP token refresh failed (429)")):
+        return "whoop_rate_limited"
+    if status is not None and status >= 500 or re.search(r"WHOOP token refresh failed \(5\d\d\)", message):
+        return "whoop_unavailable"
+    names = {base.__name__ for base in type(exc).__mro__}
+    if names & {"TransportError", "TimeoutException", "ConnectionError", "TimeoutError"}:
+        return "network_unavailable"
+    return "export_failed"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT / "assets/data/health.json")
@@ -361,7 +379,7 @@ def main() -> int:
         summary = run(args.output, args.cache, args.full, args.offline, args.connector)
     except Exception as exc:
         # Exception details and HTTP URLs can contain private record IDs. Do not log them.
-        print(f"WHOOP export failed ({type(exc).__name__}); public output was not replaced. Check local connection and cache.", file=sys.stderr)
+        print(json.dumps({"status": "failed", "error": {"code": failure_code(exc)}}))
         return 1
     print(json.dumps(summary, sort_keys=True))
     return 0

@@ -278,3 +278,66 @@ def test_runner_does_not_follow_cache_symlink(tmp_path):
     result = runner.run(link)
     assert result["status"] == "failed" and result["error"]["code"] == "storage_failed"
     assert not list(target.iterdir())
+
+
+@pytest.mark.parametrize("status,age,wake_age,expected", [
+    ("success", 3599, None, (False, "hourly")),
+    ("success", 3600, None, (True, "hourly")),
+    ("success", 600, 45, (True, "wake")),
+    ("success", 600, 10, (False, "wake_settling")),
+    ("failed", 299, 600, (False, "retry")),
+    ("failed", 300, 600, (True, "retry")),
+    ("failed", 600, 45, (True, "wake")),
+    ("running", 300, None, (True, "retry")),
+    ("success", -60, None, (True, "clock_changed")),
+])
+def test_due_gate_hourly_wake_retry_and_clock_change(status, age, wake_age, expected):
+    now = runner.timestamp_seconds(STAMP)
+    stamp = runner.datetime.fromtimestamp(now - age, runner.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    previous = {"status": status, "started_at": stamp, "last_success_at": stamp}
+    assert runner.refresh_due(previous, now, now - wake_age if wake_age is not None else None) == expected
+
+
+def test_idle_tick_preserves_failure_and_does_not_delay_retry(monkeypatch, tmp_path):
+    cache = tmp_path / "cache"
+    cache.mkdir()
+    prior = {"status": "failed", "started_at": STAMP, "last_success_at": OLDER,
+             "error": {"code": "whoop_auth_failed"}}
+    path = cache / "scheduled-status.json"
+    path.write_text(json.dumps(prior))
+    before = path.read_bytes()
+    monkeypatch.setattr(runner.time, "time", lambda: runner.timestamp_seconds(STAMP) + 120)
+    monkeypatch.setattr(runner, "latest_wake", lambda: runner.timestamp_seconds(OLDER))
+    monkeypatch.setattr(runner, "run_command", lambda *args: pytest.fail("Idle tick requested network work"))
+    result = runner.run(cache, respect_schedule=True)
+    assert result["status"] == "skipped" and result["reason"] == "retry"
+    assert path.read_bytes() == before and not (cache / "scheduled.log").exists()
+
+
+def test_long_failed_attempt_waits_five_minutes_after_finishing():
+    started = runner.timestamp_seconds(OLDER)
+    finished = runner.timestamp_seconds(STAMP)
+    previous = {"status": "failed", "started_at": OLDER, "finished_at": STAMP}
+    assert finished > started
+    assert runner.refresh_due(previous, finished + 299) == (False, "retry")
+    assert runner.refresh_due(previous, finished + 300) == (True, "retry")
+
+
+def test_native_wake_uses_newest_wake_or_boot_and_missing_clock_falls_back(monkeypatch):
+    command = Mock(return_value=subprocess.CompletedProcess([], 0,
+        b"kern.waketime: { sec = 100, usec = 0 }\nkern.boottime: { sec = 200, usec = 0 }"))
+    monkeypatch.setattr(runner.subprocess, "run", command)
+    assert runner.latest_wake() == 200
+    assert command.call_args.args[0] == ["/usr/sbin/sysctl", "kern.waketime", "kern.boottime"]
+    command.side_effect = OSError(SECRET)
+    assert runner.latest_wake() is None
+
+
+@pytest.mark.parametrize("code", ["whoop_auth_failed", "network_unavailable", SECRET])
+def test_refresh_error_codes_are_allowlisted_not_raw_child_details(monkeypatch, code):
+    process = Mock(returncode=1)
+    process.communicate.return_value = (json.dumps({"status": "failed", "error": {"code": code, "detail": SECRET}}).encode(), SECRET.encode())
+    monkeypatch.setattr(runner.subprocess, "Popen", Mock(return_value=process))
+    with pytest.raises(runner.SyncError) as caught:
+        runner.run_command(["synthetic"], 5, "refresh_failed", "refresh_timeout")
+    assert caught.value.code == ("refresh_failed" if code == SECRET else code)

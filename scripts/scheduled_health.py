@@ -28,12 +28,21 @@ WORKFLOW = "pages build and deployment"
 PUBLIC_URL = "https://aliestaha.com/assets/data/health.json"
 TOTAL_TIMEOUT = 600
 POLL_SECONDS = 15
+REFRESH_SECONDS = 3600
+RETRY_SECONDS = 300
+WAKE_SETTLE_SECONDS = 30
 LOG_LIMIT = 64 * 1024
 MAX_RESPONSE = 8 * 1024 * 1024
 ERRORS = {
+    "whoop_auth_failed": "WHOOP rejected the saved authorization. Reconnect WHOOP using the local authorization helper; waiting or reopening Codex will not repair it.",
+    "whoop_rate_limited": "WHOOP limited requests. The native scheduler will retry after five minutes.",
+    "whoop_unavailable": "WHOOP is temporarily unavailable. The native scheduler will retry after five minutes.",
+    "network_unavailable": "The network request failed. The native scheduler will retry after five minutes while the Mac is awake.",
+    "export_failed": "WHOOP export failed before publication. Check the local connector and cache; the previous public snapshot is preserved.",
+    "publication_failed": "The snapshot could not be published. Check GitHub authentication and the public-data validation; the scheduler will retry.",
     "interrupted": "The health runner was stopped before verification completed. The next scheduled run will retry.",
-    "refresh_failed": "WHOOP refresh or publication failed. Check WHOOP access, GitHub authentication, and the network; the next hourly run will retry.",
-    "refresh_timeout": "WHOOP refresh exceeded the time limit and was stopped. The next hourly run will retry.",
+    "refresh_failed": "WHOOP refresh or publication failed. Check WHOOP access, GitHub authentication, and the network; the native scheduler retries after five minutes.",
+    "refresh_timeout": "WHOOP refresh exceeded the time limit and was stopped. The native scheduler retries after five minutes.",
     "invalid_publication": "The refresh returned an unexpected publication result. Reinstall the health runner from the site scripts.",
     "github_unavailable": "GitHub deployment verification is unavailable. Check the network and gh auth status.",
     "deployment_failed": "GitHub Pages reported a failed deployment. Inspect the repository's pages build and deployment run.",
@@ -41,7 +50,7 @@ ERRORS = {
     "public_unavailable": "The public health snapshot could not be securely retrieved. Check the website, network, and TLS certificates.",
     "public_snapshot_mismatch": "GitHub Pages succeeded, but the website did not serve this publication timestamp within ten minutes. Check the Pages deployment and cache.",
     "storage_failed": "The health runner could not update its private status files. Check health-cache permissions and free disk space.",
-    "unexpected_failure": "The health runner stopped unexpectedly. Reinstall the runner or check the next hourly status.",
+    "unexpected_failure": "The health runner stopped unexpectedly. Reinstall the runner or check the next retry status.",
 }
 
 
@@ -116,6 +125,14 @@ def run_command(command, timeout, failure_code, timeout_code):
     except BaseException:
         stop_process_group(process)
         raise
+    if process.returncode != 0 and failure_code == "refresh_failed" and len(stdout) <= MAX_RESPONSE:
+        try:
+            result = json.loads(next(line for line in reversed(stdout.decode("utf-8").splitlines()) if line.strip()))
+            code = result.get("error", {}).get("code")
+            if isinstance(code, str) and code in {"whoop_auth_failed", "whoop_rate_limited", "whoop_unavailable", "network_unavailable", "export_failed", "publication_failed"}:
+                raise SyncError(code)
+        except (ValueError, UnicodeError, StopIteration, AttributeError):
+            pass
     if process.returncode != 0 or len(stdout) > MAX_RESPONSE:
         raise SyncError(failure_code)
     return stdout
@@ -223,15 +240,53 @@ def private_open(path, flags):
     return fd
 
 
-def previous_success(cache):
+def previous_status(cache):
     try:
         fd = private_open(cache / "scheduled-status.json", os.O_RDONLY)
         with os.fdopen(fd, "r") as stream:
             data = json.loads(stream.read(LOG_LIMIT))
-        value = data.get("last_success_at")
-        return value if valid_timestamp(value) else None
+        return data if isinstance(data, dict) else {}
     except (OSError, ValueError, AttributeError):
+        return {}
+
+
+def previous_success(cache):
+    value = previous_status(cache).get("last_success_at")
+    return value if valid_timestamp(value) else None
+
+
+def timestamp_seconds(value):
+    return datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc).timestamp() if valid_timestamp(value) else None
+
+
+def latest_wake():
+    """Read native wake/boot clocks, falling back to periodic checks if absent."""
+    try:
+        result = subprocess.run(["/usr/sbin/sysctl", "kern.waketime", "kern.boottime"],
+                                capture_output=True, timeout=3)
+        values = [int(value) for value in re.findall(rb"\bsec\s*=\s*(\d+)", result.stdout)]
+        return max(values) if values else None
+    except (OSError, subprocess.TimeoutExpired):
         return None
+
+
+def refresh_due(previous, now, wake=None):
+    """Minute ticks do no network work until hourly, retry, or new-wake due."""
+    started = timestamp_seconds(previous.get("started_at"))
+    finished = timestamp_seconds(previous.get("finished_at"))
+    success = timestamp_seconds(previous.get("last_success_at"))
+    if wake is not None and 0 <= now - wake < WAKE_SETTLE_SECONDS:
+        return False, "wake_settling"
+    if started is None:
+        return True, "initial"
+    if started > now or success is not None and success > now or finished is not None and finished > now:
+        return True, "clock_changed"
+    if wake is not None and started < wake <= now:
+        return True, "wake"
+    # After a wake has triggered an attempt, its subsequent ticks obey backoff.
+    if previous.get("status") != "success":
+        return (now - max(started, finished or started) >= RETRY_SECONDS), "retry"
+    return (success is None or now - success >= REFRESH_SECONDS), "hourly"
 
 
 def write_status(cache, status):
@@ -258,13 +313,14 @@ def write_status(cache, status):
         stream.write(payload)
 
 
-def run(cache=None, budget=TOTAL_TIMEOUT):
+def run(cache=None, budget=TOTAL_TIMEOUT, respect_schedule=False):
     cache = Path(cache) if cache is not None else CACHE
     status = {"status": "running", "started_at": utc_now(), "finished_at": None,
               "last_success_at": None, "commit": None, "generated_at": None}
     deadline = time.monotonic() + budget
     lock = None
     locked = False
+    persist = False
     previous_handler = signal.signal(signal.SIGTERM, handle_termination)
     try:
         if cache.is_symlink():
@@ -281,6 +337,15 @@ def run(cache=None, budget=TOTAL_TIMEOUT):
             return status
         locked = True
         status["last_success_at"] = previous_success(cache)
+        if respect_schedule:
+            due, reason = refresh_due(previous_status(cache), time.time(), latest_wake())
+            if not due:
+                # Preserve the last meaningful success/failure, including its
+                # attempt timestamp. Idle minute ticks must not postpone retries.
+                status.update(status="skipped", reason=reason, finished_at=utc_now())
+                return status
+            status["trigger"] = reason
+        persist = True
         write_status(cache, status)
         script = Path(__file__).resolve().with_name("refresh_health.py")
         output = run_command([sys.executable, str(script), "--publish"],
@@ -303,7 +368,7 @@ def run(cache=None, budget=TOTAL_TIMEOUT):
         # local write even if launchd repeats SIGTERM while unloading the job.
         signal.signal(signal.SIGTERM, signal.SIG_IGN)
         try:
-            if locked:
+            if locked and persist:
                 status["finished_at"] = utc_now()
                 try:
                     write_status(cache, status)
@@ -320,7 +385,7 @@ def run(cache=None, budget=TOTAL_TIMEOUT):
 def main():
     # launchd has private fallback stdout/stderr files, but ordinary runs are
     # silent. Read scheduled-status.json for the bounded, sanitized result.
-    return 1 if run()["status"] == "failed" else 0
+    return 1 if run(respect_schedule=True)["status"] == "failed" else 0
 
 
 if __name__ == "__main__":
