@@ -1,7 +1,7 @@
 # Body portrait generation
 
 Created with the built-in image-generation tool. Final asset:
-`assets/images/body-portrait.png`. The supplied personal portrait was the face
+`assets/images/body-portrait-pants.png`. The supplied personal portrait was the face
 reference, and the supplied Arnold Schwarzenegger photograph was the pose and
 physique reference. The original photographs are not copied into the site.
 
@@ -16,3 +16,21 @@ Edit this illustration for a real website asset. KEEP exactly the same pose, fac
 The first output baked a checkerboard into RGB pixels instead of providing
 alpha, so only the second output is used. Its white field blends into the
 site's existing cream background using CSS multiply blending.
+
+## Full-length pants edit, 2026-10-04
+
+Edited the existing raster with the built-in image-generation tool using
+`referenced_image_paths`. The selected output remains 1024 × 1536 pixels and
+replaces the original portrait as `assets/images/body-portrait-pants.png`; no resize or other image
+transformation was applied. The figure's face, upper body, pose, feet, and
+framing were visually checked against the original. Opaque workout joggers now
+cover the hips, buttocks, and legs through the ankles. The existing SVG anatomy
+anchors are unchanged.
+
+### Exact edit prompt
+
+Use case: identity-preserve.
+Asset type: existing personal website full-body line-art portrait; precise clothing edit.
+Input image 1 is the edit target. Edit ONLY the lower-body clothing: replace the skimpy posing trunks and bare legs with modest, opaque, full-length workout jogger pants. The pants must fully cover the entire hips, buttocks, crotch, thighs, knees, and calves, with a secure waistband at the existing waist and cuffs at the ankles. Use a relaxed tailored fit with restrained fabric folds; do not show underlying buttock-cleft or leg muscle lines through the fabric. Bare feet remain visible and unchanged. Express the pants in the same coffee-brown contour linework with an opaque white interior, not a solid dark block.
+Preserve exactly the man's recognizable face, curly hair, expression, head, entire bare upper body, all arm/hand positions, muscular torso, leg pose, feet, overall proportions and all figure locations. Preserve the three-quarter rear twisting bodybuilding pose, the overhead flexed arm and extended opposite arm. Keep every unchanged line and detail as close to the original as possible. Do not shift, zoom, rotate, crop, or reframe the figure: the website overlays fixed anatomy markers at the current coordinates. Keep the exact 1024x1536 portrait canvas and original margins, with head near the same top position and both feet near the same bottom positions.
+Retain the current coffee-brown pen linework on the same flat white field, which the site blends onto cream. Do not change the background, add shading, texture, scenery, text, labels, logos, symbols, accessories, or watermarks. The sole requested change is full-length opaque pants.

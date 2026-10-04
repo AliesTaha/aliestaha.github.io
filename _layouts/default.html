@@ -14,8 +14,8 @@
       <link rel="canonical" href="{{ page.url | absolute_url }}">
     {% endif %}
 
-    {% if page.title %}
-      <title>{{ page.title }} — {{ site.title }}</title>
+    {% if page.title and page.title != site.title %}
+      <title>{{ page.title }} · {{ site.title }}</title>
     {% else %}
       <title>{{ site.title }}</title>
     {% endif %}
