@@ -3,7 +3,7 @@ description: "Ali Taha. Inference and research at Baseten."
 url: "https://alibytes.com"
 baseurl: ""
 lang: "en"
-asset_version: "20261004-health-refresh"
+asset_version: "20261004-personal-journal"
 timezone: "America/Los_Angeles"
 
 permalink: /writing/:title/

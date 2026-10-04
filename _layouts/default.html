@@ -35,6 +35,10 @@
     <link rel="icon" href="data:,">
     <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="{{ '/feed.xml' | absolute_url }}">
     <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}?v={{ site.asset_version }}">
+    {% if page.category == 'personal' and page.layout == 'post' %}
+      <link rel="preload" href="{{ '/assets/fonts/alegreya/alegreya-latin-400-normal.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
+      <link rel="stylesheet" href="{{ '/assets/css/journal.css' | relative_url }}?v={{ site.asset_version }}">
+    {% endif %}
     {% if page.health_dashboard %}
       <link rel="stylesheet" href="{{ '/assets/css/health.css' | relative_url }}?v={{ site.asset_version }}">
     {% endif %}
