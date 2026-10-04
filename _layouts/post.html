@@ -2,14 +2,24 @@
 layout: default
 ---
 
-<main class="post-page">
+<main class="post-page{% if page.category == 'personal' %} post-journal{% endif %}">
+  {% if page.category == 'personal' %}
+    <a class="back-link" href="{{ '/' | relative_url }}#soul">← Soul</a>
+  {% endif %}
   <article>
     <header class="post-header">
+      {% if page.category == 'personal' %}
+      <p class="post-byline">
+        <time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: "%B %-d, %Y" }}</time>
+      </p>
+      <h1>{{ page.title }}</h1>
+      {% else %}
       <a class="back-link" href="{{ '/' | relative_url }}#{{ page.category }}">← {{ page.category | capitalize }}</a>
       <h1>{{ page.title }}</h1>
       <p class="post-byline">
         <time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: "%B %-d, %Y" }}</time>
       </p>
+      {% endif %}
     </header>
 
     <div class="post-body">
