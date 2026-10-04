@@ -39,7 +39,7 @@ def test_install_sets_independent_calendar_service(monkeypatch, local_install):
     assert installer.main() == 0
     config = plistlib.loads(plist.read_bytes())
     assert config["RunAtLoad"] is True
-    assert config["StartCalendarInterval"] == {"Minute": 0}
+    assert config["StartCalendarInterval"] == [{"Minute": minute} for minute in range(60)]
     assert config["ProgramArguments"][1].endswith("health-sync/scripts/scheduled_health.py")
     assert config["EnvironmentVariables"]["GH_PROMPT_DISABLED"] == "1"
     assert stat.S_IMODE(script.stat().st_mode) == 0o600

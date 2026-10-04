@@ -135,7 +135,7 @@
     return latest ? { date: latest.date, bpm: latest.resting_hr, periodSeconds: 60 / latest.resting_hr } : null;
   }
   function formatValue(value, key, includeUnit = true) {
-    if (!validValue(value)) return "—";
+    if (!validValue(value)) return "–";
     const metric = METRICS[key];
     const number = value.toLocaleString("en-US", { maximumFractionDigits: metric.digits, minimumFractionDigits: metric.digits });
     return includeUnit && metric.unit ? `${number}${metric.unit === "%" ? "" : " "}${metric.unit}` : number;
@@ -258,7 +258,7 @@
     const span = state.model.emaSpan;
     let description;
     if (trend.direction === "unavailable") {
-      node.textContent = "—";
+      node.textContent = "–";
       description = `${span}-day EMA percentage change unavailable: missing measurements, fewer than two measured days, or a zero starting value.`;
     } else {
       const magnitude = trend.magnitude.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });

@@ -169,7 +169,7 @@ test("inspection shows an absent or null calendar day instead of a neighboring o
   for (const date of ["2026-09-25", "2026-09-26"]) {
     const reading = inspectionModel(model, rows, date);
     assert.equal(reading.value, null);
-    assert.equal(reading.displayValue, "—");
+    assert.equal(reading.displayValue, "–");
     assert.match(reading.detail, /No measurement/);
   }
   assert.equal(inspectionModel(model, rows, "2026-09-24").value, 60);
