@@ -31,7 +31,8 @@ permalink: /
     <p class="filter-status" id="filter-status" aria-live="polite"></p>
 
     <div class="post-list" id="post-list">
-      {% for post in site.posts %}
+      {% assign blogs = site.pages | where_exp: "entry", "entry.path contains 'blogs/'" | sort: 'date' | reverse %}
+      {% for post in blogs %}
         <article
           class="post-row"
           data-category="{{ post.category }}"

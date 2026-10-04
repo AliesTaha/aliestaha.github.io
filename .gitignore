@@ -6,5 +6,4 @@ _site/
 .bundle/
 vendor/
 __pycache__/
-.pytest_cache/
 *.pyc

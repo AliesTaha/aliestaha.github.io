@@ -9,7 +9,8 @@ permalink: /feed.xml
     <description>{{ site.description | xml_escape }}</description>
     <link>{{ site.url }}</link>
     <language>{{ site.lang }}</language>
-    {% for post in site.posts limit: 20 %}
+    {% assign blogs = site.pages | where_exp: "entry", "entry.path contains 'blogs/'" | sort: 'date' | reverse %}
+    {% for post in blogs limit: 20 %}
       {% if post.external_url %}
         {% assign post_link = post.external_url %}
       {% else %}

@@ -4,6 +4,7 @@ title: "On Purpose"
 description: "This is my current purpose. Hill-climb"
 date: 2026-10-04
 category: personal
+permalink: /writing/on-purpose/
 ---
 
 I have realized that I cannot have a singular purpose in life. <span class="sr-only">Crossed out: </span><del>I think</del><span class="sr-only">. End crossed-out text.</span> It just does not work that way.
