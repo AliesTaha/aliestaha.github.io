@@ -9,7 +9,8 @@ permalink: /sitemap.xml
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-  {% for post in site.posts %}
+  {% assign blogs = site.pages | where_exp: "entry", "entry.path contains 'blogs/'" | sort: 'date' | reverse %}
+  {% for post in blogs %}
     {% unless post.external_url %}
       <url>
         <loc>{{ post.url | absolute_url }}</loc>

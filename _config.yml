@@ -6,7 +6,6 @@ lang: "en"
 asset_version: "20261004-personal-journal"
 timezone: "America/Los_Angeles"
 
-permalink: /writing/:title/
 markdown: kramdown
 kramdown:
   input: GFM
@@ -18,5 +17,4 @@ exclude:
   - Gemfile.lock
   - vendor
   - scripts
-  - tests
   - HEALTH.md

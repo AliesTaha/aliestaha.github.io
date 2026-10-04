@@ -1,46 +1,48 @@
 # alibytes.com
 
-A small Jekyll blog hosted on GitHub Pages.
+Personal writing, technical articles, and a WHOOP dashboard. Built with Jekyll on GitHub Pages.
 
-## Publish a post on this site
+## Writing
 
-Create a Markdown file in `_posts` named `YYYY-MM-DD-your-title.md`:
+All articles live in one place:
+
+- `blogs/personal/`: personal writing in the journal style.
+- `blogs/technical/`: technical articles and links to work published elsewhere.
+
+Create a file such as `blogs/personal/on-purpose.md`:
 
 ```md
 ---
 layout: post
-title: "Your title"
-description: "One sentence for the homepage and search results."
-date: 2026-07-30
-category: technical
+title: "On Purpose"
+description: "This is my current purpose. Hill-climb"
+date: 2026-10-04
+category: personal
+permalink: /writing/on-purpose/
 ---
 
-Write the post in Markdown.
+Your writing here. Keep crossed-out words with <del>hours</del>.
 ```
 
-Use `category: personal` for personal writing.
+Use `category: technical` for technical writing. For an external article, use `layout: external` and add `external_url` and `external_source`. The homepage, RSS feed, and sitemap use these files automatically, sorted by date. Add `published: false` to keep a draft off the site.
 
-## Link to an article published elsewhere
+`redirects/` preserves old links. It contains no articles.
 
-Create the same kind of file, but use the external layout and add the original URL:
-
-```md
----
-layout: external
-title: "Your title"
-description: "One sentence about the article."
-date: 2026-07-30
-category: technical
-external_url: "https://example.com/your-article"
-external_source: "Publication name"
----
-```
-
-The homepage will link directly to the original article. Posts are ordered by date automatically.
-
-## Preview locally
+## Preview
 
 ```sh
 bundle install
 bundle exec jekyll serve
+```
+
+The static site is generated in the ignored `_site/` folder. Dependencies stay in the ignored `vendor/` folder.
+
+## Health
+
+The browser reads `assets/data/health.json`. The Mac updater runs independently of Codex. See [HEALTH.md](HEALTH.md) for its commands.
+
+For a lightweight checkout without the site's image and data history:
+
+```sh
+git clone --depth 1 --single-branch https://github.com/AliesTaha/aliestaha.github.io.git
 ```
