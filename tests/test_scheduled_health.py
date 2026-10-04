@@ -250,7 +250,7 @@ def test_public_request_uses_verified_tls_and_bounded_response(monkeypatch):
     response.read.assert_called_once_with(runner.MAX_RESPONSE + 1)
 
 
-@pytest.mark.parametrize("url", ["http://aliestaha.com/assets/data/health.json", "https://example.test/health.json"])
+@pytest.mark.parametrize("url", ["http://alibytes.com/assets/data/health.json", "https://example.test/health.json"])
 def test_public_redirect_cannot_downgrade_or_change_host(url):
     with pytest.raises(runner.SyncError) as caught:
         runner.SecureRedirect().redirect_request(None, None, 302, "", {}, url)

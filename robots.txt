@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://aliestaha.com/sitemap.xml
+Sitemap: https://alibytes.com/sitemap.xml

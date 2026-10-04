@@ -25,7 +25,7 @@ from urllib.parse import urlsplit
 CACHE = Path.home() / ".local/share/whoop-codex/health-cache"
 REPOSITORY = "AliesTaha/aliestaha.github.io"
 WORKFLOW = "pages build and deployment"
-PUBLIC_URL = "https://aliestaha.com/assets/data/health.json"
+PUBLIC_URL = "https://alibytes.com/assets/data/health.json"
 TOTAL_TIMEOUT = 600
 POLL_SECONDS = 15
 REFRESH_SECONDS = 3600
