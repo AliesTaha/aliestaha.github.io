@@ -6,6 +6,10 @@ Six charts show sleep score, recovery, strain, resting heart rate, workout time,
 
 Hevy workout stats appear below WHOOP and read `assets/data/lifting.json`. Sessions, working sets, and external-load volume are totals for the selected range. Volume counts kilograms multiplied by reps for weighted exercises, excluding warmups, bodyweight, assisted, and timed exercises. The chart shows daily volume; hover or keyboard focus shows that day's values. Complete rest days are zero and incomplete values stay null. Only daily aggregates are public, never workout notes, exercise IDs, or exact training times.
 
+The strength sketches follow the most frequently logged variant in each requested family: incline dumbbell bench, barbell squat, pull-up, hammer curl, and single-arm cable row. The fixed exercise IDs stay pinned in the private cache so variants are never combined. Each point shows the best eligible set on that exercise's local calendar date. Loaded exercises use [Hevy's documented estimated 1RM calculation](https://help.hevyapp.com/hc/en-us/articles/36954464726167-Understanding-Your-Estimated-One-Rep-Max-1RM-in-Hevy), with the contributing logged kilograms and reps visible on inspection. Dumbbell weights stay as logged; they are not doubled. Pull-ups show best unweighted reps. Rest days do not become zero-strength measurements. Lifting schema v2 publishes these approved daily exercise summaries, and the publisher can read v1 snapshots during migration.
+
+Selecting an exercise brings its illustration forward while neighboring poses fade into dashed outlines. Keyboard tabs and chart inspection are supported, and reduced motion disables transitions. Five optimized WebP assets total about 617 KiB; original generated artwork and prompts are kept outside the repository.
+
 ## Automatic refresh
 
 The macOS LaunchAgent `com.aliestaha.health-sync` checks each minute and refreshes hourly, after waking, or five minutes after a failure. The Mac must be awake, online, and logged in. Closing Codex has no effect. The dashboard keeps the last good data and marks it stale after three hours.
