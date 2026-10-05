@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Refresh WHOOP's public snapshot; publication requires an explicit --publish."""
+"""Refresh the public WHOOP and Hevy snapshots; use --publish to publish."""
 import argparse
 import fcntl
 import json
@@ -9,7 +9,8 @@ import re
 import subprocess
 import sys
 
-EXPORT_ERRORS = {"whoop_auth_failed", "whoop_rate_limited", "whoop_unavailable", "network_unavailable", "export_failed"}
+EXPORT_ERRORS = {"whoop_auth_failed", "whoop_rate_limited", "whoop_unavailable", "network_unavailable", "export_failed",
+                 "hevy_auth_failed", "hevy_rate_limited", "hevy_unavailable", "hevy_export_failed"}
 
 
 def final_result(output):
@@ -20,15 +21,16 @@ def final_result(output):
         return {}
 
 
-def refresh(root, snapshot, publish=False):
+def refresh(root, snapshot, publish=False, dataset="health"):
     """Keep child diagnostics private and emit only allowlisted result fields."""
     try:
-        exported = subprocess.run([sys.executable, str(root/'export_whoop.py'), '--output', str(snapshot)], capture_output=True)
+        exporter = 'export_hevy.py' if dataset == 'lifting' else 'export_whoop.py'
+        exported = subprocess.run([sys.executable, str(root/exporter), '--output', str(snapshot)], capture_output=True)
         if exported.returncode:
             code = final_result(exported.stdout).get('error', {})
             code = code.get('code') if isinstance(code, dict) else None
             return {'status': 'failed', 'error': {'code': code if isinstance(code, str) and code in EXPORT_ERRORS else 'export_failed'}}
-        command = [sys.executable, str(root/'publish_health.py'), '--snapshot', str(snapshot)]
+        command = [sys.executable, str(root/'publish_health.py'), '--snapshot', str(snapshot), '--dataset', dataset]
         if publish:
             command.append('--publish')
         published = subprocess.run(command, capture_output=True)
@@ -48,6 +50,7 @@ def refresh(root, snapshot, publish=False):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--publish', action='store_true')
+    parser.add_argument('--dataset', choices=('health', 'lifting', 'all'), default='all')
     args = parser.parse_args()
     private = Path.home()/'.local/share/whoop-codex/health-cache'
     private.mkdir(parents=True, mode=0o700, exist_ok=True)
@@ -60,10 +63,14 @@ def main():
             print(json.dumps({'status': 'skipped', 'reason': 'another refresh is running'}))
             return
         root = Path(__file__).resolve().parent
-        snapshot = private/'public-snapshot.json'
-        result = refresh(root, snapshot, args.publish)
+        datasets = ('health', 'lifting') if args.dataset == 'all' else (args.dataset,)
+        results = {}
+        for dataset in datasets:
+            snapshot = private/('lifting-snapshot.json' if dataset == 'lifting' else 'public-snapshot.json')
+            results[dataset] = refresh(root, snapshot, args.publish, dataset)
+        result = results if args.dataset == 'all' else results[args.dataset]
         print(json.dumps(result))
-        return 1 if result.get('status') == 'failed' else 0
+        return 1 if any(item.get('status') == 'failed' for item in results.values()) else 0
 
 
 if __name__ == '__main__':
