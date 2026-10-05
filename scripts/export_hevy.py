@@ -3,8 +3,9 @@
 
 Full pagination refreshes edits and deletions without a second event subsystem.
 The private cache contains only fields needed for aggregation, never workout
-titles or notes. Public output contains daily totals and five fixed exercises'
-best contributing sets, with exercise identities pinned only in the private cache.
+titles or notes. Public output contains daily totals, four fixed loaded exercises'
+best contributing sets, and pull-up workout totals. Exercise identities are pinned
+only in the private cache.
 """
 from __future__ import annotations
 
@@ -23,6 +24,7 @@ from uuid import UUID
 from zoneinfo import ZoneInfo
 
 from publish_health import (LIFTING_METHODOLOGY_V2, LIFTING_STRENGTH,
+                            STRENGTH_EXCLUDED_DATES,
                             hevy_estimated_1rm, validate_lifting_snapshot)
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -155,17 +157,52 @@ def select_strength_templates(catalog, previous=None):
     return selected
 
 
+def pullup_total(exercises):
+    """Sum a whole workout's eligible unweighted sets, never a partial total."""
+    total, eligible = 0, 0
+    for exercise in exercises:
+        sets = exercise.get("sets")
+        if not isinstance(sets, list):
+            return None
+        for entry in sets:
+            if not isinstance(entry, dict):
+                return None
+            kind = entry.get("type")
+            if kind == "warmup":
+                continue
+            if kind not in WORKING_TYPES:
+                return None
+            weight = entry.get("weight_kg")
+            if weight is not None:
+                if not numeric(weight):
+                    return None
+                if weight > 0:
+                    continue
+            reps = entry.get("reps")
+            if not numeric(reps) or reps != int(reps) or reps > 10_000:
+                return None
+            total += int(reps)
+            eligible += 1
+    return total if eligible else None
+
+
 def strength_history(workouts, selected):
     histories = {exercise["key"]: {} for exercise in LIFTING_STRENGTH}
     definitions = {selected[item["key"]]: item for item in LIFTING_STRENGTH if item["key"] in selected}
     for workout in workouts:
         day = instant(workout.get("start_time")).astimezone(LOCAL_ZONE).date().isoformat()
         exercises = workout.get("exercises")
+        pullup_exercises = []
         for exercise in exercises if isinstance(exercises, list) else []:
             if not isinstance(exercise, dict):
                 continue
             definition = definitions.get(exercise.get("exercise_template_id"))
             if definition is None:
+                continue
+            if day in STRENGTH_EXCLUDED_DATES.get(definition["key"], set()):
+                continue
+            if definition["key"] == "pullups":
+                pullup_exercises.append(exercise)
                 continue
             history = histories[definition["key"]]
             history.setdefault(day, {"date": day, "value": None, "weight_kg": None, "reps": None})
@@ -177,21 +214,21 @@ def strength_history(workouts, selected):
                 if not numeric(reps) or not 1 <= reps <= 10_000 or reps != int(reps):
                     continue
                 reps = int(reps)
-                if definition["unit"] == "reps":
-                    # A newly logged added load cannot masquerade as bodyweight progress.
-                    if weight is not None and (not numeric(weight) or weight != 0):
-                        continue
-                    value, weight = reps, None
-                else:
-                    if not numeric(weight) or not 0 < weight <= 10_000:
-                        continue
-                    value = hevy_estimated_1rm(weight, reps)
+                if not numeric(weight) or not 0 < weight <= 10_000:
+                    continue
+                value = hevy_estimated_1rm(weight, reps)
                 candidate = {"date": day, "value": value, "weight_kg": weight, "reps": reps}
                 current = history[day]
                 rank = (value, weight or 0, reps)
                 current_rank = (current["value"] or 0, current["weight_kg"] or 0, current["reps"] or 0)
                 if rank > current_rank:
                     history[day] = candidate
+        if pullup_exercises:
+            history = histories["pullups"]
+            current = history.setdefault(day, {"date": day, "value": None, "weight_kg": None, "reps": None})
+            total = pullup_total(pullup_exercises)
+            if total is not None and (current["value"] is None or total > current["value"]):
+                history[day] = {"date": day, "value": total, "weight_kg": None, "reps": total}
     return [{**exercise, "series": [histories[exercise["key"]][day] for day in sorted(histories[exercise["key"]])]}
             for exercise in LIFTING_STRENGTH]
 

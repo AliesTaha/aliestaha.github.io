@@ -7,16 +7,14 @@
   const $ = selector => panel.querySelector(selector);
   const chart = $("[data-lifting-chart]");
   const strengthChart = $("[data-strength-chart]");
-  const room = $("[data-gym-room]");
-  const traveler = $("[data-gym-traveler]");
-  const route = $("[data-gym-route]");
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const status = $(".lifting-status");
   const DAY = 86400000;
+  const LB_PER_KG = 1 / 0.45359237;
   const DAYS = { W: 7, M: 30 };
-  const KEYS = ["sessions", "working_sets", "volume_kg"];
+  const KEYS = ["sessions", "working_sets", "volume_lb"];
   const EXERCISES = ["bench", "squat", "pullups", "curls", "rows"];
   const finite = value => typeof value === "number" && Number.isFinite(value) && value >= 0;
+  const pounds = value => finite(value) ? value * LB_PER_KG : null;
   const stamp = date => Date.parse(`${date}T00:00:00Z`);
   const day = value => new Date(value).toISOString().slice(0, 10);
   const validDate = value => typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(stamp(value)) && day(stamp(value)) === value;
@@ -31,62 +29,15 @@
   let refreshFailed = false;
   let renderedWidth = 0;
   let strength = [];
+  let strengthRange = "ALL";
   let exercise = "bench";
   let strengthSelected = null;
   let strengthGeometry = null;
   let strengthWidth = 0;
-  let sceneExercise = "bench";
-  let sceneDestination = "bench";
-  let roomAnimations = [];
-  let roomJourney = 0;
 
-  function stationPosition(key) {
-    const station = $(`[data-gym-station="${key}"]`);
-    const style = window.getComputedStyle(station);
-    return { x: Number(style.getPropertyValue("--station-x")), y: Number(style.getPropertyValue("--station-y")) };
-  }
   function showStation(key) {
     panel.querySelectorAll("[data-gym-station]").forEach(station => station.classList.toggle("is-active", station.dataset.gymStation === key));
-  }
-  function finishJourney(key) {
-    roomJourney += 1;
-    roomAnimations.forEach(animation => animation.cancel());
-    roomAnimations = [];
-    sceneExercise = sceneDestination = key;
-    if (!room) return;
-    const position = stationPosition(key);
-    traveler.style.left = `${position.x}%`;
-    traveler.style.top = `${position.y}%`;
-    traveler.style.opacity = "0";
-    room.classList.remove("is-moving");
-    showStation(key);
-  }
-  function visitStation(key) {
-    if (!room || key === sceneDestination) return;
-    if (reducedMotion.matches || !traveler.animate || !room.clientWidth || document.hidden || body?.hidden) return finishJourney(key);
-    const from = room.classList.contains("is-moving")
-      ? { x: parseFloat(window.getComputedStyle(traveler).left) / room.clientWidth * 100, y: parseFloat(window.getComputedStyle(traveler).top) / room.clientHeight * 100 }
-      : stationPosition(sceneExercise);
-    const to = stationPosition(key);
-    const journey = ++roomJourney;
-    roomAnimations.forEach(animation => animation.cancel());
-    roomAnimations = [];
-    sceneDestination = key;
-    room.classList.add("is-moving");
-    showStation(null);
-    traveler.style.setProperty("--facing", to.x < from.x ? "-1" : "1");
-    const middle = { x: (from.x + to.x) / 2, y: (from.y + to.y) / 2 - 4 };
-    const scale = y => .73 + y / 350;
-    const frame = (position, opacity, offset) => ({ left: `${position.x}%`, top: `${position.y}%`, transform: `scale(${scale(position.y)})`, opacity, offset });
-    route.setAttribute("d", `M${from.x * 10},${from.y * 6.2} Q${middle.x * 10},${(middle.y - 4) * 6.2} ${to.x * 10},${to.y * 6.2}`);
-    const travel = traveler.animate([
-      frame(from, 0, 0), frame(from, 1, .1), frame(middle, 1, .48), frame(to, 1, .88), frame(to, 0, 1)
-    ], { duration: 610, delay: 90, easing: "cubic-bezier(.3,.05,.5,1)", fill: "both" });
-    const trail = route.parentElement.animate([
-      { opacity: 0, offset: 0 }, { opacity: .32, offset: .3 }, { opacity: .2, offset: .8 }, { opacity: 0, offset: 1 }
-    ], { duration: 700, fill: "both" });
-    roomAnimations = [travel, trail];
-    travel.finished.then(() => { if (journey === roomJourney) finishJourney(key); }).catch(() => {});
+    panel.querySelectorAll("[data-gym-select]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.gymSelect === key)));
   }
 
   function normalize(data) {
@@ -97,7 +48,8 @@
       if (!row || !validDate(row.date) || seen.has(row.date)) throw new Error("Invalid daily history");
       seen.add(row.date);
       const result = { date: row.date };
-      KEYS.forEach(key => { result[key] = finite(row[key]) ? row[key] : null; });
+      ["sessions", "working_sets"].forEach(key => { result[key] = finite(row[key]) ? row[key] : null; });
+      result.volume_lb = pounds(row.volume_kg);
       return result;
     }).sort((a, b) => a.date.localeCompare(b.date));
     return clean;
@@ -107,25 +59,32 @@
     return EXERCISES.flatMap(key => {
       const item = items.find(item => item?.key === key);
       if (!item || typeof item.variant !== "string" || item.variant.length > 160 || !Array.isArray(item.series) || item.series.length > 12000) return [];
+      if (key === "pullups" && !["Best set", "Reps per workout"].includes(item.metric_label)) return [];
       const seen = new Set();
       const series = [];
       for (const point of item.series) {
         if (!point || !validDate(point.date) || seen.has(point.date)) return [];
         seen.add(point.date);
-        series.push({ date: point.date, value: finite(point.value) ? point.value : null, weight_kg: finite(point.weight_kg) ? point.weight_kg : null, reps: Number.isInteger(point.reps) && point.reps > 0 ? point.reps : null });
+        const value = key === "pullups" ? (finite(point.value) ? point.value : null) : pounds(point.value);
+        series.push({ date: point.date, value, weight_lb: pounds(point.weight_kg), reps: Number.isInteger(point.reps) && point.reps > 0 ? point.reps : null });
       }
-      return [{ key, variant: item.variant, metric_label: key === "pullups" ? "Best set" : "Estimated 1RM", unit: key === "pullups" ? "reps" : "kg", series: series.sort((a, b) => a.date.localeCompare(b.date)) }];
+      return [{ key, variant: item.variant, metric_label: key === "pullups" ? item.metric_label : "Estimated 1RM", workout_total: key === "pullups" && item.metric_label === "Reps per workout", unit: key === "pullups" ? "reps" : "lb", series: series.sort((a, b) => a.date.localeCompare(b.date)) }];
     });
   }
-  function windowRows() {
-    if (!rows.length) return { rows: [], start: null, end: null };
+  function rangeWindow(selectedRange) {
+    if (!rows.length) return { start: null, end: null };
     const end = rows[rows.length - 1].date;
-    const start = range === "ALL" ? rows[0].date : day(Math.max(stamp(rows[0].date), stamp(end) - (DAYS[range] - 1) * DAY));
+    const start = selectedRange === "ALL" ? rows[0].date : day(Math.max(stamp(rows[0].date), stamp(end) - (DAYS[selectedRange] - 1) * DAY));
+    return { start, end };
+  }
+  function windowRows() {
+    const { start, end } = rangeWindow(range);
+    if (!start) return { rows: [], start, end };
     const byDate = new Map(rows.map(row => [row.date, row]));
     const visible = [];
     for (let value = stamp(start); value <= stamp(end); value += DAY) {
       const date = day(value);
-      visible.push(byDate.get(date) || { date, sessions: null, working_sets: null, volume_kg: null });
+      visible.push(byDate.get(date) || { date, sessions: null, working_sets: null, volume_lb: null });
     }
     return { rows: visible, start, end };
   }
@@ -142,10 +101,10 @@
     const visible = date ? window.rows.filter(row => row.date === date) : window.rows;
     KEYS.forEach(key => {
       const measured = visible.filter(row => finite(row[key]));
-      const value = measured.length ? measured.reduce((sum, row) => sum + Math.round(row[key] * 100), 0) / 100 : null;
+      const value = measured.length ? measured.reduce((sum, row) => sum + row[key], 0) : null;
       const label = $(`[data-lifting-value="${key}"]`);
-      label.textContent = number(value, key === "volume_kg" ? 1 : 0);
-      label.title = number(value, key === "volume_kg" ? 2 : 0);
+      label.textContent = number(value, key === "volume_lb" ? 1 : 0);
+      label.title = key === "volume_lb" && finite(value) ? `${number(value, 2)} lb` : number(value);
       $(`[data-lifting-coverage="${key}"]`).textContent = date
         ? measured.length ? "" : "No measurement"
         : measured.length < visible.length ? `${measured.length}/${visible.length} days recorded` : "";
@@ -156,15 +115,15 @@
     if (!geometry) return;
     const { svg, title, line, dot, window, x, y, description } = geometry;
     const row = window.rows.find(item => item.date === date);
-    const valid = finite(row?.volume_kg);
-    const detail = date ? `${dateLabel(date)} · ${valid ? `${number(row.volume_kg, 1)} kg` : "No measurement"}` : "";
+    const valid = finite(row?.volume_lb);
+    const detail = date ? `${dateLabel(date)} · ${valid ? `${number(row.volume_lb, 1)} lb` : "No measurement"}` : "";
     writeTotals(window, date);
     line.setAttribute("visibility", date ? "visible" : "hidden");
     dot.setAttribute("visibility", date && valid ? "visible" : "hidden");
     if (date) {
       line.setAttribute("x1", x(date));
       line.setAttribute("x2", x(date));
-      if (valid) { dot.setAttribute("cx", x(date)); dot.setAttribute("cy", y(row.volume_kg)); }
+      if (valid) { dot.setAttribute("cx", x(date)); dot.setAttribute("cy", y(row.volume_lb)); }
     }
     const accessible = date ? `${dateLabel(date, true)}. Sessions: ${number(row?.sessions)}. Working sets: ${number(row?.working_sets)}. External-load volume: ${detail}.` : description;
     title.textContent = accessible;
@@ -179,26 +138,26 @@
     const pad = { left: 4, right: 4, top: 20, bottom: 23 };
     const plotWidth = width - pad.left - pad.right;
     const plotHeight = height - pad.top - pad.bottom;
-    const values = window.rows.filter(row => finite(row.volume_kg));
-    const max = Math.max(1, ...values.map(row => row.volume_kg));
+    const values = window.rows.filter(row => finite(row.volume_lb));
+    const max = Math.max(1, ...values.map(row => row.volume_lb));
     const duration = stamp(window.end) - stamp(window.start);
     const x = date => duration ? pad.left + (stamp(date) - stamp(window.start)) / duration * plotWidth : width / 2;
     const y = value => pad.top + plotHeight * (1 - value / max);
-    const description = `Daily external-load volume in kilograms, ${dateLabel(window.start, true)} to ${dateLabel(window.end, true)}. ${values.length} recorded days; ${window.rows.length - values.length} missing days.`;
+    const description = `Daily external-load volume in pounds, ${dateLabel(window.start, true)} to ${dateLabel(window.end, true)}. ${values.length} recorded days; ${window.rows.length - values.length} missing days.`;
     const svg = svgElement("svg", { viewBox: `0 0 ${width} ${height}`, role: "img", "aria-label": description });
     const title = svgElement("title", {}, description);
     svg.append(title, svgElement("line", { class: "lifting-axis", x1: pad.left, x2: width - pad.right, y1: y(0), y2: y(0) }));
     svg.append(svgElement("text", { class: "lifting-axis-label", x: pad.left, y: height - 3 }, dateLabel(window.start, window.start.slice(0, 4) !== window.end.slice(0, 4))));
     if (window.start !== window.end) svg.append(svgElement("text", { class: "lifting-axis-label", x: width - pad.right, y: height - 3, "text-anchor": "end" }, dateLabel(window.end, window.start.slice(0, 4) !== window.end.slice(0, 4))));
     if (values.length) {
-      svg.append(svgElement("text", { class: "lifting-axis-label", x: pad.left, y: 10 }, `${number(max, max < 10 ? 1 : 0)} kg`));
+      svg.append(svgElement("text", { class: "lifting-axis-label", x: pad.left, y: 10 }, `${number(max, max < 10 ? 1 : 0)} lb`));
       let segment = [];
       const flush = () => {
-        if (segment.length > 1) svg.append(svgElement("path", { class: "lifting-line", d: segment.map((row, index) => `${index ? "L" : "M"}${x(row.date).toFixed(2)},${y(row.volume_kg).toFixed(2)}`).join(" ") }));
-        if (segment.length === 1 || range === "W") segment.forEach(row => svg.append(svgElement("circle", { class: "lifting-dot", cx: x(row.date), cy: y(row.volume_kg), r: 2.4 })));
+        if (segment.length > 1) svg.append(svgElement("path", { class: "lifting-line", d: segment.map((row, index) => `${index ? "L" : "M"}${x(row.date).toFixed(2)},${y(row.volume_lb).toFixed(2)}`).join(" ") }));
+        if (segment.length === 1 || range === "W") segment.forEach(row => svg.append(svgElement("circle", { class: "lifting-dot", cx: x(row.date), cy: y(row.volume_lb), r: 2.4 })));
         segment = [];
       };
-      window.rows.forEach(row => { if (finite(row.volume_kg)) segment.push(row); else flush(); });
+      window.rows.forEach(row => { if (finite(row.volume_lb)) segment.push(row); else flush(); });
       flush();
     } else svg.append(svgElement("text", { class: "lifting-empty", x: width / 2, y: height / 2, "text-anchor": "middle" }, "No volume measurements in this period"));
     const line = svgElement("line", { class: "lifting-hover-line", y1: pad.top, y2: y(0), visibility: "hidden" });
@@ -215,12 +174,15 @@
     const point = date ? points.find(point => point.date === date) : points[points.length - 1];
     const measured = finite(point?.value);
     const value = $("[data-strength-value]");
-    value.textContent = number(point?.value, item.unit === "kg" ? 1 : 0);
+    value.textContent = number(point?.value, item.unit === "lb" ? 1 : 0);
     value.title = measured ? `${number(point.value, 2)} ${item.unit}` : "";
-    const set = point && measured && item.unit === "kg" && finite(point.weight_kg) && point.reps
-      ? `${number(point.weight_kg, 2)} kg × ${point.reps} reps` : "";
+    const set = point && measured && item.unit === "lb" && finite(point.weight_lb) && point.reps
+      ? `${number(point.weight_lb, 2)} lb × ${point.reps} reps` : "";
+    const aggregation = item.workout_total ? "Most reps in one workout each day" : "";
+    const missing = item.workout_total ? "No complete workout total" : "No comparable set";
+    const detail = set;
     $("[data-strength-detail]").textContent = point
-      ? `${dateLabel(point.date, true)}${measured ? set ? ` · ${set}` : "" : " · No comparable set"}`
+      ? `${dateLabel(point.date, true)}${measured ? detail ? ` · ${detail}` : "" : ` · ${missing}`}`
       : "No sessions in this period";
     line.setAttribute("visibility", date && point ? "visible" : "hidden");
     dot.setAttribute("visibility", date && measured ? "visible" : "hidden");
@@ -230,14 +192,20 @@
       if (measured) { dot.setAttribute("cx", x(point.date)); dot.setAttribute("cy", y(point.value)); }
     }
     const accessible = date && point
-      ? `${item.variant}. ${dateLabel(point.date, true)}. ${measured ? `${item.metric_label}: ${number(point.value, 2)} ${item.unit}.${set ? ` Logged set: ${set}.` : ""}` : "No comparable set."}`
+      ? `${item.variant}. ${dateLabel(point.date, true)}. ${measured ? `${item.metric_label}: ${number(point.value, 2)} ${item.unit}.${set ? ` Logged set: ${set}.` : ""}${aggregation ? ` ${aggregation}.` : ""}` : `${missing}.`}`
       : description;
     title.textContent = accessible;
     svg.setAttribute("aria-label", accessible);
     strengthChart.setAttribute("aria-label", `${accessible} Use left and right arrows to inspect workout days, Home and End to jump, and Escape to clear.`);
   }
-  function renderStrength(window) {
+  function renderStrength() {
     if (!strengthChart) return;
+    const window = rangeWindow(strengthRange);
+    if (!window.start) return;
+    showStation(exercise);
+    panel.querySelectorAll("[data-strength-range]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.strengthRange === strengthRange)));
+    const period = $("[data-strength-period]");
+    if (period) period.textContent = `${dateLabel(window.start, true)} – ${dateLabel(window.end, true)}`;
     panel.querySelectorAll("[data-strength-tab]").forEach(button => {
       const active = button.dataset.strengthTab === exercise;
       button.setAttribute("aria-selected", String(active));
@@ -246,8 +214,8 @@
     $("#strength-panel").setAttribute("aria-labelledby", `strength-tab-${exercise}`);
     const item = strength.find(item => item.key === exercise);
     $("[data-strength-variant]").textContent = item?.variant || $("[aria-selected='true'][data-strength-tab]").textContent;
-    $("[data-strength-metric]").textContent = item?.metric_label || (exercise === "pullups" ? "Best set" : "Estimated 1RM");
-    $("[data-strength-unit]").textContent = item?.unit || (exercise === "pullups" ? "reps" : "kg");
+    $("[data-strength-metric]").textContent = item?.metric_label || (exercise === "pullups" ? "Reps per workout" : "Estimated 1RM");
+    $("[data-strength-unit]").textContent = item?.unit || (exercise === "pullups" ? "reps" : "lb");
     if (!item) {
       $("[data-strength-value]").textContent = "–";
       $("[data-strength-value]").title = "";
@@ -270,14 +238,14 @@
     const duration = stamp(window.end) - stamp(window.start);
     const x = date => duration ? pad.left + (stamp(date) - stamp(window.start)) / duration * plotWidth : width / 2;
     const y = value => pad.top + (height - pad.top - pad.bottom) * (1 - (value - low) / (high - low));
-    const description = `${item.variant}. ${item.metric_label} in ${item.unit}, ${dateLabel(window.start, true)} to ${dateLabel(window.end, true)}. ${measured.length} measured workout days; ${points.length - measured.length} workout days without a comparable set. Points represent workout dates; days without sessions are not measurements.`;
+    const description = `${item.variant}. ${item.metric_label} in ${item.unit}, ${dateLabel(window.start, true)} to ${dateLabel(window.end, true)}. ${measured.length} measured workout days; ${points.length - measured.length} workout days without ${item.workout_total ? "a complete workout total" : "a comparable set"}. ${item.workout_total ? "Most reps in one workout each day. " : ""}Points represent workout dates; days without sessions are not measurements.`;
     const svg = svgElement("svg", { viewBox: `0 0 ${width} ${height}`, role: "img", "aria-label": description });
     const title = svgElement("title", {}, description);
     svg.append(title, svgElement("line", { class: "lifting-axis", x1: pad.left, x2: width - pad.right, y1: height - pad.bottom, y2: height - pad.bottom }));
     svg.append(svgElement("text", { class: "lifting-axis-label", x: pad.left, y: height - 3 }, dateLabel(window.start, window.start.slice(0, 4) !== window.end.slice(0, 4))));
     if (window.start !== window.end) svg.append(svgElement("text", { class: "lifting-axis-label", x: width - pad.right, y: height - 3, "text-anchor": "end" }, dateLabel(window.end, window.start.slice(0, 4) !== window.end.slice(0, 4))));
     if (measured.length) {
-      svg.append(svgElement("text", { class: "lifting-axis-label", x: pad.left, y: 10 }, `${number(Math.max(...values), item.unit === "kg" ? 1 : 0)} ${item.unit}`));
+      svg.append(svgElement("text", { class: "lifting-axis-label", x: pad.left, y: 10 }, `${number(Math.max(...values), item.unit === "lb" ? 1 : 0)} ${item.unit}`));
       let segment = [];
       const flush = () => {
         if (segment.length > 1) svg.append(svgElement("path", { class: "strength-trail", d: segment.map((point, index) => `${index ? "L" : "M"}${x(point.date).toFixed(2)},${y(point.value).toFixed(2)}`).join(" ") }));
@@ -285,8 +253,8 @@
       };
       points.forEach(point => { if (finite(point.value)) segment.push(point); else flush(); });
       flush();
-      measured.forEach(point => svg.append(svgElement("circle", { class: "strength-point", cx: x(point.date), cy: y(point.value), r: range === "ALL" ? 2.2 : 2.8 })));
-    } else svg.append(svgElement("text", { class: "lifting-empty", x: width / 2, y: height / 2, "text-anchor": "middle" }, points.length ? "No comparable sets" : "No sessions in this period"));
+      measured.forEach(point => svg.append(svgElement("circle", { class: "strength-point", cx: x(point.date), cy: y(point.value), r: strengthRange === "ALL" ? 2.2 : 2.8 })));
+    } else svg.append(svgElement("text", { class: "lifting-empty", x: width / 2, y: height / 2, "text-anchor": "middle" }, points.length ? item.workout_total ? "No complete workout totals" : "No comparable sets" : "No sessions in this period"));
     const line = svgElement("line", { class: "lifting-hover-line", y1: pad.top, y2: height - pad.bottom, visibility: "hidden" });
     const dot = svgElement("circle", { class: "lifting-hover-dot", r: 4, visibility: "hidden" });
     svg.append(line, dot);
@@ -295,10 +263,11 @@
     inspectStrength(points.some(point => point.date === strengthSelected) ? strengthSelected : null);
   }
   function chooseExercise(key) {
-    visitStation(key);
+    if (!EXERCISES.includes(key)) return;
+    showStation(key);
     exercise = key;
     strengthSelected = null;
-    if (rows.length) renderStrength(windowRows());
+    if (rows.length) renderStrength();
   }
   function strengthPointer(event) {
     if (!strengthGeometry?.points.length) return;
@@ -327,7 +296,7 @@
     panel.querySelectorAll("[data-lifting-range]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.liftingRange === range)));
     writeTotals(window);
     renderChart(window);
-    renderStrength(window);
+    renderStrength();
   }
   function freshness() {
     if (!publication) return;
@@ -376,7 +345,13 @@
     const days = Math.round((stamp(geometry.window.end) - stamp(geometry.window.start)) / DAY);
     inspect(day(stamp(geometry.window.start) + Math.round(fraction * days) * DAY));
   }
-  panel.querySelectorAll("[data-lifting-range]").forEach(button => button.addEventListener("click", () => { range = button.dataset.liftingRange; selected = null; strengthSelected = null; render(); }));
+  panel.querySelectorAll("[data-lifting-range]").forEach(button => button.addEventListener("click", () => { range = button.dataset.liftingRange; selected = null; render(); }));
+  panel.querySelectorAll("[data-strength-range]").forEach(button => button.addEventListener("click", () => {
+    strengthRange = button.dataset.strengthRange;
+    strengthSelected = null;
+    renderStrength();
+  }));
+  panel.querySelectorAll("[data-gym-select]").forEach(button => button.addEventListener("click", () => chooseExercise(button.dataset.gymSelect)));
   $("[data-lifting-retry]").addEventListener("click", load);
   chart.addEventListener("pointermove", pointer, { passive: true });
   chart.addEventListener("pointerdown", pointer, { passive: true });
@@ -429,8 +404,7 @@
   }
   window.setInterval(freshness, 60000);
   window.setInterval(() => { if (!document.hidden && !body?.hidden) load(); }, 5 * 60000);
-  reducedMotion.addEventListener("change", () => { if (reducedMotion.matches) finishJourney(exercise); });
-  document.addEventListener("visibilitychange", () => { if (document.hidden) finishJourney(exercise); else if (!body?.hidden) load(); });
-  document.addEventListener("site:sectionchange", event => { if (event.detail?.section === "body") { render(); if (!document.hidden) load(); } else finishJourney(exercise); });
+  document.addEventListener("visibilitychange", () => { if (!document.hidden && !body?.hidden) load(); });
+  document.addEventListener("site:sectionchange", event => { if (event.detail?.section === "body") { render(); if (!document.hidden) load(); } });
   load();
 })();
