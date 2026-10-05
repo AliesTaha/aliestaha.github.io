@@ -151,10 +151,6 @@
     const generated = Date.parse(generatedAt);
     return { valid: Number.isFinite(generated), stale: !Number.isFinite(generated) || now - generated > 3 * 3600000 };
   }
-  const helpers = { METRICS, EMA_SPANS, validDate, normalizeDaily, selectRange, metricSummary, splitSegments, emaSeries, emaTrend, indicatorDirection, cardModels, nearestCalendarDay, inspectionModel, heartbeatModel, formatValue, publicationState };
-  if (typeof module !== "undefined" && module.exports) module.exports = helpers;
-  if (typeof document === "undefined") return;
-
   const page = document.querySelector("[data-health-url]");
   if (!page) return;
   const $ = selector => page.querySelector(selector);
