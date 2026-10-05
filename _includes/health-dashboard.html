@@ -79,11 +79,11 @@
       <dl class="lifting-totals" aria-label="Workout totals for the selected period">
         <div><dt>Sessions</dt><dd><span data-lifting-value="sessions"></span><small data-lifting-coverage="sessions"></small></dd></div>
         <div><dt>Working sets</dt><dd><span data-lifting-value="working_sets"></span><small data-lifting-coverage="working_sets"></small></dd></div>
-        <div><dt>External-load volume</dt><dd><span data-lifting-value="volume_kg"></span><span class="lifting-unit">kg</span><small data-lifting-coverage="volume_kg"></small></dd></div>
+        <div><dt>External-load volume</dt><dd><span data-lifting-value="volume_lb"></span><span class="lifting-unit">lb</span><small data-lifting-coverage="volume_lb"></small></dd></div>
       </dl>
       <div class="lifting-chart-heading"><h3>Daily volume</h3></div>
       <div class="lifting-chart" data-lifting-chart tabindex="0" role="group" aria-label="Daily external-load volume chart"></div>
-      <p class="lifting-method">Volume = logged kg × reps. Warm-ups, bodyweight and assisted exercises excluded.</p>
+      <p class="lifting-method">Volume = logged weight in lb × reps. Warm-ups, bodyweight and assisted exercises excluded.</p>
       <section class="strength-section" aria-labelledby="strength-title">
         <div class="strength-heading">
           <h3 id="strength-title">Strength</h3>
@@ -96,48 +96,65 @@
           </div>
         </div>
         <div class="strength-stage" id="strength-panel" role="tabpanel" aria-labelledby="strength-tab-bench">
-          <div class="gym-room" data-gym-room aria-hidden="true">
-            <svg class="gym-architecture" viewBox="0 0 1000 620" fill="none">
+          <div class="gym-room" data-gym-room role="group" aria-label="Gym exercise stations">
+            <svg class="gym-art-filters" width="0" height="0" aria-hidden="true"><defs>
+              <filter id="gym-paper-ink" color-interpolation-filters="sRGB">
+                <feComponentTransfer><feFuncR type="linear" slope="0.9529411765"/><feFuncG type="linear" slope="0.9333333333"/><feFuncB type="linear" slope="0.8941176471"/></feComponentTransfer>
+              </filter>
+            </defs></svg>
+            <svg class="gym-architecture" viewBox="0 0 1000 620" fill="none" aria-hidden="true">
               <path class="gym-wall" d="M35 535V135L145 55H850L970 145V535M145 55V308H850V55M35 385L145 308M850 308L970 390"/>
               <path class="gym-floor" d="M35 535L145 308M970 535L850 308M35 535H970M440 535L470 308M735 535L680 308"/>
               <path class="gym-mirror" d="M190 85H435V230H190ZM455 85H700V230H455Z"/>
               <path class="gym-reflection" d="M215 110L240 94M215 127L269 94M481 111L506 95"/>
             </svg>
-            <svg class="gym-route" viewBox="0 0 1000 620" fill="none"><path data-gym-route/></svg>
-            <div class="gym-station is-active" data-gym-station="bench" style="--station-x:30; --station-y:88; --station-width:34; --station-height:46; --station-depth:4">
+            <div class="gym-station is-active" data-gym-station="bench" style="--station-x:30; --station-y:88; --station-width:34; --station-height:46; --station-depth:4; --idle-x:28; --idle-height:85">
               <img class="gym-equipment" src="{{ '/assets/images/gym-bench-empty.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+              <img class="gym-idle" src="{{ '/assets/images/gym-idle.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
               <img class="gym-occupied" src="{{ '/assets/images/strength-bench.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+              <button class="gym-station-select" type="button" data-gym-select="bench" aria-label="Select bench" aria-pressed="true"></button>
             </div>
-            <div class="gym-station" data-gym-station="squat" style="--station-x:20; --station-y:56; --station-width:29; --station-height:46; --station-depth:2">
+            <div class="gym-station" data-gym-station="squat" style="--station-x:20; --station-y:56; --station-width:29; --station-height:46; --station-depth:2; --idle-x:54; --idle-height:75">
               <img class="gym-equipment" src="{{ '/assets/images/gym-squat-empty.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+              <img class="gym-idle" src="{{ '/assets/images/gym-idle.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
               <img class="gym-occupied" src="{{ '/assets/images/strength-squat.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+              <button class="gym-station-select" type="button" data-gym-select="squat" aria-label="Select squat" aria-pressed="false"></button>
             </div>
-            <div class="gym-station" data-gym-station="pullups" style="--station-x:51; --station-y:51; --station-width:25; --station-height:43; --station-depth:1">
+            <div class="gym-station" data-gym-station="pullups" style="--station-x:51; --station-y:51; --station-width:25; --station-height:43; --station-depth:1; --idle-x:48; --idle-height:75">
               <img class="gym-equipment" src="{{ '/assets/images/gym-pullups-empty.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+              <img class="gym-idle" src="{{ '/assets/images/gym-idle.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
               <img class="gym-occupied" src="{{ '/assets/images/strength-pullups.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+              <button class="gym-station-select" type="button" data-gym-select="pullups" aria-label="Select pull-ups" aria-pressed="false"></button>
             </div>
-            <div class="gym-station" data-gym-station="curls" style="--station-x:70; --station-y:90; --station-width:28; --station-height:49; --station-depth:5">
+            <div class="gym-station" data-gym-station="curls" style="--station-x:70; --station-y:90; --station-width:28; --station-height:49; --station-depth:5; --idle-x:56; --idle-height:88">
               <img class="gym-equipment" src="{{ '/assets/images/gym-curls-empty.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+              <img class="gym-idle" src="{{ '/assets/images/gym-idle.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
               <img class="gym-occupied" src="{{ '/assets/images/strength-curls.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+              <button class="gym-station-select" type="button" data-gym-select="curls" aria-label="Select curls" aria-pressed="false"></button>
             </div>
-            <div class="gym-station" data-gym-station="rows" style="--station-x:82; --station-y:59; --station-width:31; --station-height:51; --station-depth:3">
+            <div class="gym-station" data-gym-station="rows" style="--station-x:82; --station-y:59; --station-width:31; --station-height:51; --station-depth:3; --idle-x:39; --idle-height:75">
               <img class="gym-equipment" src="{{ '/assets/images/gym-rows-empty.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+              <img class="gym-idle" src="{{ '/assets/images/gym-idle.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
               <img class="gym-occupied" src="{{ '/assets/images/strength-rows.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
-            </div>
-            <div class="gym-traveler" data-gym-traveler>
-              <div class="gym-runner">
-                <img class="gym-runner-echo gym-runner-echo-far" src="{{ '/assets/images/gym-traveler.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
-                <img class="gym-runner-echo" src="{{ '/assets/images/gym-traveler.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
-                <img src="{{ '/assets/images/gym-traveler.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
-              </div>
+              <button class="gym-station-select" type="button" data-gym-select="rows" aria-label="Select rows" aria-pressed="false"></button>
             </div>
           </div>
           <div class="strength-progress">
             <h4 data-strength-variant>Incline Bench Press (Dumbbell)</h4>
             <p class="strength-metric" data-strength-metric>Estimated 1RM</p>
-            <p class="strength-reading"><span data-strength-value>–</span><span class="strength-unit" data-strength-unit>kg</span></p>
+            <p class="strength-reading"><span data-strength-value>–</span><span class="strength-unit" data-strength-unit>lb</span></p>
             <p class="strength-detail" data-strength-detail></p>
-            <div class="strength-chart" data-strength-chart tabindex="0" role="group" aria-label="Strength progress chart"></div>
+            <div class="strength-history">
+              <div class="strength-toolbar">
+                <p class="strength-period" data-strength-period aria-live="polite"></p>
+                <div class="lifting-ranges strength-ranges" role="group" aria-label="Strength time range">
+                  <button type="button" data-strength-range="W" aria-pressed="false">Week</button>
+                  <button type="button" data-strength-range="M" aria-pressed="false">Month</button>
+                  <button type="button" data-strength-range="ALL" aria-pressed="true">All</button>
+                </div>
+              </div>
+              <div class="strength-chart" data-strength-chart tabindex="0" role="group" aria-label="Strength progress chart"></div>
+            </div>
           </div>
         </div>
       </section>

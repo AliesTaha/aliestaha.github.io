@@ -77,22 +77,35 @@ LIFTING_METHODOLOGY = {
     "volume_kg": "External-load volume sums logged weight in kilograms times repetitions for normal, dropset, and failure sets in exercises classified by Hevy as weight_reps. Warmup, bodyweight, assisted, timed, and distance exercises are excluded. No body mass or unlogged load is estimated.",
     "missing": "Zero means no logged activity or no eligible sets that day. Null means a required value or exercise classification is missing or invalid. A failed refresh preserves the last successful snapshot.",
 }
-LIFTING_STRENGTH = (
+LIFTING_STRENGTH_LEGACY = (
     {"key": "bench", "label": "Bench", "variant": "Incline Bench Press (Dumbbell)", "metric_label": "Estimated 1RM", "unit": "kg"},
     {"key": "squat", "label": "Squat", "variant": "Squat (Barbell)", "metric_label": "Estimated 1RM", "unit": "kg"},
     {"key": "pullups", "label": "Pull-ups", "variant": "Pull Up", "metric_label": "Best set", "unit": "reps"},
     {"key": "curls", "label": "Curls", "variant": "Hammer Curl (Dumbbell)", "metric_label": "Estimated 1RM", "unit": "kg"},
     {"key": "rows", "label": "Rows", "variant": "Single Arm Cable Row", "metric_label": "Estimated 1RM", "unit": "kg"},
 )
+LIFTING_STRENGTH = tuple(
+    {**item, "metric_label": "Reps per workout"} if item["key"] == "pullups" else item
+    for item in LIFTING_STRENGTH_LEGACY
+)
+# Explicit user correction, not an automatic outlier filter or a workout deletion.
+STRENGTH_EXCLUDED_DATES = {"bench": {"2025-10-05"}}
 # Hevy's documented repetition-percentage table, capped at 50% after 30 reps.
 # https://help.hevyapp.com/hc/en-us/articles/36954464726167
 HEVY_REP_PERCENTAGES = (100, 97, 94, 92, 89, 86, 83, 81, 78, 75, 73, 71, 70, 68, 67,
                         65, 64, 63, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50)
-LIFTING_METHODOLOGY_V2 = {
+LIFTING_METHODOLOGY_V2_LEGACY = {
     **LIFTING_METHODOLOGY,
     "strength": "Each family follows one fixed Hevy exercise variant, chosen from the most frequently logged variant in the initial history. Variants are never combined. Each point is the best eligible normal, dropset, or failure set on that session's local calendar date; warmups are excluded. Dates without that exercise have no strength point. A performed exercise with no usable set has a null point.",
     "estimated_1rm": "Loaded exercises use Hevy's estimated one-rep-max calculation: recorded weight divided by its repetition percentage. Percentages for 1 through 30 reps are 100, 97, 94, 92, 89, 86, 83, 81, 78, 75, 73, 71, 70, 68, 67, 65, 64, 63, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50; sets above 30 reps also use 50. Values are rounded to two decimals and are estimates, not achieved maximum lifts. Higher-repetition estimates are less reliable. The contributing set's weight and repetitions are included.",
     "logged_weight": "Weight is exactly the kilogram value recorded in Hevy, without doubling dumbbells or adjusting cable loads. Pull Up tracks the highest repetition count from an unweighted set, with no estimated body mass, added load, or assistance conversion.",
+}
+LIFTING_METHODOLOGY_V2 = {
+    **LIFTING_METHODOLOGY_V2_LEGACY,
+    "strength": "Each family follows one fixed Hevy exercise variant, chosen from the most frequently logged variant in the initial history. Variants are never combined. Loaded exercise points use the best eligible normal, dropset, or failure set on that session's local calendar date; warmups are excluded. Dates without that exercise have no strength point. A performed exercise with no usable measurement has a null point.",
+    "logged_weight": "Weight is exactly the kilogram value recorded in Hevy, without doubling dumbbells or adjusting cable loads. Pull Up uses unweighted repetitions only, with no estimated body mass, added load, or assistance conversion.",
+    "pullups": "Reps per workout sums repetitions across all normal, dropset, and failure sets of the fixed Pull Up exercise within one workout, including repeated entries of that exercise. Warmups and explicitly added-weight sets are excluded. Missing or invalid eligible set data makes that workout total unknown; totals are never partial. If several workouts share a local calendar date, the point is the greatest complete workout total, not their sum. No eligible sets gives a null point; explicitly recorded zero repetitions gives zero. The point's reps field is the workout total, not one contributing set.",
+    "strength_corrections": "The user-identified incorrect Incline Bench Press (Dumbbell) strength observation on 2025-10-05 is excluded. Its workout and all daily totals remain intact; no other exercise or date is filtered.",
 }
 
 
@@ -132,7 +145,8 @@ def validate_lifting_snapshot(snapshot, now=None):
     now = now or datetime.now(timezone.utc)
     if generated > now + timedelta(minutes=15) or generated.year < 2010:
         raise PublishError("Snapshot generation timestamp is outside safe bounds")
-    methodology = LIFTING_METHODOLOGY_V2 if version == 2 else LIFTING_METHODOLOGY
+    legacy_strength = version == 2 and snapshot["methodology"] == LIFTING_METHODOLOGY_V2_LEGACY
+    methodology = (LIFTING_METHODOLOGY_V2_LEGACY if legacy_strength else LIFTING_METHODOLOGY_V2) if version == 2 else LIFTING_METHODOLOGY
     if snapshot["timezone"] != "America/Toronto" or snapshot["methodology"] != methodology:
         raise PublishError("Unreviewed lifting metadata")
     rows = snapshot["daily"]
@@ -167,7 +181,7 @@ def validate_lifting_snapshot(snapshot, now=None):
           or len(rows) != (dates[-1] - dates[0]).days + 1):
         raise PublishError("Coverage does not match lifting history")
     if version == 2:
-        validate_strength(snapshot["strength"], rows)
+        validate_strength(snapshot["strength"], rows, legacy=legacy_strength)
     return generated
 
 
@@ -175,11 +189,11 @@ def hevy_estimated_1rm(weight, reps):
     return round(weight * 100 / HEVY_REP_PERCENTAGES[min(reps, 30) - 1], 2)
 
 
-def validate_strength(strength, daily):
+def validate_strength(strength, daily, *, legacy=False):
     if not isinstance(strength, list) or len(strength) != len(LIFTING_STRENGTH):
         raise PublishError("Unexpected strength exercises")
     active_dates = {row["date"] for row in daily if row["sessions"] > 0}
-    for exercise, approved in zip(strength, LIFTING_STRENGTH):
+    for exercise, approved in zip(strength, LIFTING_STRENGTH_LEGACY if legacy else LIFTING_STRENGTH):
         exact_keys(exercise, {*approved, "series"}, "strength exercise")
         if any(exercise[key] != value for key, value in approved.items()):
             raise PublishError("Unreviewed strength metadata")
@@ -190,6 +204,8 @@ def validate_strength(strength, daily):
         for point in series:
             exact_keys(point, {"date", "value", "weight_kg", "reps"}, "strength observation")
             dates.append(valid_date(point["date"]))
+            if not legacy and point["date"] in STRENGTH_EXCLUDED_DATES.get(approved["key"], set()):
+                raise PublishError("A corrected strength observation must remain excluded")
             if point["date"] not in active_dates:
                 raise PublishError("Strength observation must belong to a logged session date")
             value, weight, reps = point["value"], point["weight_kg"], point["reps"]
@@ -197,9 +213,10 @@ def validate_strength(strength, daily):
                 if weight is not None or reps is not None:
                     raise PublishError("Unknown strength must not contain a contributing set")
                 continue
+            workout_reps = approved["unit"] == "reps" and not legacy
             if (isinstance(value, bool) or not isinstance(value, (int, float))
-                    or not math.isfinite(value) or not 0 < value <= 20_000
-                    or type(reps) is not int or not 1 <= reps <= 10_000):
+                    or not math.isfinite(value) or not 0 <= value <= 20_000 or (not workout_reps and value == 0)
+                    or type(reps) is not int or not (0 if workout_reps else 1) <= reps <= (20_000 if workout_reps else 10_000)):
                 raise PublishError("Invalid strength measurement")
             if approved["unit"] == "reps":
                 if weight is not None or value != reps:
@@ -385,6 +402,8 @@ def publish(snapshot, *, enabled=False, cache=CACHE, dataset="health"):
     generated = validate_snapshot(snapshot, dataset=dataset)
     if dataset == "lifting" and snapshot["schema_version"] != 2:
         raise PublishError("New lifting publications require schema version 2")
+    if dataset == "lifting" and snapshot["methodology"] != LIFTING_METHODOLOGY_V2:
+        raise PublishError("New lifting publications require the current strength definitions")
     content = canonical(snapshot)
     if len(content) > MAX_BYTES:
         raise PublishError("Snapshot exceeds size limit")
