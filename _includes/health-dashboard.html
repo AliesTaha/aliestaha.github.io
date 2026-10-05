@@ -84,6 +84,34 @@
       <div class="lifting-chart-heading"><h3>Daily volume</h3></div>
       <div class="lifting-chart" data-lifting-chart tabindex="0" role="group" aria-label="Daily external-load volume chart"></div>
       <p class="lifting-method">Volume = logged kg × reps. Warm-ups, bodyweight and assisted exercises excluded.</p>
+      <section class="strength-section" aria-labelledby="strength-title">
+        <div class="strength-heading">
+          <h3 id="strength-title">Strength</h3>
+          <div class="strength-tabs" role="tablist" aria-label="Exercise">
+            <button type="button" role="tab" id="strength-tab-bench" data-strength-tab="bench" aria-controls="strength-panel" aria-selected="true">Bench</button>
+            <button type="button" role="tab" id="strength-tab-squat" data-strength-tab="squat" aria-controls="strength-panel" aria-selected="false" tabindex="-1">Squat</button>
+            <button type="button" role="tab" id="strength-tab-pullups" data-strength-tab="pullups" aria-controls="strength-panel" aria-selected="false" tabindex="-1">Pull-ups</button>
+            <button type="button" role="tab" id="strength-tab-curls" data-strength-tab="curls" aria-controls="strength-panel" aria-selected="false" tabindex="-1">Curls</button>
+            <button type="button" role="tab" id="strength-tab-rows" data-strength-tab="rows" aria-controls="strength-panel" aria-selected="false" tabindex="-1">Rows</button>
+          </div>
+        </div>
+        <div class="strength-stage" id="strength-panel" role="tabpanel" aria-labelledby="strength-tab-bench">
+          <div class="strength-poses" aria-hidden="true">
+            <img class="strength-pose is-active" data-strength-pose="bench" src="{{ '/assets/images/strength-bench.webp' | relative_url }}" alt="" loading="lazy" decoding="async">
+            <img class="strength-pose" data-strength-pose="squat" src="{{ '/assets/images/strength-squat.webp' | relative_url }}" alt="" loading="lazy" decoding="async">
+            <img class="strength-pose" data-strength-pose="pullups" src="{{ '/assets/images/strength-pullups.webp' | relative_url }}" alt="" loading="lazy" decoding="async">
+            <img class="strength-pose" data-strength-pose="curls" src="{{ '/assets/images/strength-curls.webp' | relative_url }}" alt="" loading="lazy" decoding="async">
+            <img class="strength-pose" data-strength-pose="rows" src="{{ '/assets/images/strength-rows.webp' | relative_url }}" alt="" loading="lazy" decoding="async">
+          </div>
+          <div class="strength-progress">
+            <h4 data-strength-variant>Incline Bench Press (Dumbbell)</h4>
+            <p class="strength-metric" data-strength-metric>Estimated 1RM</p>
+            <p class="strength-reading"><span data-strength-value>–</span><span class="strength-unit" data-strength-unit>kg</span></p>
+            <p class="strength-detail" data-strength-detail></p>
+            <div class="strength-chart" data-strength-chart tabindex="0" role="group" aria-label="Strength progress chart"></div>
+          </div>
+        </div>
+      </section>
     </div>
   </section>
 </section>

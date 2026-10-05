@@ -30,6 +30,36 @@
 .lifting-axis-label { fill: #70685e; font: 10px var(--health-sans); }
 .lifting-empty { fill: #70685e; font: 12px var(--health-sans); }
 .lifting-method { margin: 13px 0 0; color: #70685e; font: 10px/1.6 var(--health-sans); }
+.strength-section { margin-top: 32px; padding-top: 25px; border-top: 1px solid var(--line); }
+.strength-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+.strength-heading h3 { margin: 0; color: var(--ink); font: 400 25px/1.25 Georgia, "Times New Roman", serif; }
+.strength-tabs { display: flex; flex-wrap: wrap; gap: 3px; }
+.strength-tabs button { position: relative; border: 0; padding: 8px 10px; background: transparent; color: #70685e; font: 11px/1.4 var(--health-sans); cursor: pointer; }
+.strength-tabs button::after { content: ""; position: absolute; inset: auto 10px 2px; height: 1px; background: var(--health-accent); transform: scaleX(0); transition: transform 180ms ease; }
+.strength-tabs button[aria-selected="true"] { color: var(--ink); }
+.strength-tabs button[aria-selected="true"]::after { transform: scaleX(1); }
+.strength-tabs button:hover { color: var(--ink); }
+.strength-tabs button:focus-visible, .strength-chart:focus-visible { outline: 1px solid var(--health-accent); outline-offset: 3px; }
+.strength-stage { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: 22px; align-items: center; margin-top: 15px; }
+.strength-poses { position: relative; min-width: 0; height: 360px; overflow: hidden; }
+.strength-pose { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; transform: translateX(0) scale(.9); mix-blend-mode: multiply; transition: opacity 430ms ease, transform 560ms cubic-bezier(.2,.65,.3,1); pointer-events: none; }
+.strength-pose.is-before { z-index: 1; opacity: .085; transform: translateX(-20px) scale(.84); }
+.strength-pose.is-after { z-index: 1; opacity: .085; transform: translateX(20px) scale(.84); }
+.strength-pose.is-before, .strength-pose.is-after { filter: blur(.3px); mask-image: repeating-linear-gradient(135deg, #000 0 5px, transparent 5px 8px); }
+.strength-pose.is-active { z-index: 2; opacity: 1; transform: translateX(0) scale(1); }
+.strength-progress { min-width: 0; padding: 12px 0; }
+.strength-progress h4 { margin: 0 0 12px; color: var(--ink); font: 400 17px/1.4 Georgia, "Times New Roman", serif; }
+.strength-metric { margin: 0 0 4px; color: #70685e; font: 11px/1.5 var(--health-sans); }
+.strength-reading { margin: 0; color: var(--health-accent); font: 40px/1.2 Georgia, "Times New Roman", serif; letter-spacing: -.035em; font-variant-numeric: lining-nums tabular-nums; }
+.strength-unit { margin-left: 6px; color: #70685e; font: 11px/1 var(--health-sans); letter-spacing: 0; }
+.strength-detail { min-height: 3em; margin: 8px 0 13px; color: #70685e; font: 11px/1.5 var(--health-sans); font-variant-numeric: tabular-nums; }
+.strength-chart { height: 170px; width: 100%; touch-action: pan-y; cursor: crosshair; }
+.strength-chart svg { display: block; width: 100%; height: 170px; overflow: visible; }
+.strength-trail { fill: none; stroke: var(--health-accent); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.strength-point { fill: var(--paper); stroke: var(--health-accent); stroke-width: 1.3; }
+@media (prefers-reduced-motion: reduce) {
+  .strength-pose, .strength-tabs button::after { transition: none; }
+}
 @media (max-width: 570px) {
   .lifting-panel { margin-top: 34px; padding-top: 24px; }
   .lifting-heading h2 { font-size: 25px; }
@@ -39,4 +69,13 @@
   .lifting-totals dd { font-size: clamp(22px, 6vw, 30px); }
   .lifting-unit { margin-left: 3px; font-size: 10px; }
   .lifting-chart-heading { align-items: flex-start; }
+  .strength-heading { align-items: flex-start; flex-direction: column; gap: 9px; }
+  .strength-tabs { width: 100%; justify-content: space-between; gap: 0; }
+  .strength-tabs button { padding: 8px 7px; }
+  .strength-tabs button::after { left: 7px; right: 7px; }
+  .strength-stage { grid-template-columns: minmax(0, 1fr); gap: 0; margin-top: 5px; }
+  .strength-poses { height: 310px; width: 100%; max-width: 370px; margin-inline: auto; }
+  .strength-progress { padding: 2px 0 0; }
+  .strength-progress h4 { margin-bottom: 9px; }
+  .strength-detail { min-height: 1.5em; }
 }
