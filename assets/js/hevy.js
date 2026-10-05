@@ -7,6 +7,10 @@
   const $ = selector => panel.querySelector(selector);
   const chart = $("[data-lifting-chart]");
   const strengthChart = $("[data-strength-chart]");
+  const room = $("[data-gym-room]");
+  const traveler = $("[data-gym-traveler]");
+  const route = $("[data-gym-route]");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const status = $(".lifting-status");
   const DAY = 86400000;
   const DAYS = { W: 7, M: 30 };
@@ -31,6 +35,59 @@
   let strengthSelected = null;
   let strengthGeometry = null;
   let strengthWidth = 0;
+  let sceneExercise = "bench";
+  let sceneDestination = "bench";
+  let roomAnimations = [];
+  let roomJourney = 0;
+
+  function stationPosition(key) {
+    const station = $(`[data-gym-station="${key}"]`);
+    const style = window.getComputedStyle(station);
+    return { x: Number(style.getPropertyValue("--station-x")), y: Number(style.getPropertyValue("--station-y")) };
+  }
+  function showStation(key) {
+    panel.querySelectorAll("[data-gym-station]").forEach(station => station.classList.toggle("is-active", station.dataset.gymStation === key));
+  }
+  function finishJourney(key) {
+    roomJourney += 1;
+    roomAnimations.forEach(animation => animation.cancel());
+    roomAnimations = [];
+    sceneExercise = sceneDestination = key;
+    if (!room) return;
+    const position = stationPosition(key);
+    traveler.style.left = `${position.x}%`;
+    traveler.style.top = `${position.y}%`;
+    traveler.style.opacity = "0";
+    room.classList.remove("is-moving");
+    showStation(key);
+  }
+  function visitStation(key) {
+    if (!room || key === sceneDestination) return;
+    if (reducedMotion.matches || !traveler.animate || !room.clientWidth || document.hidden || body?.hidden) return finishJourney(key);
+    const from = room.classList.contains("is-moving")
+      ? { x: parseFloat(window.getComputedStyle(traveler).left) / room.clientWidth * 100, y: parseFloat(window.getComputedStyle(traveler).top) / room.clientHeight * 100 }
+      : stationPosition(sceneExercise);
+    const to = stationPosition(key);
+    const journey = ++roomJourney;
+    roomAnimations.forEach(animation => animation.cancel());
+    roomAnimations = [];
+    sceneDestination = key;
+    room.classList.add("is-moving");
+    showStation(null);
+    traveler.style.setProperty("--facing", to.x < from.x ? "-1" : "1");
+    const middle = { x: (from.x + to.x) / 2, y: (from.y + to.y) / 2 - 4 };
+    const scale = y => .73 + y / 350;
+    const frame = (position, opacity, offset) => ({ left: `${position.x}%`, top: `${position.y}%`, transform: `scale(${scale(position.y)})`, opacity, offset });
+    route.setAttribute("d", `M${from.x * 10},${from.y * 6.2} Q${middle.x * 10},${(middle.y - 4) * 6.2} ${to.x * 10},${to.y * 6.2}`);
+    const travel = traveler.animate([
+      frame(from, 0, 0), frame(from, 1, .1), frame(middle, 1, .48), frame(to, 1, .88), frame(to, 0, 1)
+    ], { duration: 610, delay: 90, easing: "cubic-bezier(.3,.05,.5,1)", fill: "both" });
+    const trail = route.parentElement.animate([
+      { opacity: 0, offset: 0 }, { opacity: .32, offset: .3 }, { opacity: .2, offset: .8 }, { opacity: 0, offset: 1 }
+    ], { duration: 700, fill: "both" });
+    roomAnimations = [travel, trail];
+    travel.finished.then(() => { if (journey === roomJourney) finishJourney(key); }).catch(() => {});
+  }
 
   function normalize(data) {
     if (![1, 2].includes(data.schema_version) || !Array.isArray(data.daily) || data.daily.length > 12000) throw new Error("Invalid lifting summary");
@@ -181,19 +238,12 @@
   }
   function renderStrength(window) {
     if (!strengthChart) return;
-    const current = EXERCISES.indexOf(exercise);
     panel.querySelectorAll("[data-strength-tab]").forEach(button => {
       const active = button.dataset.strengthTab === exercise;
       button.setAttribute("aria-selected", String(active));
       button.tabIndex = active ? 0 : -1;
     });
     $("#strength-panel").setAttribute("aria-labelledby", `strength-tab-${exercise}`);
-    panel.querySelectorAll("[data-strength-pose]").forEach(image => {
-      const index = EXERCISES.indexOf(image.dataset.strengthPose);
-      image.classList.toggle("is-active", index === current);
-      image.classList.toggle("is-before", index === (current + EXERCISES.length - 1) % EXERCISES.length);
-      image.classList.toggle("is-after", index === (current + 1) % EXERCISES.length);
-    });
     const item = strength.find(item => item.key === exercise);
     $("[data-strength-variant]").textContent = item?.variant || $("[aria-selected='true'][data-strength-tab]").textContent;
     $("[data-strength-metric]").textContent = item?.metric_label || (exercise === "pullups" ? "Best set" : "Estimated 1RM");
@@ -245,6 +295,7 @@
     inspectStrength(points.some(point => point.date === strengthSelected) ? strengthSelected : null);
   }
   function chooseExercise(key) {
+    visitStation(key);
     exercise = key;
     strengthSelected = null;
     if (rows.length) renderStrength(windowRows());
@@ -378,7 +429,8 @@
   }
   window.setInterval(freshness, 60000);
   window.setInterval(() => { if (!document.hidden && !body?.hidden) load(); }, 5 * 60000);
-  document.addEventListener("visibilitychange", () => { if (!document.hidden && !body?.hidden) load(); });
-  document.addEventListener("site:sectionchange", event => { if (event.detail?.section === "body") { render(); if (!document.hidden) load(); } });
+  reducedMotion.addEventListener("change", () => { if (reducedMotion.matches) finishJourney(exercise); });
+  document.addEventListener("visibilitychange", () => { if (document.hidden) finishJourney(exercise); else if (!body?.hidden) load(); });
+  document.addEventListener("site:sectionchange", event => { if (event.detail?.section === "body") { render(); if (!document.hidden) load(); } else finishJourney(exercise); });
   load();
 })();

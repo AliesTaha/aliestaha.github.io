@@ -40,25 +40,41 @@
 .strength-tabs button[aria-selected="true"]::after { transform: scaleX(1); }
 .strength-tabs button:hover { color: var(--ink); }
 .strength-tabs button:focus-visible, .strength-chart:focus-visible { outline: 1px solid var(--health-accent); outline-offset: 3px; }
-.strength-stage { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: 22px; align-items: center; margin-top: 15px; }
-.strength-poses { position: relative; min-width: 0; height: 360px; overflow: hidden; }
-.strength-pose { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; transform: translateX(0) scale(.9); mix-blend-mode: multiply; transition: opacity 430ms ease, transform 560ms cubic-bezier(.2,.65,.3,1); pointer-events: none; }
-.strength-pose.is-before { z-index: 1; opacity: .085; transform: translateX(-20px) scale(.84); }
-.strength-pose.is-after { z-index: 1; opacity: .085; transform: translateX(20px) scale(.84); }
-.strength-pose.is-before, .strength-pose.is-after { filter: blur(.3px); mask-image: repeating-linear-gradient(135deg, #000 0 5px, transparent 5px 8px); }
-.strength-pose.is-active { z-index: 2; opacity: 1; transform: translateX(0) scale(1); }
-.strength-progress { min-width: 0; padding: 12px 0; }
-.strength-progress h4 { margin: 0 0 12px; color: var(--ink); font: 400 17px/1.4 Georgia, "Times New Roman", serif; }
+.strength-stage { min-width: 0; margin-top: 15px; }
+.gym-room { position: relative; width: 100%; aspect-ratio: 1000 / 620; overflow: hidden; isolation: isolate; background: var(--paper); }
+.gym-architecture, .gym-route { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.gym-architecture { color: var(--health-accent); stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+.gym-wall { opacity: .3; }
+.gym-floor { opacity: .15; }
+.gym-mirror { opacity: .14; }
+.gym-reflection { opacity: .22; }
+.gym-route { z-index: 6; opacity: 0; }
+.gym-route path { stroke: var(--health-accent); stroke-width: 1.9; stroke-linecap: round; stroke-dasharray: 3 9; }
+.gym-station { position: absolute; left: calc(var(--station-x) * 1%); top: calc(var(--station-y) * 1%); width: calc(var(--station-width) * 1%); height: calc(var(--station-height) * 1%); transform: translate(-50%, -100%); z-index: var(--station-depth); pointer-events: none; mix-blend-mode: multiply; }
+.gym-station img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; margin: 0; border: 0; border-radius: 0; object-fit: contain; object-position: center bottom; transition: opacity 150ms ease; }
+.gym-equipment { opacity: .57; }
+.gym-occupied { opacity: 0; }
+.gym-station.is-active .gym-equipment { opacity: 0; }
+.gym-station.is-active .gym-occupied { opacity: 1; transition-duration: 230ms; }
+.gym-traveler { position: absolute; left: 30%; top: 88%; width: 24%; height: 40%; opacity: 0; z-index: 7; pointer-events: none; mix-blend-mode: multiply; transform-origin: 0 0; }
+.gym-runner { position: relative; width: 100%; height: 100%; transform: translate(-50%, -100%) scaleX(var(--facing, 1)); transform-origin: center; }
+.gym-runner img { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; border: 0; border-radius: 0; object-fit: contain; object-position: center bottom; }
+.gym-runner-echo { opacity: .15; transform: translateX(-18%); mask-image: repeating-linear-gradient(135deg, #000 0 3px, transparent 3px 6px); }
+.gym-runner-echo-far { opacity: .07; transform: translateX(-34%); }
+.strength-progress { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.5fr); column-gap: 35px; align-items: start; min-width: 0; padding: 12px 0; }
+.strength-progress h4 { grid-column: 1; margin: 0 0 12px; color: var(--ink); font: 400 17px/1.4 Georgia, "Times New Roman", serif; }
+.strength-progress > p { grid-column: 1; }
 .strength-metric { margin: 0 0 4px; color: #70685e; font: 11px/1.5 var(--health-sans); }
 .strength-reading { margin: 0; color: var(--health-accent); font: 40px/1.2 Georgia, "Times New Roman", serif; letter-spacing: -.035em; font-variant-numeric: lining-nums tabular-nums; }
 .strength-unit { margin-left: 6px; color: #70685e; font: 11px/1 var(--health-sans); letter-spacing: 0; }
 .strength-detail { min-height: 3em; margin: 8px 0 13px; color: #70685e; font: 11px/1.5 var(--health-sans); font-variant-numeric: tabular-nums; }
-.strength-chart { height: 170px; width: 100%; touch-action: pan-y; cursor: crosshair; }
+.strength-chart { grid-column: 2; grid-row: 1 / 5; align-self: center; min-width: 0; height: 170px; width: 100%; touch-action: pan-y; cursor: crosshair; }
 .strength-chart svg { display: block; width: 100%; height: 170px; overflow: visible; }
 .strength-trail { fill: none; stroke: var(--health-accent); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .strength-point { fill: var(--paper); stroke: var(--health-accent); stroke-width: 1.3; }
 @media (prefers-reduced-motion: reduce) {
-  .strength-pose, .strength-tabs button::after { transition: none; }
+  .gym-station img, .strength-tabs button::after { transition: none; }
+  .gym-traveler, .gym-route { display: none; }
 }
 @media (max-width: 570px) {
   .lifting-panel { margin-top: 34px; padding-top: 24px; }
@@ -73,9 +89,8 @@
   .strength-tabs { width: 100%; justify-content: space-between; gap: 0; }
   .strength-tabs button { padding: 8px 7px; }
   .strength-tabs button::after { left: 7px; right: 7px; }
-  .strength-stage { grid-template-columns: minmax(0, 1fr); gap: 0; margin-top: 5px; }
-  .strength-poses { height: 310px; width: 100%; max-width: 370px; margin-inline: auto; }
-  .strength-progress { padding: 2px 0 0; }
+  .strength-stage { margin-top: 12px; }
+  .strength-progress { display: block; padding: 8px 0 0; }
   .strength-progress h4 { margin-bottom: 9px; }
   .strength-detail { min-height: 1.5em; }
 }
