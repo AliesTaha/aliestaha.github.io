@@ -1,5 +1,11 @@
 <svg class="health-body-figure" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1536" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false" fill="none">
-  <image class="health-body-portrait" href="{{ '/assets/images/body-portrait-pants.png' | relative_url }}?v={{ site.asset_version }}" width="1024" height="1536" style="mix-blend-mode:multiply" />
+  <defs>
+    <filter id="health-portrait-ink" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <!-- Remove the drawing's pale paper while preserving its original ink colors. -->
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 -1.3 0 1.25 0"/>
+    </filter>
+  </defs>
+  <image class="health-body-portrait" href="{{ '/assets/images/body-portrait-pants.png' | relative_url }}?v={{ site.asset_version }}" width="1024" height="1536" filter="url(#health-portrait-ink)" />
   <g class="health-body-points" fill="var(--health-accent, #8b6539)">
     <circle data-body-anchor="sleep_performance" cx="456" cy="145" r="7"/>
     <circle data-body-anchor="recovery" cx="594" cy="253" r="7"/>
