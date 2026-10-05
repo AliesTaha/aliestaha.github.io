@@ -130,6 +130,33 @@
         : measured.length < visible.length ? `${measured.length}/${visible.length} days recorded` : "";
     });
   }
+  function writeVolumeTrend(points, date) {
+    const observed = points.filter(row => finite(row.trend_lb));
+    const eligible = date ? observed.filter(row => row.date <= date) : observed;
+    const first = observed[0];
+    const last = date ? observed.find(row => row.date === date) : observed[observed.length - 1];
+    let percent = null;
+    if (eligible.length >= 2 && last) {
+      if (first.trend_lb > 0) percent = 100 * (last.trend_lb - first.trend_lb) / first.trend_lb;
+      else if (last.trend_lb === 0) percent = 0;
+    }
+    const node = $("[data-lifting-trend]");
+    const magnitude = Number.isFinite(percent) ? Math.round(Math.abs(percent) * 10) / 10 : null;
+    const direction = magnitude === null ? "unavailable" : magnitude === 0 ? "flat" : percent > 0 ? "up" : "down";
+    node.dataset.direction = direction;
+    let description;
+    if (direction === "unavailable") {
+      node.textContent = "–";
+      description = "7-training-day EMA percentage change unavailable: missing measurements, fewer than two training days, or a zero starting value.";
+    } else {
+      const label = magnitude.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+      node.textContent = direction === "flat" ? "0.0%" : `${direction === "up" ? "↑ +" : "↓ −"}${label}%`;
+      description = `7-training-day EMA ${direction === "flat" ? "unchanged" : `${direction} ${label}%`}, ${dateLabel(first.date, true)} to ${dateLabel(last.date, true)}.`;
+    }
+    node.title = description;
+    node.setAttribute("aria-label", description);
+    return description;
+  }
   function inspect(date) {
     if (!geometry) return;
     const { svg, title, line, dot, window, points, x, y, description } = geometry;
@@ -139,6 +166,7 @@
     const valid = finite(row?.volume_lb);
     const detail = date ? `${dateLabel(date)} · ${valid ? `${number(row.volume_lb, 1)} lb` : "No measurement"}` : "";
     writeTotals(window, date);
+    const trendDescription = writeVolumeTrend(points, date);
     line.setAttribute("visibility", date ? "visible" : "hidden");
     dot.setAttribute("visibility", date && valid ? "visible" : "hidden");
     if (date) {
@@ -146,7 +174,7 @@
       line.setAttribute("x2", x(date));
       if (valid) { dot.setAttribute("cx", x(date)); dot.setAttribute("cy", y(row.volume_lb)); }
     }
-    const accessible = date ? `${dateLabel(date, true)}. Sessions: ${number(row.sessions)}. Working sets: ${number(row.working_sets)}. External-load volume: ${detail}. 7-training-day trend: ${finite(row.trend_lb) ? `${number(row.trend_lb, 1)} lb` : "No measurement"}.` : description;
+    const accessible = (date ? `${dateLabel(date, true)}. Sessions: ${number(row.sessions)}. Working sets: ${number(row.working_sets)}. External-load volume: ${detail}. 7-training-day trend: ${finite(row.trend_lb) ? `${number(row.trend_lb, 1)} lb` : "No measurement"}.` : description) + ` ${trendDescription}`;
     title.textContent = accessible;
     svg.setAttribute("aria-label", accessible);
     chart.setAttribute("aria-label", `${accessible} Use left and right arrows to inspect workout dates, Home and End to jump, and Escape to clear.`);
