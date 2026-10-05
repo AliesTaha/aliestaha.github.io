@@ -41,6 +41,8 @@
     {% endif %}
     {% if page.health_dashboard %}
       <link rel="stylesheet" href="{{ '/assets/css/health.css' | relative_url }}?v={{ site.asset_version }}">
+      <link rel="stylesheet" href="{{ '/assets/css/hevy.css' | relative_url }}?v={{ site.asset_version }}">
+      <script src="{{ '/assets/js/hevy.js' | relative_url }}?v={{ site.asset_version }}" defer></script>
     {% endif %}
   </head>
   <body>

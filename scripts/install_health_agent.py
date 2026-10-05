@@ -13,7 +13,7 @@ import sys
 import tempfile
 
 LABEL = "com.aliestaha.health-sync"
-SCRIPTS = ("scheduled_health.py", "refresh_health.py", "export_whoop.py", "publish_health.py")
+SCRIPTS = ("scheduled_health.py", "refresh_health.py", "export_whoop.py", "export_hevy.py", "publish_health.py")
 
 
 def atomic_write(path, content, mode=0o600):

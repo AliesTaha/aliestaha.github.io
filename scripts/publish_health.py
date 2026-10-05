@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate and optionally publish the deliberately public WHOOP snapshot.
+"""Validate and optionally publish approved daily WHOOP or Hevy summaries.
 
 Dry-run is the default. --publish is required to change GitHub. The repository,
 branch, and destination are fixed; credentials and raw WHOOP records are never
@@ -27,6 +27,7 @@ REPOSITORY = "AliesTaha/aliestaha.github.io"
 BRANCH = "main"
 DESTINATION = "assets/data/health.json"
 ENDPOINT = f"repos/{REPOSITORY}/contents/{DESTINATION}"
+DESTINATIONS = {"health": DESTINATION, "lifting": "assets/data/lifting.json"}
 CACHE = Path.home() / ".local/share/whoop-codex/health-cache"
 MAX_BYTES = 8 * 1024 * 1024
 MAX_DAYS = 12_000
@@ -66,6 +67,16 @@ METHODOLOGY = {
     "workouts": "Count and summed elapsed minutes of recorded workouts starting that day. Zero means no recorded workout; not proof of no exercise. Minutes are unknown if any recorded workout is incomplete.",
     "missing": "Null means no measurement or not yet scored, never zero. Missing calendar days remain visible as gaps. Biological age and continuous heart-rate samples are not supplied by this API.",
 }
+LIFTING_TOP_KEYS = {"schema_version", "generated_at", "timezone", "coverage", "daily", "methodology"}
+LIFTING_RANGES = {"sessions": (0, 1000), "minutes": (0, 10080), "working_sets": (0, 10000), "volume_kg": (0, 1_000_000_000)}
+LIFTING_METHODOLOGY = {
+    "dates": "Sessions are grouped by their start date in America/Toronto, including daylight saving time. Every calendar day from the first logged session through the last refresh date is retained. With no logged sessions, the current date is shown as zero.",
+    "sessions": "Count of workouts logged in Hevy. These are separate from WHOOP workouts and must not be added to them.",
+    "minutes": "Summed elapsed workout time, including rests, from logged start and end times. A missing or invalid duration makes the daily total unknown.",
+    "working_sets": "Count of logged normal, dropset, and failure sets across all exercises. Warmup sets are excluded; this is a log count, not a physiological workload score.",
+    "volume_kg": "External-load volume sums logged weight in kilograms times repetitions for normal, dropset, and failure sets in exercises classified by Hevy as weight_reps. Warmup, bodyweight, assisted, timed, and distance exercises are excluded. No body mass or unlogged load is estimated.",
+    "missing": "Zero means no logged activity or no eligible sets that day. Null means a required value or exercise classification is missing or invalid. A failed refresh preserves the last successful snapshot.",
+}
 
 
 class PublishError(Exception):
@@ -95,7 +106,60 @@ def timestamp(value):
         raise PublishError("Invalid generated_at timestamp") from None
 
 
-def validate_snapshot(snapshot, now=None):
+def validate_lifting_snapshot(snapshot, now=None):
+    exact_keys(snapshot, LIFTING_TOP_KEYS, "lifting snapshot")
+    if type(snapshot["schema_version"]) is not int or snapshot["schema_version"] != 1:
+        raise PublishError("Unsupported lifting schema version")
+    generated = timestamp(snapshot["generated_at"])
+    now = now or datetime.now(timezone.utc)
+    if generated > now + timedelta(minutes=15) or generated.year < 2010:
+        raise PublishError("Snapshot generation timestamp is outside safe bounds")
+    if snapshot["timezone"] != "America/Toronto" or snapshot["methodology"] != LIFTING_METHODOLOGY:
+        raise PublishError("Unreviewed lifting metadata")
+    rows = snapshot["daily"]
+    if not isinstance(rows, list) or len(rows) > MAX_DAYS:
+        raise PublishError("Lifting history exceeds its bounds")
+    dates = []
+    for row in rows:
+        exact_keys(row, {"date", *LIFTING_RANGES}, "lifting daily")
+        day = valid_date(row["date"])
+        if day < date(2010, 1, 1) or day > generated.date() + timedelta(days=1):
+            raise PublishError("Observation date is outside safe bounds")
+        dates.append(day)
+        for key, (lower, upper) in LIFTING_RANGES.items():
+            value = row[key]
+            if value is None and key != "sessions":
+                continue
+            if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not lower <= value <= upper:
+                raise PublishError("Lifting metrics must be bounded numbers or permitted nulls")
+            if key in ("sessions", "working_sets") and value != int(value):
+                raise PublishError("Lifting counts must be whole numbers")
+        if row["sessions"] == 0 and any(row[key] != 0 for key in ("minutes", "working_sets", "volume_kg")):
+            raise PublishError("A day without logged sessions must have zero totals")
+    if dates != sorted(set(dates)):
+        raise PublishError("Daily dates must be unique and sorted")
+    coverage = snapshot["coverage"]
+    exact_keys(coverage, {"first_date", "last_date", "days"}, "coverage")
+    if not dates:
+        if coverage != {"first_date": None, "last_date": None, "days": 0} or type(coverage["days"]) is not int:
+            raise PublishError("Empty lifting coverage is invalid")
+    elif (coverage["first_date"] != dates[0].isoformat() or coverage["last_date"] != dates[-1].isoformat()
+          or type(coverage["days"]) is not int or coverage["days"] != len(rows)
+          or len(rows) != (dates[-1] - dates[0]).days + 1):
+        raise PublishError("Coverage does not match lifting history")
+    return generated
+
+
+def destination(dataset):
+    if dataset not in DESTINATIONS:
+        raise PublishError("Unknown public dataset")
+    return DESTINATIONS[dataset]
+
+
+def validate_snapshot(snapshot, now=None, dataset="health"):
+    destination(dataset)
+    if dataset == "lifting":
+        return validate_lifting_snapshot(snapshot, now)
     exact_keys(snapshot, TOP_KEYS, "snapshot")
     if type(snapshot["schema_version"]) is not int or snapshot["schema_version"] != 1:
         raise PublishError("Unsupported public schema version")
@@ -159,18 +223,18 @@ def _no_duplicate_keys(pairs):
     return result
 
 
-def decode_snapshot(raw):
+def decode_snapshot(raw, dataset="health"):
     if len(raw) > MAX_BYTES:
         raise PublishError("Snapshot exceeds size limit")
     try:
         snapshot = json.loads(raw, object_pairs_hook=_no_duplicate_keys)
     except (ValueError, UnicodeError, RecursionError):
         raise PublishError("Snapshot is not valid JSON") from None
-    validate_snapshot(snapshot)
+    validate_snapshot(snapshot, dataset=dataset)
     return snapshot
 
 
-def read_snapshot(path):
+def read_snapshot(path, dataset="health"):
     try:
         with path.open("rb") as stream:
             if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
@@ -178,7 +242,7 @@ def read_snapshot(path):
             raw = stream.read(MAX_BYTES + 1)
     except OSError:
         raise PublishError("Cannot read snapshot") from None
-    return decode_snapshot(raw)
+    return decode_snapshot(raw, dataset)
 
 
 def canonical(snapshot):
@@ -230,14 +294,16 @@ def gh_api(method, endpoint, input_path=None):
     return status, data
 
 
-def read_remote():
-    status, result = gh_api("GET", ENDPOINT + "?ref=" + BRANCH)
+def read_remote(dataset="health"):
+    target = destination(dataset)
+    endpoint = f"repos/{REPOSITORY}/contents/{target}"
+    status, result = gh_api("GET", endpoint + "?ref=" + BRANCH)
     if status == 404:
         return None, None
     if status != 200 or not isinstance(result, dict):
         raise PublishError("Cannot inspect current public snapshot")
     if (result.get("type") != "file" or result.get("encoding") != "base64"
-            or result.get("path") != DESTINATION
+            or result.get("path") != target
             or not re.fullmatch(r"[0-9a-f]{40}", str(result.get("sha", "")))
             or not isinstance(result.get("content"), str)):
         raise PublishError("Unexpected public file response")
@@ -248,17 +314,19 @@ def read_remote():
         raw = base64.b64decode(content, validate=True)
     except (ValueError, binascii.Error):
         raise PublishError("Remote snapshot encoding is invalid") from None
-    return decode_snapshot(raw), result["sha"]
+    return decode_snapshot(raw, dataset), result["sha"]
 
 
-def publish(snapshot, *, enabled=False, cache=CACHE):
-    generated = validate_snapshot(snapshot)
+def publish(snapshot, *, enabled=False, cache=CACHE, dataset="health"):
+    target = destination(dataset)
+    endpoint = f"repos/{REPOSITORY}/contents/{target}"
+    generated = validate_snapshot(snapshot, dataset=dataset)
     content = canonical(snapshot)
     if len(content) > MAX_BYTES:
         raise PublishError("Snapshot exceeds size limit")
     with publish_lock(cache):
         for attempt in range(2):
-            previous, sha = read_remote()
+            previous, sha = read_remote(dataset)
             if previous is not None:
                 previous_time = timestamp(previous["generated_at"])
                 if generated < previous_time:
@@ -271,7 +339,8 @@ def publish(snapshot, *, enabled=False, cache=CACHE):
             if not enabled:
                 return {"published": False, "would_publish": True, "reason": "dry_run", "commit": None,
                         "generated_at": snapshot["generated_at"]}
-            request = {"message": "Update public WHOOP health snapshot", "branch": BRANCH,
+            label = "WHOOP health" if dataset == "health" else "Hevy lifting"
+            request = {"message": f"Update public {label} snapshot", "branch": BRANCH,
                        "content": base64.b64encode(content).decode("ascii")}
             if sha:
                 request["sha"] = sha
@@ -280,7 +349,7 @@ def publish(snapshot, *, enabled=False, cache=CACHE):
                 with os.fdopen(fd, "w", encoding="utf-8") as stream:
                     os.fchmod(stream.fileno(), 0o600)
                     json.dump(request, stream)
-                status, result = gh_api("PUT", ENDPOINT, Path(filename))
+                status, result = gh_api("PUT", endpoint, Path(filename))
             finally:
                 Path(filename).unlink(missing_ok=True)
             if status == 409 and attempt == 0:
@@ -297,13 +366,14 @@ def publish(snapshot, *, enabled=False, cache=CACHE):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--dataset", choices=tuple(DESTINATIONS), default="health")
     parser.add_argument("--snapshot", required=True, type=Path)
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--dry-run", action="store_true", help="Inspect without writing (default)")
     mode.add_argument("--publish", action="store_true", help="Publish the validated snapshot to the fixed public destination")
     args = parser.parse_args(argv)
     try:
-        result = publish(read_snapshot(args.snapshot), enabled=args.publish)
+        result = publish(read_snapshot(args.snapshot, args.dataset), enabled=args.publish, dataset=args.dataset)
     except PublishError as exc:
         result = {"published": False, "error": str(exc)}
         print(json.dumps(result, sort_keys=True))

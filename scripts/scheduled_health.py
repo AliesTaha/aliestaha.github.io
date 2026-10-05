@@ -26,6 +26,7 @@ CACHE = Path.home() / ".local/share/whoop-codex/health-cache"
 REPOSITORY = "AliesTaha/aliestaha.github.io"
 WORKFLOW = "pages build and deployment"
 PUBLIC_URL = "https://alibytes.com/assets/data/health.json"
+PUBLIC_URLS = {"health": PUBLIC_URL, "lifting": "https://alibytes.com/assets/data/lifting.json"}
 TOTAL_TIMEOUT = 600
 POLL_SECONDS = 15
 REFRESH_SECONDS = 3600
@@ -39,6 +40,10 @@ ERRORS = {
     "whoop_unavailable": "WHOOP is temporarily unavailable. The native scheduler will retry after five minutes.",
     "network_unavailable": "The network request failed. The native scheduler will retry after five minutes while the Mac is awake.",
     "export_failed": "WHOOP export failed before publication. Check the local connector and cache; the previous public snapshot is preserved.",
+    "hevy_auth_failed": "Hevy rejected the saved API key. Reconnect Hevy using its developer settings and the local setup helper.",
+    "hevy_rate_limited": "Hevy limited requests. The native scheduler will retry after five minutes.",
+    "hevy_unavailable": "Hevy is temporarily unavailable. The native scheduler will retry after five minutes.",
+    "hevy_export_failed": "Hevy export failed before publication. Check the local connector; the previous public workout snapshot is preserved.",
     "publication_failed": "The snapshot could not be published. Check GitHub authentication and the public-data validation; the scheduler will retry.",
     "interrupted": "The health runner was stopped before verification completed. The next scheduled run will retry.",
     "refresh_failed": "WHOOP refresh or publication failed. Check WHOOP access, GitHub authentication, and the network; the native scheduler retries after five minutes.",
@@ -129,7 +134,7 @@ def run_command(command, timeout, failure_code, timeout_code):
         try:
             result = json.loads(next(line for line in reversed(stdout.decode("utf-8").splitlines()) if line.strip()))
             code = result.get("error", {}).get("code")
-            if isinstance(code, str) and code in {"whoop_auth_failed", "whoop_rate_limited", "whoop_unavailable", "network_unavailable", "export_failed", "publication_failed"}:
+            if isinstance(code, str) and code in {"whoop_auth_failed", "whoop_rate_limited", "whoop_unavailable", "network_unavailable", "export_failed", "publication_failed", "hevy_auth_failed", "hevy_rate_limited", "hevy_unavailable", "hevy_export_failed"}:
                 raise SyncError(code)
         except (ValueError, UnicodeError, StopIteration, AttributeError):
             pass
@@ -199,10 +204,10 @@ class SecureRedirect(request.HTTPRedirectHandler):
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
-def public_timestamp(timeout):
+def public_timestamp(timeout, dataset="health"):
     context = ssl.create_default_context()
     opener = request.build_opener(request.HTTPSHandler(context=context), SecureRedirect())
-    req = request.Request(PUBLIC_URL, headers={"Cache-Control": "no-cache", "Accept": "application/json"})
+    req = request.Request(PUBLIC_URLS[dataset], headers={"Cache-Control": "no-cache", "Accept": "application/json"})
     try:
         with opener.open(req, timeout=timeout) as response:
             if response.status != 200 or urlsplit(response.url).scheme != "https":
@@ -219,12 +224,12 @@ def public_timestamp(timeout):
         raise SyncError("public_unavailable") from None
 
 
-def wait_for_publication(generated_at, deadline):
+def wait_for_publication(generated_at, deadline, dataset="health"):
     last_error = "public_unavailable"
     while True:
         timeout = min(30, time_left(deadline, last_error))
         try:
-            if public_timestamp(timeout) == generated_at:
+            if public_timestamp(timeout, dataset) == generated_at:
                 return
             last_error = "public_snapshot_mismatch"
         except SyncError as exc:
@@ -336,27 +341,63 @@ def run(cache=None, budget=TOTAL_TIMEOUT, respect_schedule=False):
                           last_success_at=previous_success(cache))
             return status
         locked = True
+        previous = previous_status(cache)
         status["last_success_at"] = previous_success(cache)
+        previous_datasets = previous.get("datasets", {})
+        wake = latest_wake() if respect_schedule else None
+        due_datasets = []
+        for dataset in PUBLIC_URLS:
+            old = previous_datasets.get(dataset, {})
+            due, reason = refresh_due(old, time.time(), wake) if respect_schedule else (True, "manual")
+            if due:
+                due_datasets.append(dataset)
         if respect_schedule:
-            due, reason = refresh_due(previous_status(cache), time.time(), latest_wake())
-            if not due:
+            if not due_datasets:
                 # Preserve the last meaningful success/failure, including its
                 # attempt timestamp. Idle minute ticks must not postpone retries.
                 status.update(status="skipped", reason=reason, finished_at=utc_now())
                 return status
             status["trigger"] = reason
         persist = True
+        status["datasets"] = {name: previous_datasets.get(name, {}) for name in PUBLIC_URLS}
         write_status(cache, status)
         script = Path(__file__).resolve().with_name("refresh_health.py")
-        output = run_command([sys.executable, str(script), "--publish"],
-                             time_left(deadline, "refresh_timeout"), "refresh_failed", "refresh_timeout")
-        publication = publication_result(output)
-        status.update(publication)
-        if publication.get("status") != "skipped":
-            # Both gates must succeed before recording a new last_success_at.
-            wait_for_deployment(publication["commit"], deadline)
-            wait_for_publication(publication["generated_at"], deadline)
+        for index, dataset in enumerate(due_datasets):
+            # Reserve time for the other source even if this source or its
+            # deployment stalls. Successful sources keep their hourly cadence.
+            source_deadline = time.monotonic() + max(0, deadline - time.monotonic()) / (len(due_datasets) - index)
+            source_status = {"status": "running", "started_at": utc_now(), "finished_at": None,
+                             "last_success_at": previous_datasets.get(dataset, {}).get("last_success_at")}
+            status["datasets"][dataset] = source_status
+            write_status(cache, status)
+            try:
+                output = run_command([sys.executable, str(script), "--publish", "--dataset", dataset],
+                                     time_left(source_deadline, "refresh_timeout"), "refresh_failed", "refresh_timeout")
+                publication = publication_result(output)
+                if publication.get("status") == "skipped" and publication.get("reason") == "refresh_in_progress":
+                    status["datasets"][dataset] = {**source_status, **publication, "finished_at": utc_now()}
+                    continue
+                # Even unchanged snapshots must reach the live site before success.
+                if publication.get("commit"):
+                    wait_for_deployment(publication["commit"], source_deadline)
+                wait_for_publication(publication["generated_at"], source_deadline, dataset)
+                status["datasets"][dataset] = {**source_status, **publication, "status": "success",
+                                               "finished_at": utc_now(), "last_success_at": utc_now()}
+            except SyncError as exc:
+                status["datasets"][dataset] = {**source_status, "status": "failed", "finished_at": utc_now(),
+                                               "error": {"code": exc.code, "message": ERRORS[exc.code]}}
+                if exc.code == "interrupted":
+                    raise
+            write_status(cache, status)
+        health = status["datasets"].get("health", {})
+        status.update(commit=health.get("commit"), generated_at=health.get("generated_at"))
+        failures = [result for result in status["datasets"].values() if result["status"] == "failed"]
+        if failures:
+            status.update(status="failed", error=failures[0]["error"])
+        elif all(result["status"] == "success" for result in status["datasets"].values()):
             status.update(status="success", last_success_at=utc_now())
+        else:
+            status.update(status="skipped", reason="refresh_in_progress")
     except SyncError as exc:
         status.update(status="failed", error={"code": exc.code, "message": ERRORS[exc.code]})
     except OSError:

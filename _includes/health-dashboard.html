@@ -61,4 +61,29 @@
       </article>
     </div>
   </div>
+  <section class="lifting-panel" data-lifting-url="{{ '/assets/data/lifting.json' | relative_url }}" aria-labelledby="lifting-title">
+    <header class="lifting-heading">
+      <h2 id="lifting-title">Workouts</h2>
+      <div class="lifting-ranges" role="group" aria-label="Workout time range">
+        <button type="button" data-lifting-range="W" aria-pressed="false">Week</button>
+        <button type="button" data-lifting-range="M" aria-pressed="true">Month</button>
+        <button type="button" data-lifting-range="ALL" aria-pressed="false">All</button>
+      </div>
+    </header>
+    <div class="lifting-status" role="status">
+      <span data-lifting-status>Hevy · Loading…</span>
+      <button type="button" data-lifting-retry hidden>Retry</button>
+    </div>
+    <div data-lifting-content hidden>
+      <p class="lifting-period" data-lifting-period aria-live="polite"></p>
+      <dl class="lifting-totals" aria-label="Workout totals for the selected period">
+        <div><dt>Sessions</dt><dd><span data-lifting-value="sessions"></span><small data-lifting-coverage="sessions"></small></dd></div>
+        <div><dt>Working sets</dt><dd><span data-lifting-value="working_sets"></span><small data-lifting-coverage="working_sets"></small></dd></div>
+        <div><dt>External-load volume</dt><dd><span data-lifting-value="volume_kg"></span><span class="lifting-unit">kg</span><small data-lifting-coverage="volume_kg"></small></dd></div>
+      </dl>
+      <div class="lifting-chart-heading"><h3>Daily volume</h3></div>
+      <div class="lifting-chart" data-lifting-chart tabindex="0" role="group" aria-label="Daily external-load volume chart"></div>
+      <p class="lifting-method">Volume = logged kg × reps. Warm-ups, bodyweight and assisted exercises excluded.</p>
+    </div>
+  </section>
 </section>

@@ -39,7 +39,7 @@ The static site is generated in the ignored `_site/` folder. Dependencies stay i
 
 ## Health
 
-The browser reads `assets/data/health.json`. The Mac updater runs independently of Codex. See [HEALTH.md](HEALTH.md) for its commands.
+The browser reads WHOOP measurements from `assets/data/health.json` and Hevy workout totals from `assets/data/lifting.json`. The Mac updater runs independently of Codex. See [HEALTH.md](HEALTH.md) for its commands.
 
 For a lightweight checkout without the site's image and data history:
 
