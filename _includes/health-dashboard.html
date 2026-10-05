@@ -61,38 +61,15 @@
       </article>
     </div>
   </div>
-  <section class="lifting-panel" data-lifting-url="{{ '/assets/data/lifting.json' | relative_url }}" aria-labelledby="lifting-title">
-    <header class="lifting-heading">
-      <h2 id="lifting-title">Workouts</h2>
-      <div class="lifting-ranges" role="group" aria-label="Workout time range">
-        <button type="button" data-lifting-range="W" aria-pressed="false">Week</button>
-        <button type="button" data-lifting-range="M" aria-pressed="true">Month</button>
-        <button type="button" data-lifting-range="ALL" aria-pressed="false">All</button>
-      </div>
-    </header>
+  <div class="lifting-panel" data-lifting-url="{{ '/assets/data/lifting.json' | relative_url }}">
     <div class="lifting-status" role="status">
       <span data-lifting-status>Hevy · Loading…</span>
       <button type="button" data-lifting-retry hidden>Retry</button>
     </div>
     <div data-lifting-content hidden>
-      <p class="lifting-period" data-lifting-period aria-live="polite"></p>
-      <dl class="lifting-totals" aria-label="Workout totals for the selected period">
-        <div><dt>Sessions</dt><dd><span data-lifting-value="sessions"></span><small data-lifting-coverage="sessions"></small></dd></div>
-        <div><dt>Working sets</dt><dd><span data-lifting-value="working_sets"></span><small data-lifting-coverage="working_sets"></small></dd></div>
-        <div><dt>External-load volume</dt><dd><span data-lifting-value="volume_lb"></span><span class="lifting-unit">lb</span><small data-lifting-coverage="volume_lb"></small></dd></div>
-      </dl>
-      <div class="lifting-chart-heading">
-        <h3>Training-day volume</h3>
-        <div class="lifting-legend" role="group" aria-label="Volume chart lines">
-          <span><i class="lifting-legend-daily" aria-hidden="true"></i>Training days</span>
-          <span title="Exponential moving average over seven training days"><i class="lifting-legend-trend" aria-hidden="true"></i>Trend</span>
-        </div>
-      </div>
-      <div class="lifting-chart" data-lifting-chart tabindex="0" role="group" aria-label="Training-day external-load volume chart"></div>
-      <p class="lifting-method">Volume = logged weight in lb × reps. Rest days omitted. Warm-ups, bodyweight and assisted exercises excluded.</p>
       <section class="strength-section" aria-labelledby="strength-title">
         <div class="strength-heading">
-          <h3 id="strength-title">Strength</h3>
+          <h2 id="strength-title">Strength</h2>
           <div class="strength-tabs" role="tablist" aria-label="Exercise">
             <button type="button" role="tab" id="strength-tab-bench" data-strength-tab="bench" aria-controls="strength-panel" aria-selected="true">Bench</button>
             <button type="button" role="tab" id="strength-tab-squat" data-strength-tab="squat" aria-controls="strength-panel" aria-selected="false" tabindex="-1">Squat</button>
@@ -152,7 +129,7 @@
             </div>
           </div>
           <div class="strength-progress">
-            <h4 data-strength-variant>Incline Bench Press (Dumbbell)</h4>
+            <h3 data-strength-variant>Incline Bench Press (Dumbbell)</h3>
             <p class="strength-metric" data-strength-metric>Estimated 1RM</p>
             <p class="strength-reading"><span data-strength-value>–</span><span class="strength-unit" data-strength-unit>lb</span></p>
             <p class="strength-detail" data-strength-detail></p>
@@ -170,6 +147,31 @@
           </div>
         </div>
       </section>
+      <section class="workouts-section" aria-labelledby="lifting-title">
+        <header class="lifting-heading">
+          <h2 id="lifting-title">Workouts</h2>
+          <div class="lifting-ranges" role="group" aria-label="Workout time range">
+            <button type="button" data-lifting-range="W" aria-pressed="false">Week</button>
+            <button type="button" data-lifting-range="M" aria-pressed="true">Month</button>
+            <button type="button" data-lifting-range="ALL" aria-pressed="false">All</button>
+          </div>
+        </header>
+        <p class="lifting-period" data-lifting-period aria-live="polite"></p>
+        <dl class="lifting-totals" aria-label="Workout totals for the selected period">
+          <div><dt>Sessions</dt><dd><span data-lifting-value="sessions"></span><small data-lifting-coverage="sessions"></small></dd></div>
+          <div><dt>Working sets</dt><dd><span data-lifting-value="working_sets"></span><small data-lifting-coverage="working_sets"></small></dd></div>
+          <div><dt>External-load volume</dt><dd><span data-lifting-value="volume_lb"></span><span class="lifting-unit">lb</span><small data-lifting-coverage="volume_lb"></small></dd></div>
+        </dl>
+        <div class="lifting-chart-heading">
+          <div class="lifting-chart-title"><h3>Training-day volume</h3><span class="health-card-trend" data-lifting-trend></span></div>
+          <div class="lifting-legend" role="group" aria-label="Volume chart lines">
+            <span><i class="lifting-legend-daily" aria-hidden="true"></i>Training days</span>
+            <span title="Exponential moving average over seven training days"><i class="lifting-legend-trend" aria-hidden="true"></i>Trend</span>
+          </div>
+        </div>
+        <div class="lifting-chart" data-lifting-chart tabindex="0" role="group" aria-label="Training-day external-load volume chart"></div>
+        <p class="lifting-method">Volume = logged weight in lb × reps. Rest days omitted. Warm-ups, bodyweight and assisted exercises excluded.</p>
+      </section>
     </div>
-  </section>
+  </div>
 </section>

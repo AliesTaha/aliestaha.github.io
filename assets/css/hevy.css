@@ -1,11 +1,11 @@
 .lifting-panel { margin-top: 44px; padding-top: 26px; border-top: 1px solid var(--line); }
 .lifting-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.lifting-heading h2 { margin: 0; color: var(--ink); font: 400 27px/1.25 Georgia, "Times New Roman", serif; }
+.lifting-heading h2, .strength-heading h2 { margin: 0; color: var(--ink); font: 400 27px/1.25 Georgia, "Times New Roman", serif; }
 .lifting-ranges { display: flex; gap: 3px; }
 .lifting-ranges button { border: 0; border-radius: 3px; padding: 7px 11px; background: transparent; color: #70685e; font: 11px/1.4 var(--health-sans); cursor: pointer; }
 .lifting-ranges button[aria-pressed="true"] { color: var(--paper); background: var(--accent); }
 .lifting-ranges button:hover:not([aria-pressed="true"]) { color: var(--ink); background: var(--soft); }
-.lifting-status { display: flex; align-items: baseline; gap: 9px; margin: 12px 0 0; color: #70685e; font: 11px/1.6 var(--health-sans); }
+.lifting-status { display: flex; align-items: baseline; gap: 9px; margin: 0 0 18px; color: #70685e; font: 11px/1.6 var(--health-sans); }
 .lifting-status[data-error="true"], .lifting-status[data-stale="true"] { color: #79583b; }
 .lifting-status button { padding: 0; border: 0; background: transparent; color: var(--ink); font: inherit; text-decoration: underline; cursor: pointer; }
 .lifting-period { margin: 18px 0 20px; color: #70685e; font: 11px/1.5 var(--health-sans); }
@@ -17,8 +17,8 @@
 .lifting-totals dd small { display: block; margin-top: 5px; color: #70685e; font: 10px/1.4 var(--health-sans); letter-spacing: 0; }
 .lifting-totals dd small:empty { display: none; }
 .lifting-chart-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 12px; min-height: 23px; }
-.lifting-chart-heading h3, .lifting-chart-heading span { margin: 0; color: #70685e; font: 11px/1.5 var(--health-sans); }
-.lifting-chart-heading span { text-align: right; font-variant-numeric: tabular-nums; }
+.lifting-chart-heading h3, .lifting-legend span { margin: 0; color: #70685e; font: 11px/1.5 var(--health-sans); }
+.lifting-chart-title { display: flex; align-items: baseline; gap: 12px; }
 .lifting-legend { display: flex; gap: 14px; align-items: center; margin-bottom: 6px; }
 .lifting-legend span { display: inline-flex; align-items: center; gap: 5px; }
 .lifting-legend i { width: 16px; border-top: 1.5px solid var(--health-accent); }
@@ -36,9 +36,8 @@
 .lifting-axis-label { fill: #70685e; font: 10px var(--health-sans); }
 .lifting-empty { fill: #70685e; font: 12px var(--health-sans); }
 .lifting-method { margin: 13px 0 0; color: #70685e; font: 10px/1.6 var(--health-sans); }
-.strength-section { margin-top: 32px; padding-top: 25px; border-top: 1px solid var(--line); }
+.workouts-section { margin-top: 32px; padding-top: 25px; border-top: 1px solid var(--line); }
 .strength-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
-.strength-heading h3 { margin: 0; color: var(--ink); font: 400 25px/1.25 Georgia, "Times New Roman", serif; }
 .strength-tabs { display: flex; flex-wrap: wrap; gap: 3px; }
 .strength-tabs button { position: relative; border: 0; padding: 8px 10px; background: transparent; color: #70685e; font: 11px/1.4 var(--health-sans); cursor: pointer; }
 .strength-tabs button::after { content: ""; position: absolute; inset: auto 10px 2px; height: 1px; background: var(--health-accent); transform: scaleX(0); transition: transform 180ms ease; }
@@ -73,7 +72,7 @@
 .gym-station-select { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; background: transparent; cursor: pointer; pointer-events: auto; }
 .gym-station-select:focus-visible { outline: 1px dashed var(--health-accent); outline-offset: 2px; border-radius: 6px; }
 .strength-progress { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.5fr); column-gap: 35px; align-items: start; min-width: 0; padding: 12px 0; }
-.strength-progress h4 { grid-column: 1; margin: 0 0 12px; color: var(--ink); font: 400 17px/1.4 Georgia, "Times New Roman", serif; }
+.strength-progress h3 { grid-column: 1; margin: 0 0 12px; color: var(--ink); font: 400 17px/1.4 Georgia, "Times New Roman", serif; }
 .strength-progress > p { grid-column: 1; }
 .strength-metric { margin: 0 0 4px; color: #70685e; font: 11px/1.5 var(--health-sans); }
 .strength-reading { margin: 0; color: var(--health-accent); font: 40px/1.2 Georgia, "Times New Roman", serif; letter-spacing: -.035em; font-variant-numeric: lining-nums tabular-nums; }
@@ -92,7 +91,7 @@
 }
 @media (max-width: 570px) {
   .lifting-panel { margin-top: 34px; padding-top: 24px; }
-  .lifting-heading h2 { font-size: 25px; }
+  .lifting-heading h2, .strength-heading h2 { font-size: 25px; }
   .lifting-ranges button { padding: 7px 9px; }
   .lifting-totals { gap: 14px; }
   .lifting-totals dt { min-height: 2.8em; font-size: 11px; }
@@ -105,6 +104,6 @@
   .strength-tabs button::after { left: 7px; right: 7px; }
   .strength-stage { margin-top: 12px; }
   .strength-progress { display: block; padding: 8px 0 0; }
-  .strength-progress h4 { margin-bottom: 9px; }
+  .strength-progress h3 { margin-bottom: 9px; }
   .strength-detail { min-height: 1.5em; }
 }
