@@ -88,6 +88,26 @@
     }
     return { rows: visible, start, end };
   }
+  function trainingSeries(history) {
+    const series = [];
+    let average = null;
+    let previous = null;
+    const alpha = 2 / (7 + 1);
+    history.forEach(row => {
+      if (previous && stamp(row.date) - stamp(previous) > DAY) {
+        series.push({ date: day(stamp(previous) + DAY), volume_lb: null, trend_lb: null });
+      }
+      previous = row.date;
+      if (!finite(row.sessions) || !finite(row.volume_lb)) {
+        series.push({ ...row, volume_lb: null, trend_lb: null });
+      } else if (row.sessions > 0) {
+        average = average === null ? row.volume_lb : alpha * row.volume_lb + (1 - alpha) * average;
+        series.push({ ...row, trend_lb: average });
+      }
+      // Rest days do not age the EMA. Missing days split paths but retain its prior state.
+    });
+    return series;
+  }
   function svgElement(tag, attrs = {}, text = null) {
     const element = document.createElementNS("http://www.w3.org/2000/svg", tag);
     Object.entries(attrs).forEach(([key, value]) => element.setAttribute(key, value));
@@ -111,10 +131,11 @@
     });
   }
   function inspect(date) {
-    selected = date;
     if (!geometry) return;
-    const { svg, title, line, dot, window, x, y, description } = geometry;
-    const row = window.rows.find(item => item.date === date);
+    const { svg, title, line, dot, window, points, x, y, description } = geometry;
+    const row = points.find(item => item.date === date);
+    selected = row ? date : null;
+    date = selected;
     const valid = finite(row?.volume_lb);
     const detail = date ? `${dateLabel(date)} · ${valid ? `${number(row.volume_lb, 1)} lb` : "No measurement"}` : "";
     writeTotals(window, date);
@@ -125,10 +146,10 @@
       line.setAttribute("x2", x(date));
       if (valid) { dot.setAttribute("cx", x(date)); dot.setAttribute("cy", y(row.volume_lb)); }
     }
-    const accessible = date ? `${dateLabel(date, true)}. Sessions: ${number(row?.sessions)}. Working sets: ${number(row?.working_sets)}. External-load volume: ${detail}.` : description;
+    const accessible = date ? `${dateLabel(date, true)}. Sessions: ${number(row.sessions)}. Working sets: ${number(row.working_sets)}. External-load volume: ${detail}. 7-training-day trend: ${finite(row.trend_lb) ? `${number(row.trend_lb, 1)} lb` : "No measurement"}.` : description;
     title.textContent = accessible;
     svg.setAttribute("aria-label", accessible);
-    chart.setAttribute("aria-label", `${accessible} Use left and right arrows to inspect days, Home and End to jump, and Escape to clear.`);
+    chart.setAttribute("aria-label", `${accessible} Use left and right arrows to inspect workout dates, Home and End to jump, and Escape to clear.`);
   }
   function renderChart(window) {
     if (body?.hidden || !chart.clientWidth) return;
@@ -138,34 +159,43 @@
     const pad = { left: 4, right: 4, top: 20, bottom: 23 };
     const plotWidth = width - pad.left - pad.right;
     const plotHeight = height - pad.top - pad.bottom;
-    const values = window.rows.filter(row => finite(row.volume_lb));
-    const max = Math.max(1, ...values.map(row => row.volume_lb));
+    const series = trainingSeries(rows).filter(row => row.date >= window.start && row.date <= window.end);
+    const points = series.filter(row => row.sessions > 0);
+    const measured = points.filter(row => finite(row.volume_lb));
+    const missing = window.rows.filter(row => !finite(row.sessions) || !finite(row.volume_lb)).length;
+    const restDays = window.rows.filter(row => row.sessions === 0 && finite(row.volume_lb)).length;
+    const max = Math.max(1, ...measured.flatMap(row => [row.volume_lb, row.trend_lb]));
     const duration = stamp(window.end) - stamp(window.start);
     const x = date => duration ? pad.left + (stamp(date) - stamp(window.start)) / duration * plotWidth : width / 2;
     const y = value => pad.top + plotHeight * (1 - value / max);
-    const description = `Daily external-load volume in pounds, ${dateLabel(window.start, true)} to ${dateLabel(window.end, true)}. ${values.length} recorded days; ${window.rows.length - values.length} missing days.`;
+    const description = `External-load volume per training day in pounds, ${dateLabel(window.start, true)} to ${dateLabel(window.end, true)}. ${measured.length} measured training days; ${missing} days missing measurements; ${restDays} rest days omitted. The 7-training-day exponential moving average uses full history before this period. Gaps break both lines; the average resumes from its prior state at the next measured training day.`;
     const svg = svgElement("svg", { viewBox: `0 0 ${width} ${height}`, role: "img", "aria-label": description });
     const title = svgElement("title", {}, description);
     svg.append(title, svgElement("line", { class: "lifting-axis", x1: pad.left, x2: width - pad.right, y1: y(0), y2: y(0) }));
     svg.append(svgElement("text", { class: "lifting-axis-label", x: pad.left, y: height - 3 }, dateLabel(window.start, window.start.slice(0, 4) !== window.end.slice(0, 4))));
     if (window.start !== window.end) svg.append(svgElement("text", { class: "lifting-axis-label", x: width - pad.right, y: height - 3, "text-anchor": "end" }, dateLabel(window.end, window.start.slice(0, 4) !== window.end.slice(0, 4))));
-    if (values.length) {
+    if (measured.length) {
       svg.append(svgElement("text", { class: "lifting-axis-label", x: pad.left, y: 10 }, `${number(max, max < 10 ? 1 : 0)} lb`));
       let segment = [];
       const flush = () => {
-        if (segment.length > 1) svg.append(svgElement("path", { class: "lifting-line", d: segment.map((row, index) => `${index ? "L" : "M"}${x(row.date).toFixed(2)},${y(row.volume_lb).toFixed(2)}`).join(" ") }));
-        if (segment.length === 1 || range === "W") segment.forEach(row => svg.append(svgElement("circle", { class: "lifting-dot", cx: x(row.date), cy: y(row.volume_lb), r: 2.4 })));
+        if (segment.length > 1) {
+          ["volume_lb", "trend_lb"].forEach(key => svg.append(svgElement("path", { class: key === "volume_lb" ? "lifting-line" : "lifting-trend", d: segment.map((row, index) => `${index ? "L" : "M"}${x(row.date).toFixed(2)},${y(row[key]).toFixed(2)}`).join(" ") })));
+        } else if (segment.length === 1) {
+          const row = segment[0];
+          svg.append(svgElement("circle", { class: "lifting-trend", cx: x(row.date), cy: y(row.trend_lb), r: 2.5 }));
+        }
         segment = [];
       };
-      window.rows.forEach(row => { if (finite(row.volume_lb)) segment.push(row); else flush(); });
+      series.forEach(row => { if (finite(row.volume_lb)) segment.push(row); else flush(); });
       flush();
-    } else svg.append(svgElement("text", { class: "lifting-empty", x: width / 2, y: height / 2, "text-anchor": "middle" }, "No volume measurements in this period"));
+      measured.forEach(row => svg.append(svgElement("circle", { class: "lifting-dot", cx: x(row.date), cy: y(row.volume_lb), r: 2.4 })));
+    } else svg.append(svgElement("text", { class: "lifting-empty", x: width / 2, y: height / 2, "text-anchor": "middle" }, missing ? "No measured training days" : "No workouts in this period"));
     const line = svgElement("line", { class: "lifting-hover-line", y1: pad.top, y2: y(0), visibility: "hidden" });
     const dot = svgElement("circle", { class: "lifting-hover-dot", r: 3.5, visibility: "hidden" });
     svg.append(line, dot);
     chart.replaceChildren(svg);
-    geometry = { svg, title, line, dot, window, x, y, width, pad, plotWidth, description };
-    inspect(selected && selected >= window.start && selected <= window.end ? selected : null);
+    geometry = { svg, title, line, dot, window, points, x, y, width, pad, plotWidth, description };
+    inspect(points.some(row => row.date === selected) ? selected : null);
   }
   function inspectStrength(date) {
     strengthSelected = date;
@@ -337,13 +367,14 @@
     }
   }
   function pointer(event) {
-    if (!geometry) return;
+    if (!geometry?.points.length) return;
     const bounds = geometry.svg.getBoundingClientRect();
     if (!bounds.width) return;
     const pixel = (event.clientX - bounds.left) * geometry.width / bounds.width;
     const fraction = Math.max(0, Math.min(1, (pixel - geometry.pad.left) / geometry.plotWidth));
-    const days = Math.round((stamp(geometry.window.end) - stamp(geometry.window.start)) / DAY);
-    inspect(day(stamp(geometry.window.start) + Math.round(fraction * days) * DAY));
+    const target = stamp(geometry.window.start) + fraction * (stamp(geometry.window.end) - stamp(geometry.window.start));
+    const closest = geometry.points.reduce((best, row) => Math.abs(stamp(row.date) - target) < Math.abs(stamp(best.date) - target) ? row : best);
+    inspect(closest.date);
   }
   panel.querySelectorAll("[data-lifting-range]").forEach(button => button.addEventListener("click", () => { range = button.dataset.liftingRange; selected = null; render(); }));
   panel.querySelectorAll("[data-strength-range]").forEach(button => button.addEventListener("click", () => {
@@ -357,15 +388,16 @@
   chart.addEventListener("pointerdown", pointer, { passive: true });
   chart.addEventListener("pointerleave", event => { if (event.pointerType !== "touch") inspect(null); });
   chart.addEventListener("pointercancel", () => inspect(null));
-  chart.addEventListener("focus", () => { if (geometry) inspect(geometry.window.end); });
+  chart.addEventListener("focus", () => { const points = geometry?.points; if (points?.length) inspect(points[points.length - 1].date); });
   chart.addEventListener("blur", () => inspect(null));
   chart.addEventListener("keydown", event => {
-    if (!geometry || !["ArrowLeft", "ArrowRight", "Home", "End", "Escape"].includes(event.key)) return;
+    const points = geometry?.points;
+    if (!points?.length || !["ArrowLeft", "ArrowRight", "Home", "End", "Escape"].includes(event.key)) return;
     event.preventDefault();
-    const window = geometry.window;
     if (event.key === "Escape") return inspect(null);
-    const next = event.key === "Home" ? window.start : event.key === "End" ? window.end : day(stamp(selected || window.end) + (event.key === "ArrowLeft" ? -1 : 1) * DAY);
-    inspect(next < window.start ? window.start : next > window.end ? window.end : next);
+    const index = selected ? points.findIndex(row => row.date === selected) : points.length - 1;
+    const next = event.key === "Home" ? 0 : event.key === "End" ? points.length - 1 : Math.max(0, Math.min(points.length - 1, index + (event.key === "ArrowLeft" ? -1 : 1)));
+    inspect(points[next].date);
   });
   document.addEventListener("pointerdown", event => { if (!chart.contains(event.target)) inspect(null); }, { passive: true });
   panel.querySelectorAll("[data-strength-tab]").forEach(button => {

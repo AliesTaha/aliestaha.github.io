@@ -81,9 +81,15 @@
         <div><dt>Working sets</dt><dd><span data-lifting-value="working_sets"></span><small data-lifting-coverage="working_sets"></small></dd></div>
         <div><dt>External-load volume</dt><dd><span data-lifting-value="volume_lb"></span><span class="lifting-unit">lb</span><small data-lifting-coverage="volume_lb"></small></dd></div>
       </dl>
-      <div class="lifting-chart-heading"><h3>Daily volume</h3></div>
-      <div class="lifting-chart" data-lifting-chart tabindex="0" role="group" aria-label="Daily external-load volume chart"></div>
-      <p class="lifting-method">Volume = logged weight in lb × reps. Warm-ups, bodyweight and assisted exercises excluded.</p>
+      <div class="lifting-chart-heading">
+        <h3>Training-day volume</h3>
+        <div class="lifting-legend" role="group" aria-label="Volume chart lines">
+          <span><i class="lifting-legend-daily" aria-hidden="true"></i>Training days</span>
+          <span title="Exponential moving average over seven training days"><i class="lifting-legend-trend" aria-hidden="true"></i>Trend</span>
+        </div>
+      </div>
+      <div class="lifting-chart" data-lifting-chart tabindex="0" role="group" aria-label="Training-day external-load volume chart"></div>
+      <p class="lifting-method">Volume = logged weight in lb × reps. Rest days omitted. Warm-ups, bodyweight and assisted exercises excluded.</p>
       <section class="strength-section" aria-labelledby="strength-title">
         <div class="strength-heading">
           <h3 id="strength-title">Strength</h3>
@@ -100,6 +106,12 @@
             <svg class="gym-art-filters" width="0" height="0" aria-hidden="true"><defs>
               <filter id="gym-paper-ink" color-interpolation-filters="sRGB">
                 <feComponentTransfer><feFuncR type="linear" slope="0.9529411765"/><feFuncG type="linear" slope="0.9333333333"/><feFuncB type="linear" slope="0.8941176471"/></feComponentTransfer>
+              </filter>
+              <filter id="gym-transparent-ink" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+                <!-- Near-white paper becomes transparent; brown marks retain their edge opacity. -->
+                <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 -1.3 0 1.25 0" result="ink-alpha"/>
+                <feFlood flood-color="#7b4c29" result="ink-color"/>
+                <feComposite in="ink-color" in2="ink-alpha" operator="in"/>
               </filter>
             </defs></svg>
             <svg class="gym-architecture" viewBox="0 0 1000 620" fill="none" aria-hidden="true">

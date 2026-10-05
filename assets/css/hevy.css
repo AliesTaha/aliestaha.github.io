@@ -16,14 +16,20 @@
 .lifting-unit { margin-left: 5px; color: #70685e; font: 11px/1 var(--health-sans); letter-spacing: 0; }
 .lifting-totals dd small { display: block; margin-top: 5px; color: #70685e; font: 10px/1.4 var(--health-sans); letter-spacing: 0; }
 .lifting-totals dd small:empty { display: none; }
-.lifting-chart-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; min-height: 23px; }
+.lifting-chart-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 12px; min-height: 23px; }
 .lifting-chart-heading h3, .lifting-chart-heading span { margin: 0; color: #70685e; font: 11px/1.5 var(--health-sans); }
 .lifting-chart-heading span { text-align: right; font-variant-numeric: tabular-nums; }
+.lifting-legend { display: flex; gap: 14px; align-items: center; margin-bottom: 6px; }
+.lifting-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.lifting-legend i { width: 16px; border-top: 1.5px solid var(--health-accent); }
+.lifting-legend-daily { opacity: .5; }
+.lifting-legend .lifting-legend-trend { border-top-style: dashed; }
 .lifting-chart { height: 154px; width: 100%; touch-action: pan-y; cursor: crosshair; }
 .lifting-chart svg { display: block; width: 100%; height: 154px; overflow: visible; }
 .lifting-chart:focus-visible { outline: 1px solid var(--health-accent); outline-offset: 4px; }
 .lifting-axis { stroke: var(--line); stroke-width: 1; }
-.lifting-line { fill: none; stroke: var(--health-accent); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.lifting-line { fill: none; stroke: var(--health-accent); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; opacity: .5; }
+.lifting-trend { fill: none; stroke: var(--health-accent); stroke-width: 2; stroke-dasharray: 5 4; stroke-linecap: round; stroke-linejoin: round; }
 .lifting-dot { fill: var(--paper); stroke: var(--health-accent); stroke-width: 1.3; }
 .lifting-hover-line { stroke: var(--health-muted-accent); stroke-width: 1; stroke-dasharray: 2 3; pointer-events: none; }
 .lifting-hover-dot { fill: var(--health-accent); stroke: var(--paper); stroke-width: 2; pointer-events: none; }
@@ -53,6 +59,7 @@
 .gym-station img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; margin: 0; border: 0; border-radius: 0; object-fit: contain; object-position: center bottom; filter: url("#gym-paper-ink"); transition: opacity 180ms ease; pointer-events: none; }
 .gym-equipment { opacity: .57; }
 .gym-station .gym-idle { inset: auto; bottom: 2%; left: calc(var(--idle-x) * 1%); height: calc(var(--idle-height) * 1%); transform: translateX(-50%); opacity: .42; }
+.gym-station .gym-equipment, .gym-station .gym-idle { filter: url("#gym-transparent-ink"); }
 .gym-occupied { opacity: 0; }
 /* Keep clips in the square artwork's coordinates, including its opaque paper matte. */
 .gym-station .gym-occupied { inset: auto; bottom: 0; left: 50%; width: min(100%, calc(62% * var(--station-height) / var(--station-width))); height: auto; aspect-ratio: 1; transform: translateX(-50%); }
