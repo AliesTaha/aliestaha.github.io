@@ -96,12 +96,41 @@
           </div>
         </div>
         <div class="strength-stage" id="strength-panel" role="tabpanel" aria-labelledby="strength-tab-bench">
-          <div class="strength-poses" aria-hidden="true">
-            <img class="strength-pose is-active" data-strength-pose="bench" src="{{ '/assets/images/strength-bench.webp' | relative_url }}" alt="" loading="lazy" decoding="async">
-            <img class="strength-pose" data-strength-pose="squat" src="{{ '/assets/images/strength-squat.webp' | relative_url }}" alt="" loading="lazy" decoding="async">
-            <img class="strength-pose" data-strength-pose="pullups" src="{{ '/assets/images/strength-pullups.webp' | relative_url }}" alt="" loading="lazy" decoding="async">
-            <img class="strength-pose" data-strength-pose="curls" src="{{ '/assets/images/strength-curls.webp' | relative_url }}" alt="" loading="lazy" decoding="async">
-            <img class="strength-pose" data-strength-pose="rows" src="{{ '/assets/images/strength-rows.webp' | relative_url }}" alt="" loading="lazy" decoding="async">
+          <div class="gym-room" data-gym-room aria-hidden="true">
+            <svg class="gym-architecture" viewBox="0 0 1000 620" fill="none">
+              <path class="gym-wall" d="M35 535V135L145 55H850L970 145V535M145 55V308H850V55M35 385L145 308M850 308L970 390"/>
+              <path class="gym-floor" d="M35 535L145 308M970 535L850 308M35 535H970M440 535L470 308M735 535L680 308"/>
+              <path class="gym-mirror" d="M190 85H435V230H190ZM455 85H700V230H455Z"/>
+              <path class="gym-reflection" d="M215 110L240 94M215 127L269 94M481 111L506 95"/>
+            </svg>
+            <svg class="gym-route" viewBox="0 0 1000 620" fill="none"><path data-gym-route/></svg>
+            <div class="gym-station is-active" data-gym-station="bench" style="--station-x:30; --station-y:88; --station-width:34; --station-height:46; --station-depth:4">
+              <img class="gym-equipment" src="{{ '/assets/images/gym-bench-empty.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+              <img class="gym-occupied" src="{{ '/assets/images/strength-bench.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+            </div>
+            <div class="gym-station" data-gym-station="squat" style="--station-x:20; --station-y:56; --station-width:29; --station-height:46; --station-depth:2">
+              <img class="gym-equipment" src="{{ '/assets/images/gym-squat-empty.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+              <img class="gym-occupied" src="{{ '/assets/images/strength-squat.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+            </div>
+            <div class="gym-station" data-gym-station="pullups" style="--station-x:51; --station-y:51; --station-width:25; --station-height:43; --station-depth:1">
+              <img class="gym-equipment" src="{{ '/assets/images/gym-pullups-empty.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+              <img class="gym-occupied" src="{{ '/assets/images/strength-pullups.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+            </div>
+            <div class="gym-station" data-gym-station="curls" style="--station-x:70; --station-y:90; --station-width:28; --station-height:49; --station-depth:5">
+              <img class="gym-equipment" src="{{ '/assets/images/gym-curls-empty.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+              <img class="gym-occupied" src="{{ '/assets/images/strength-curls.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+            </div>
+            <div class="gym-station" data-gym-station="rows" style="--station-x:82; --station-y:59; --station-width:31; --station-height:51; --station-depth:3">
+              <img class="gym-equipment" src="{{ '/assets/images/gym-rows-empty.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+              <img class="gym-occupied" src="{{ '/assets/images/strength-rows.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+            </div>
+            <div class="gym-traveler" data-gym-traveler>
+              <div class="gym-runner">
+                <img class="gym-runner-echo gym-runner-echo-far" src="{{ '/assets/images/gym-traveler.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+                <img class="gym-runner-echo" src="{{ '/assets/images/gym-traveler.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+                <img src="{{ '/assets/images/gym-traveler.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+              </div>
+            </div>
           </div>
           <div class="strength-progress">
             <h4 data-strength-variant>Incline Bench Press (Dumbbell)</h4>
