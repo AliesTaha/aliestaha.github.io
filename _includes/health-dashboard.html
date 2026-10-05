@@ -80,17 +80,6 @@
         </div>
         <div class="strength-stage" id="strength-panel" role="tabpanel" aria-labelledby="strength-tab-bench">
           <div class="gym-room" data-gym-room role="group" aria-label="Gym exercise stations">
-            <svg class="gym-art-filters" width="0" height="0" aria-hidden="true"><defs>
-              <filter id="gym-paper-ink" color-interpolation-filters="sRGB">
-                <feComponentTransfer><feFuncR type="linear" slope="0.9529411765"/><feFuncG type="linear" slope="0.9333333333"/><feFuncB type="linear" slope="0.8941176471"/></feComponentTransfer>
-              </filter>
-              <filter id="gym-transparent-ink" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
-                <!-- Near-white paper becomes transparent; brown marks retain their edge opacity. -->
-                <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 -1.3 0 1.25 0" result="ink-alpha"/>
-                <feFlood flood-color="#7b4c29" result="ink-color"/>
-                <feComposite in="ink-color" in2="ink-alpha" operator="in"/>
-              </filter>
-            </defs></svg>
             <svg class="gym-architecture" viewBox="0 0 1000 620" fill="none" aria-hidden="true">
               <path class="gym-wall" d="M35 535V135L145 55H850L970 145V535M145 55V308H850V55M35 385L145 308M850 308L970 390"/>
               <path class="gym-floor" d="M35 535L145 308M970 535L850 308M35 535H970M440 535L470 308M735 535L680 308"/>
@@ -98,33 +87,33 @@
               <path class="gym-reflection" d="M215 110L240 94M215 127L269 94M481 111L506 95"/>
             </svg>
             <div class="gym-station is-active" data-gym-station="bench" style="--station-x:30; --station-y:88; --station-width:34; --station-height:46; --station-depth:4; --idle-x:28; --idle-height:85">
-              <img class="gym-equipment" src="{{ '/assets/images/gym-bench-empty.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
-              <img class="gym-idle" src="{{ '/assets/images/gym-idle.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
-              <img class="gym-occupied" src="{{ '/assets/images/strength-bench.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+              {% include gym-art.svg station="bench" kind="gym-equipment" asset="gym-bench-empty.webp" %}
+              {% include gym-art.svg station="bench" kind="gym-idle" asset="gym-idle.webp" %}
+              {% include gym-art.svg station="bench" kind="gym-occupied" asset="strength-bench.webp" %}
               <button class="gym-station-select" type="button" data-gym-select="bench" aria-label="Select bench" aria-pressed="true"></button>
             </div>
             <div class="gym-station" data-gym-station="squat" style="--station-x:20; --station-y:56; --station-width:29; --station-height:46; --station-depth:2; --idle-x:54; --idle-height:75">
-              <img class="gym-equipment" src="{{ '/assets/images/gym-squat-empty.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
-              <img class="gym-idle" src="{{ '/assets/images/gym-idle.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
-              <img class="gym-occupied" src="{{ '/assets/images/strength-squat.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+              {% include gym-art.svg station="squat" kind="gym-equipment" asset="gym-squat-empty.webp" %}
+              {% include gym-art.svg station="squat" kind="gym-idle" asset="gym-idle.webp" %}
+              {% include gym-art.svg station="squat" kind="gym-occupied" asset="strength-squat.webp" %}
               <button class="gym-station-select" type="button" data-gym-select="squat" aria-label="Select squat" aria-pressed="false"></button>
             </div>
             <div class="gym-station" data-gym-station="pullups" style="--station-x:51; --station-y:51; --station-width:25; --station-height:43; --station-depth:1; --idle-x:48; --idle-height:75">
-              <img class="gym-equipment" src="{{ '/assets/images/gym-pullups-empty.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
-              <img class="gym-idle" src="{{ '/assets/images/gym-idle.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
-              <img class="gym-occupied" src="{{ '/assets/images/strength-pullups.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+              {% include gym-art.svg station="pullups" kind="gym-equipment" asset="gym-pullups-empty.webp" %}
+              {% include gym-art.svg station="pullups" kind="gym-idle" asset="gym-idle.webp" %}
+              {% include gym-art.svg station="pullups" kind="gym-occupied" asset="strength-pullups.webp" %}
               <button class="gym-station-select" type="button" data-gym-select="pullups" aria-label="Select pull-ups" aria-pressed="false"></button>
             </div>
             <div class="gym-station" data-gym-station="curls" style="--station-x:70; --station-y:90; --station-width:28; --station-height:49; --station-depth:5; --idle-x:56; --idle-height:88">
-              <img class="gym-equipment" src="{{ '/assets/images/gym-curls-empty.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
-              <img class="gym-idle" src="{{ '/assets/images/gym-idle.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
-              <img class="gym-occupied" src="{{ '/assets/images/strength-curls.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+              {% include gym-art.svg station="curls" kind="gym-equipment" asset="gym-curls-empty.webp" %}
+              {% include gym-art.svg station="curls" kind="gym-idle" asset="gym-idle.webp" %}
+              {% include gym-art.svg station="curls" kind="gym-occupied" asset="strength-curls.webp" %}
               <button class="gym-station-select" type="button" data-gym-select="curls" aria-label="Select curls" aria-pressed="false"></button>
             </div>
             <div class="gym-station" data-gym-station="rows" style="--station-x:82; --station-y:59; --station-width:31; --station-height:51; --station-depth:3; --idle-x:39; --idle-height:75">
-              <img class="gym-equipment" src="{{ '/assets/images/gym-rows-empty.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
-              <img class="gym-idle" src="{{ '/assets/images/gym-idle.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
-              <img class="gym-occupied" src="{{ '/assets/images/strength-rows.webp' | relative_url }}?v={{ site.asset_version }}" alt="" loading="lazy" decoding="async">
+              {% include gym-art.svg station="rows" kind="gym-equipment" asset="gym-rows-empty.webp" %}
+              {% include gym-art.svg station="rows" kind="gym-idle" asset="gym-idle.webp" %}
+              {% include gym-art.svg station="rows" kind="gym-occupied" asset="strength-rows.webp" %}
               <button class="gym-station-select" type="button" data-gym-select="rows" aria-label="Select rows" aria-pressed="false"></button>
             </div>
           </div>
