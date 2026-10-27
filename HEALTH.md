@@ -12,7 +12,7 @@ The strength illustrations share one gym room. Each station has a faded figure s
 
 ## Automatic refresh
 
-The macOS LaunchAgent `com.aliestaha.health-sync` checks each minute and refreshes hourly, after waking, or five minutes after a failure. The Mac must be awake, online, and logged in. Closing Codex has no effect. The dashboard keeps the last good data and marks it stale after three hours.
+The macOS LaunchAgent `com.aliestaha.health-sync` checks each minute and refreshes hourly, after waking, or five minutes after a transient failure. It allows 30 seconds after waking for the network to settle. The Mac must be awake, online, and logged in. Closing Codex has no effect. The dashboard keeps the last good data and marks it stale after three hours. Rejected authorizations back off to hourly checks; replacing the saved credentials triggers a refresh on the next minute check. Credentials are detected by file modification time, without reading their contents into scheduler status.
 
 The installed runtime is `~/.local/share/whoop-codex/health-sync/`. WHOOP credentials stay under `~/.whoop-mcp/`; the Hevy API key is in the private file `~/.config/hevy/api-key`. The read-only Hevy client is installed at `~/.local/share/hevy-codex/hevy_connector.py` and is registered as the `hevy` Codex MCP server. The checkout can move without stopping the service.
 
@@ -40,10 +40,14 @@ cat ~/.local/share/whoop-codex/health-cache/scheduled-status.json
 Sanitized logs are in the same private cache directory. If status reports `whoop_auth_failed`, reconnect:
 
 ```sh
-~/.local/share/whoop-codex/.venv/bin/python ~/.local/share/whoop-codex/whoop_mcp_server.py auth
+~/.local/share/whoop-codex/.venv/bin/python ~/.local/share/whoop-codex/health-sync/scripts/reconnect_whoop.py
 ```
 
-Complete sign-in on WHOOP's browser page. The next attempt uses the new tokens.
+Complete sign-in on WHOOP's browser page. This helper then refreshes and publishes the data and verifies the live site. If an updater is already running, the next minute check detects the new credentials. The first authorization failure also writes a reconnect instruction to the private `launchd-error.log`. No browser is opened automatically by background checks.
+
+The connector already serializes rotating-token refreshes across processes and saves tokens atomically. Normal access-token expiration is handled automatically. A revoked or rejected refresh token still requires WHOOP sign-in; an awake laptop cannot override the provider's authorization decision. The October 27 repair confirmed an HTTP 400 on the previous refresh token and restored access with fresh authorization; the original reason WHOOP rejected that token was not established.
+
+Scheduler regression checks: `python -m unittest discover -s scripts -p 'test_*.py'`.
 
 For `hevy_auth_failed`, generate a replacement key at `https://hevy.com/settings?developer` and save it through the local form:
 

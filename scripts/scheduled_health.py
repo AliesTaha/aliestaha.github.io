@@ -31,6 +31,7 @@ TOTAL_TIMEOUT = 600
 POLL_SECONDS = 15
 REFRESH_SECONDS = 3600
 RETRY_SECONDS = 300
+AUTH_RETRY_SECONDS = 3600
 WAKE_SETTLE_SECONDS = 30
 LOG_LIMIT = 64 * 1024
 MAX_RESPONSE = 8 * 1024 * 1024
@@ -275,7 +276,16 @@ def latest_wake():
         return None
 
 
-def refresh_due(previous, now, wake=None):
+def credential_version(dataset):
+    """Observe replacement credentials without reading or logging their contents."""
+    path = Path.home() / (".whoop-mcp/tokens.json" if dataset == "health" else ".config/hevy/api-key")
+    try:
+        return str(path.stat().st_mtime_ns)
+    except OSError:
+        return None
+
+
+def refresh_due(previous, now, wake=None, credentials=None):
     """Minute ticks do no network work until hourly, retry, or new-wake due."""
     started = timestamp_seconds(previous.get("started_at"))
     finished = timestamp_seconds(previous.get("finished_at"))
@@ -286,6 +296,13 @@ def refresh_due(previous, now, wake=None):
         return True, "initial"
     if started > now or success is not None and success > now or finished is not None and finished > now:
         return True, "clock_changed"
+    auth_failed = previous.get("error", {}).get("code") in {"whoop_auth_failed", "hevy_auth_failed"}
+    if auth_failed:
+        if credentials is not None and credentials != previous.get("credential_version"):
+            return True, "credentials_changed"
+        # Invalid grants need sign-in, not repeated token exchanges every five
+        # minutes. Keep an hourly fallback for externally repaired connections.
+        return now - max(started, finished or started) >= AUTH_RETRY_SECONDS, "authorization_required"
     if wake is not None and started < wake <= now:
         return True, "wake"
     # After a wake has triggered an attempt, its subsequent ticks obey backoff.
@@ -348,7 +365,7 @@ def run(cache=None, budget=TOTAL_TIMEOUT, respect_schedule=False):
         due_datasets = []
         for dataset in PUBLIC_URLS:
             old = previous_datasets.get(dataset, {})
-            due, reason = refresh_due(old, time.time(), wake) if respect_schedule else (True, "manual")
+            due, reason = refresh_due(old, time.time(), wake, credential_version(dataset)) if respect_schedule else (True, "manual")
             if due:
                 due_datasets.append(dataset)
         if respect_schedule:
@@ -367,7 +384,8 @@ def run(cache=None, budget=TOTAL_TIMEOUT, respect_schedule=False):
             # deployment stalls. Successful sources keep their hourly cadence.
             source_deadline = time.monotonic() + max(0, deadline - time.monotonic()) / (len(due_datasets) - index)
             source_status = {"status": "running", "started_at": utc_now(), "finished_at": None,
-                             "last_success_at": previous_datasets.get(dataset, {}).get("last_success_at")}
+                             "last_success_at": previous_datasets.get(dataset, {}).get("last_success_at"),
+                             "credential_version": credential_version(dataset)}
             status["datasets"][dataset] = source_status
             write_status(cache, status)
             try:
@@ -424,9 +442,14 @@ def run(cache=None, budget=TOTAL_TIMEOUT, respect_schedule=False):
 
 
 def main():
-    # launchd has private fallback stdout/stderr files, but ordinary runs are
-    # silent. Read scheduled-status.json for the bounded, sanitized result.
-    return 1 if run(respect_schedule=True)["status"] == "failed" else 0
+    previous = previous_status(CACHE).get("datasets", {}).get("health", {})
+    result = run(respect_schedule=True)
+    health = result.get("datasets", {}).get("health", {})
+    if (health.get("error", {}).get("code") == "whoop_auth_failed"
+            and previous.get("error", {}).get("code") != "whoop_auth_failed"):
+        print("WHOOP sign-in is required. Run ~/.local/share/whoop-codex/.venv/bin/python "
+              "~/.local/share/whoop-codex/health-sync/scripts/reconnect_whoop.py", file=sys.stderr)
+    return 1 if result["status"] == "failed" else 0
 
 
 if __name__ == "__main__":
