@@ -9,7 +9,7 @@ permalink: /
 <main>
   <section class="intro" aria-label="Introduction">
     <p class="intro-copy">
-      i'm ali taha. i go by <a href="https://x.com/waterloo_intern" rel="me">waterloo_intern</a> on twitter. i work on inference and research at <a href="https://www.baseten.co/">baseten</a>. this is a collection of my personal and technical writings, as well as a tracker of my current passion, weightlifting.
+      i'm ali taha. i go by <a href="https://x.com/ali_taha" rel="me">@ali_taha</a> on twitter. i work on inference and research at <a href="https://www.baseten.co/">baseten</a>. this is a collection of my personal and technical writings, as well as a tracker of my current passion, weightlifting.
     </p>
   </section>
 
@@ -67,15 +67,35 @@ permalink: /
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Blog",
-  "name": {{ page.title | jsonify }},
-  "description": {{ site.description | jsonify }},
-  "url": {{ site.url | jsonify }},
-  "author": {
-    "@type": "Person",
-    "name": "Ali Taha",
-    "url": {{ site.url | jsonify }},
-    "sameAs": ["https://github.com/AliesTaha"]
-  }
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": {{ '/' | absolute_url | append: '#person' | jsonify }},
+      "name": "Ali Taha",
+      "givenName": "Ali",
+      "familyName": "Taha",
+      "alternateName": ["ali_taha", "waterloo_intern", "AliesTaha"],
+      "url": {{ '/' | absolute_url | jsonify }},
+      "description": {{ site.description | jsonify }},
+      "sameAs": [
+        "https://x.com/ali_taha",
+        "https://www.linkedin.com/in/aliestaha/",
+        "https://github.com/AliesTaha",
+        "https://www.baseten.co/author/ali-taha/",
+        "https://www.wikidata.org/wiki/Q142294225"
+      ]
+    },
+    {
+      "@type": "Blog",
+      "@id": {{ '/' | absolute_url | append: '#blog' | jsonify }},
+      "name": {{ page.title | jsonify }},
+      "description": {{ site.description | jsonify }},
+      "url": {{ '/' | absolute_url | jsonify }},
+      "author": {
+        "@id": {{ '/' | absolute_url | append: '#person' | jsonify }}
+      }
+    }
+  ]
 }
 </script>
+
